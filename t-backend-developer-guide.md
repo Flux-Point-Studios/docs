@@ -28,22 +28,8 @@ curl -H "api-key: YOUR_API_KEY_HERE" \
   https://api.fluxpointstudios.com/health
 ```
 
-**Contact the Flux Point Team** via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> to get your API key if you don't have one yet.
+**Contact the Flux Point Team** via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> to get your API key if you need one.
 
-### 💰 Pricing & Access
-
-**API Access**: 10,000 $AGENT per month
-
-* Payment is processed through **FluidTokens scheduled transactions** via Aquarium
-* Subscription includes access to all platform features:
-  * Unlimited chat interactions with the AI assistant
-  * Background task processing with autonomous agents
-  * File upload and vector store creation
-  * Image generation and editing capabilities
-  * Knowledge graph access and querying
-  * Real-time research and blockchain monitoring
-
-**Payment Setup**: Contact the Flux Point Team via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> for details.
 
 ### Architecture & Execution Model
 
@@ -63,6 +49,8 @@ T Backend supports x402 “payment required” access control to gate API routes
 - Pay‑to‑use flows for protected endpoints (e.g., premium analysis, data products).
 - Clean handoff from “402 Payment Required” to “200 OK” once a valid payment proof is submitted.
 - Designed to be composable with your app and simple to audit.
+
+[Test x402](https://api-v2.fluxpointstudios.com/x402/)
 
 ### 🌟 Core Features
 
