@@ -1,6 +1,6 @@
 # T Backend Developer Guide
 
-<figure><img src="https://1356692922-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FUuGwxkf8UtZNwSX6MybN%2Fuploads%2FfM87b9HJshYOxZyFGwFo%2Fagent_t_pfp.png?alt=media&#x26;token=016e0be5-f784-4e38-9ad3-d32d1030b28d" alt=""><figcaption></figcaption></figure>
+<img width="400" height="400" alt="agentT_realistic" src="https://github.com/user-attachments/assets/cef3c0e4-c20d-4ae5-a6e1-7c00ab4fb0a1" />
 
 **Welcome to T Backend!** Your autonomous multi-agent AI platform is now ready for development. This guide will help you get started with the powerful features available.
 
@@ -17,7 +17,7 @@ T Backend combines a conversational AI assistant with autonomous agents that can
 
 ### 📜 API Documentation
 
-For complete details on all API endpoints, request formats, and responses, refer to our [Swagger API Docs](https://api.fluxpointstudios.com/docs). This comprehensive documentation will guide you through integrating with the T-Backend efficiently.
+For complete details on all API endpoints, request formats, and responses, refer to our [Swagger API Docs](https://api-v2.fluxpointstudios.com/docs). This comprehensive documentation will guide you throu[...]
 
 ### 🔑 Authentication Setup
 
@@ -25,7 +25,7 @@ All API requests require an `api-key` header:
 
 ```bash
 curl -H "api-key: YOUR_API_KEY_HERE" \
-  https://api.fluxpointstudios.com/health
+  https://api-v2.fluxpointstudios.com/health
 ```
 
 **Contact the Flux Point Team** via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> to get your API key if you need one.
@@ -33,7 +33,7 @@ curl -H "api-key: YOUR_API_KEY_HERE" \
 
 ### Architecture & Execution Model
 
-T Backend runs a privacy‑first, local‑execution model with optional overflow to cloud when needed. The assistant dynamically selects tools (web search, document search, image analysis) and composes results into clear, sourced answers. Client‑specific workflows can be added without impacting the general API.
+T Backend runs a privacy‑first, local‑execution model with optional overflow to cloud when needed. The assistant dynamically selects tools (web search, document search, image analysis) and compose[...]
 
 ### Hybrid Memory (Graphs + Embeddings)
 
@@ -62,7 +62,7 @@ The main chat endpoint provides conversational AI with advanced capabilities:
 import requests
 
 response = requests.post(
-    "https://api.fluxpointstudios.com/chat",
+    "https://api-v2.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "message": "Research the latest developments in blockchain technology",
@@ -87,7 +87,7 @@ For complex analysis that might take several minutes:
 ```python
 # Start a background task
 bg_task = requests.post(
-    "https://api.fluxpointstudios.com/background/create",
+    "https://api-v2.fluxpointstudios.com/background/create",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "model": "advanced",  # Uses our most powerful AI model
@@ -102,7 +102,7 @@ task_id = bg_task.json()["id"]
 import time
 while True:
     status = requests.get(
-        f"https://api.fluxpointstudios.com/background/{task_id}",
+        f"https://api-v2.fluxpointstudios.com/background/{task_id}",
         headers={"api-key": "YOUR_API_KEY"}
     ).json()
     
@@ -147,7 +147,7 @@ Create searchable document collections:
 ```python
 # 1. Create a vector store for your documents
 store = requests.post(
-    "https://api.fluxpointstudios.com/files/vector-stores",
+    "https://api-v2.fluxpointstudios.com/files/vector-stores",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "name": "my-documents",
@@ -159,21 +159,21 @@ store_id = store["id"]
 
 # 2. Upload a file
 file_response = requests.post(
-    "https://api.fluxpointstudios.com/files/upload-url",
+    "https://api-v2.fluxpointstudios.com/files/upload-url",
     headers={"api-key": "YOUR_API_KEY"},
     params={"url": "https://example.com/whitepaper.pdf"}
 ).json()
 
 # 3. Add file to vector store
 requests.post(
-    f"https://api.fluxpointstudios.com/files/vector-stores/{store_id}/files",
+    f"https://api-v2.fluxpointstudios.com/files/vector-stores/{store_id}/files",
     headers={"api-key": "YOUR_API_KEY"},
     json={"file_id": file_response["file_id"]}
 )
 
 # 4. Now you can search across your documents in chat!
 search_response = requests.post(
-    "https://api.fluxpointstudios.com/chat",
+    "https://api-v2.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY"},
     json={"message": "Search my documents for information about tokenomics"}
 )
@@ -193,7 +193,7 @@ Generate and edit images from text:
 ```python
 # Generate a new image
 image_response = requests.post(
-    "https://api.fluxpointstudios.com/images/generate",
+    "https://api-v2.fluxpointstudios.com/images/generate",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "prompt": "A futuristic AI agent working with blockchain data",
@@ -221,7 +221,7 @@ Explore and query the temporal knowledge graph:
 ```python
 # List accessible graphs
 graphs = requests.get(
-    "https://api.fluxpointstudios.com/graph/accessible",
+    "https://api-v2.fluxpointstudios.com/graph/accessible",
     headers={"api-key": "YOUR_API_KEY"}
 ).json()
 
@@ -229,7 +229,7 @@ graphs = requests.get(
 if graphs["graphs"]:
     graph_id = graphs["graphs"][0]["id"]
     results = requests.get(
-        f"https://api.fluxpointstudios.com/graph/{graph_id}/query?query=blockchain",
+        f"https://api-v2.fluxpointstudios.com/graph/{graph_id}/query?query=blockchain",
         headers={"api-key": "YOUR_API_KEY"}
     ).json()
 ```
@@ -241,7 +241,7 @@ if graphs["graphs"]:
 ```python
 # Deep research on a complex topic
 research_task = requests.post(
-    "https://api.fluxpointstudios.com/background/create",
+    "https://api-v2.fluxpointstudios.com/background/create",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "input": "Research and analyze the impact of AI agents on financial markets",
@@ -255,7 +255,7 @@ research_task = requests.post(
 ```python
 # Upload company docs to vector store, then ask questions
 response = requests.post(
-    "https://api.fluxpointstudios.com/chat",
+    "https://api-v2.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY"},
     json={"message": "Based on our uploaded documentation, what is our API rate limiting policy?"}
 )
@@ -266,7 +266,7 @@ response = requests.post(
 ```python
 # Ask about crypto trends (uses blockchain agent automatically)
 market_response = requests.post(
-    "https://api.fluxpointstudios.com/chat",
+    "https://api-v2.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY"},
     json={"message": "What are the current market conditions for Cardano and recent developments?"}
 )
@@ -277,7 +277,7 @@ market_response = requests.post(
 ```python
 # Generate an image, then refine it
 initial_image = requests.post(
-    "https://api.fluxpointstudios.com/images/generate",
+    "https://api-v2.fluxpointstudios.com/images/generate",
     headers={"api-key": "YOUR_API_KEY"},
     json={"prompt": "A modern office workspace"}
 ).json()
@@ -285,7 +285,7 @@ initial_image = requests.post(
 # Edit the generated image
 if initial_image["success"]:
     edited_image = requests.post(
-        "https://api.fluxpointstudios.com/images/edit",
+        "https://api-v2.fluxpointstudios.com/images/edit",
         headers={"api-key": "YOUR_API_KEY"},
         json={
             "prompt": "Add some plants and natural lighting",
@@ -299,7 +299,7 @@ if initial_image["success"]:
 ```python
 # Check background task history
 tasks = requests.get(
-    "https://api.fluxpointstudios.com/background/",
+    "https://api-v2.fluxpointstudios.com/background/",
     headers={"api-key": "YOUR_API_KEY"}
 ).json()
 
@@ -307,7 +307,7 @@ print(f"You have {len(tasks['responses'])} background tasks")
 
 # View your vector stores
 stores = requests.get(
-    "https://api.fluxpointstudios.com/files/vector-stores",
+    "https://api-v2.fluxpointstudios.com/files/vector-stores",
     headers={"api-key": "YOUR_API_KEY"}
 ).json()
 
@@ -316,7 +316,7 @@ for store in stores:
 
 # Check system health
 health = requests.get(
-    "https://api.fluxpointstudios.com/health",
+    "https://api-v2.fluxpointstudios.com/health",
     headers={"api-key": "YOUR_API_KEY"}
 ).json()
 ```
@@ -330,7 +330,7 @@ You can create specialized background tasks for different agent types:
 ```python
 # Research-focused task
 research_task = requests.post(
-    "https://api.fluxpointstudios.com/background/create",
+    "https://api-v2.fluxpointstudios.com/background/create",
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "input": "research latest blockchain trends",
@@ -340,7 +340,7 @@ research_task = requests.post(
 
 # Consolidation task for knowledge optimization
 consolidation_task = requests.post(
-    "https://api.fluxpointstudios.com/background/create", 
+    "https://api-v2.fluxpointstudios.com/background/create", 
     headers={"api-key": "YOUR_API_KEY"},
     json={
         "input": "consolidate recent knowledge and optimize storage",
@@ -358,14 +358,14 @@ import requests
 
 # Create a background task
 task = requests.post(
-    "https://api.fluxpointstudios.com/background/create",
+    "https://api-v2.fluxpointstudios.com/background/create",
     headers={"api-key": "YOUR_API_KEY"},
     json={"input": "Analyze market trends", "stream": True}
 ).json()
 
 # Stream the results
 response = requests.get(
-    f"https://api.fluxpointstudios.com/background/{task['id']}/stream",
+    f"https://api-v2.fluxpointstudios.com/background/{task['id']}/stream",
     headers={"api-key": "YOUR_API_KEY"},
     stream=True
 )
@@ -414,7 +414,7 @@ else:
 ### Data Isolation & Behavior Notes
 
 - **Key‑scoped by design**: everything stored (graphs, memories, vector knowledge) is isolated to your API key. No cross‑tenant leakage.
-- **Duplicate & caching**: by default, re‑sending the same document reprocesses it. Deterministic caching/dedupe can be enabled per workflow on request (e.g., cache‑by‑document ID with optional force bypass).
+- **Duplicate & caching**: by default, re‑sending the same document reprocesses it. Deterministic caching/dedupe can be enabled per workflow on request (e.g., cache‑by‑document ID with optional [...]
 
 ### 📚 Additional Resources
 
@@ -442,5 +442,3 @@ Start with simple chat requests and gradually explore the advanced features. The
 * [ ] Create your first background task
 * [ ] Generate an image
 * [ ] Explore the knowledge graphs
-
-Welcome to the future of autonomous AI development! 🚀
