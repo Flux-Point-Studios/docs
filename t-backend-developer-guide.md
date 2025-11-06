@@ -1,10 +1,6 @@
----
-description: Updated July 2025
----
-
 # T Backend Developer Guide
 
-<figure><img src=".gitbook/assets/agent_t_pfp.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="https://1356692922-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FUuGwxkf8UtZNwSX6MybN%2Fuploads%2FfM87b9HJshYOxZyFGwFo%2Fagent_t_pfp.png?alt=media&#x26;token=016e0be5-f784-4e38-9ad3-d32d1030b28d" alt=""><figcaption></figcaption></figure>
 
 **Welcome to T Backend!** Your autonomous multi-agent AI platform is now ready for development. This guide will help you get started with the powerful features available.
 
@@ -32,7 +28,7 @@ curl -H "api-key: YOUR_API_KEY_HERE" \
   https://api.fluxpointstudios.com/health
 ```
 
-**Contact the Flux Point Team** via email: contact@fluxpointstudios.com OR Discord: https://discord.gg/MfYUMnfrJM to get your API key if you don't have one yet.
+**Contact the Flux Point Team** via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> to get your API key if you don't have one yet.
 
 ### 💰 Pricing & Access
 
@@ -47,7 +43,26 @@ curl -H "api-key: YOUR_API_KEY_HERE" \
   * Knowledge graph access and querying
   * Real-time research and blockchain monitoring
 
-**Payment Setup**: Contact the Flux Point Team via email: contact@fluxpointstudios.com OR Discord: https://discord.gg/MfYUMnfrJM for details.
+**Payment Setup**: Contact the Flux Point Team via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> for details.
+
+### Architecture & Execution Model
+
+T Backend runs a privacy‑first, local‑execution model with optional overflow to cloud when needed. The assistant dynamically selects tools (web search, document search, image analysis) and composes results into clear, sourced answers. Client‑specific workflows can be added without impacting the general API.
+
+### Hybrid Memory (Graphs + Embeddings)
+
+T uses a hybrid memory approach to improve context and recall:
+- **Knowledge Graphs**: Entities and relationships (with temporal context) captured from interactions; queryable via graph endpoints.
+- **Semantic Embeddings**: Conversation text and document snippets indexed for fast semantic recall (Document Q&A and `/chat`).
+
+This gives you: precise entity reasoning (graph) plus robust fuzzy matching and passage retrieval (embeddings).
+
+### Payments & Access Control (x402)
+
+T Backend supports x402 “payment required” access control to gate API routes behind on‑chain proofs:
+- Pay‑to‑use flows for protected endpoints (e.g., premium analysis, data products).
+- Clean handoff from “402 Payment Required” to “200 OK” once a valid payment proof is submitted.
+- Designed to be composable with your app and simple to audit.
 
 ### 🌟 Core Features
 
@@ -126,6 +141,17 @@ The platform includes specialized autonomous agents that work behind the scenes:
 
 These agents automatically enhance your chat interactions and can be triggered through background tasks for specific analysis types.
 
+### General vs. Custom Endpoints
+
+- **General endpoints** (recommended starting points)
+  - `/chat`: Conversational assistant (can ground answers in your documents/graphs).
+  - `/background`: Long‑running tasks with polling/streaming.
+  - `/files`: File upload and vector store management.
+  - `/images`: Image generation/editing; image analysis workflows.
+  - `/graph`: Knowledge graph CRUD and querying.
+- **Custom endpoints**
+  - For turnkey workflows (e.g., single‑purpose extract/verify pipelines), we can expose dedicated endpoints that compose multiple tools. These remain private to your integration.
+
 #### 4. **File Upload & Search**
 
 Create searchable document collections:
@@ -165,6 +191,13 @@ search_response = requests.post(
 )
 ```
 
+##### Document Knowledge (Vector Stores)
+
+Attach your own domain documents to T and query them:
+- Create private vector stores and upload documents.
+- Ask `/chat` targeted questions; answers can be grounded in your sources.
+- Stores are isolated per client; you decide which stores `/chat` can use on each request.
+
 #### 5. **Image Generation & Editing**
 
 Generate and edit images from text:
@@ -186,6 +219,12 @@ if image_response["success"]:
     base64_images = image_response["images"]
     print(f"Generated {len(base64_images)} images!")
 ```
+
+##### Image Analysis & OCR
+
+T can analyze images and (optionally) run OCR for scanned documents to extract text fields. This enables:
+- License/document verification workflows.
+- OCR‑backed document extraction for scanned PDFs or images.
 
 #### 6. **Knowledge Graph Access**
 
@@ -371,7 +410,7 @@ for line in response.iter_lines():
 
 * Check the interactive API docs at `/docs` endpoint
 * Review system health at `GET /health`
-* Contact the Flux Point Team via email: contact@fluxpointstudios.com OR Discord: https://discord.gg/MfYUMnfrJM for API key issues or permission problems
+* Contact the Flux Point Team via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> for API key issues or permission problems
 
 **Debug Tips:**
 
@@ -383,6 +422,11 @@ if response.status_code != 200:
 else:
     result = response.json()
 ```
+
+### Data Isolation & Behavior Notes
+
+- **Key‑scoped by design**: everything stored (graphs, memories, vector knowledge) is isolated to your API key. No cross‑tenant leakage.
+- **Duplicate & caching**: by default, re‑sending the same document reprocesses it. Deterministic caching/dedupe can be enabled per workflow on request (e.g., cache‑by‑document ID with optional force bypass).
 
 ### 📚 Additional Resources
 
