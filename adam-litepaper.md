@@ -136,7 +136,7 @@ The response returns a directional bias (Bullish / Bearish), confidence level, a
   * **T2 Benefits:**
     * **2yr ACCESS TO ADAM (Starting November 1, 2025)**
       * **+1 Additional Trading Agents**
-* **Phase 3** – Public launch with 20,000 $AGENT per month subscription for access to ADAM.
+* **Phase 3** – Public launch with ~~20,000 $AGENT~~ 50 $USDM per month subscription for access to ADAM.
 
 These _ADAM Launch Passes_ act as a bridge between users having tiered access now versus waiting 30-60 days until our $AGENT Subscription service has been audited and launched on mainnet.\
 \
@@ -144,7 +144,7 @@ These Launch Passes will be available starting with T1 on 7/3/2025 at [https://f
 
 ### $AGENT Subscription
 
-Once launched, users pay 2**0,000 $AGENT** per month to Flux Point Studios _(**2%** of subscription fees go to the on-chain treasury for ecosystem growth)_ to activate **one trading agent bound to a single wallet**. Support for additional agents per user will be introduced in **November 2025**.
+Once launched, users pay ~~2**0,000 $AGENT**~~ 50 $USDM per month to Flux Point Studios _(**2%** of subscription fees go to the on-chain treasury for ecosystem growth)_ to activate **one trading agent bound to a single wallet**. Support for additional agents per user will be introduced in **November 2025**.
 
 ***
 
