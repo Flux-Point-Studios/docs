@@ -1,5 +1,5 @@
 ---
-description: Updated October 2025 — Version 1.1
+description: Updated November 2025 — Version 1.2
 ---
 
 # ADAM Litepaper
