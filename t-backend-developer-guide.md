@@ -2,443 +2,337 @@
 
 <img width="400" height="400" alt="agentT_realistic" src="https://github.com/user-attachments/assets/cef3c0e4-c20d-4ae5-a6e1-7c00ab4fb0a1" />
 
-**Welcome to T Backend!** Your autonomous multi-agent AI platform is now ready for development. This guide will help you get started with the powerful features available.
+**Welcome to T Backend!** This guide helps you integrate with the **T API** and understand the core request flows.
 
-### 🎯 What You Can Do
+### Quick Links
 
-T Backend combines a conversational AI assistant with autonomous agents that can:
+- **Base URL**: `https://api-v2.fluxpointstudios.com`
+- **Swagger API Docs**: [API Docs](https://api-v2.fluxpointstudios.com/docs)
+- **Support**: `contact@fluxpointstudios.com` · [Discord](https://discord.gg/MfYUMnfrJM)
 
-* **Research complex topics** and provide detailed analysis
-* **Monitor blockchain/crypto markets** automatically
-* **Process long-running tasks** in the background
-* **Manage knowledge graphs** with temporal memory
-* **Generate and edit images** from text descriptions
-* **Handle file uploads** and create searchable document collections
+---
 
-### 📜 API Documentation
+## Authentication
 
-For complete details on all API endpoints, request formats, and responses, refer to our [Swagger API Docs](https://api-v2.fluxpointstudios.com/docs). This comprehensive documentation will guide you throu[...]
+### API Key
 
-### 🔑 Authentication Setup
-
-All API requests require an `api-key` header:
+All authenticated requests use an `api-key` header:
 
 ```bash
-curl -H "api-key: YOUR_API_KEY_HERE" \
-  https://api-v2.fluxpointstudios.com/health
+curl -s https://api-v2.fluxpointstudios.com/health \
+  -H "api-key: YOUR_API_KEY_HERE"
 ```
 
-**Contact the Flux Point Team** via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> to get your API key if you need one.
+If you need an API key, contact `contact@fluxpointstudios.com` or reach out on [Discord](https://discord.gg/MfYUMnfrJM).
 
+### Pay‑Per‑Call (x402)
 
-### Architecture & Execution Model
+If you omit `api-key` on protected endpoints, the server may return:
 
-T Backend runs a privacy‑first, local‑execution model with optional overflow to cloud when needed. The assistant dynamically selects tools (web search, document search, image analysis) and compose[...]
+- `402 Payment Required` with an **invoice payload**
+- You pay the invoice on-chain
+- You retry the same request with:
+  - `X-Invoice-Id: <invoiceId>`
+  - `X-Payment: <tx_hash_or_signed_cbor>`
 
-### Hybrid Memory (Graphs + Embeddings)
+**Partner billing (recommended)**: include `X-Partner: <partner_name>` and `X-Wallet-Address: <addr...>` so your pricing/tier rules apply.
 
-T uses a hybrid memory approach to improve context and recall:
-- **Knowledge Graphs**: Entities and relationships (with temporal context) captured from interactions; queryable via graph endpoints.
-- **Semantic Embeddings**: Conversation text and document snippets indexed for fast semantic recall (Document Q&A and `/chat`).
+---
 
-This gives you: precise entity reasoning (graph) plus robust fuzzy matching and passage retrieval (embeddings).
+## Public API Surface
 
-### Payments & Access Control (x402)
+The customer-facing Swagger docs are intentionally scoped to:
 
-T Backend supports x402 “payment required” access control to gate API routes behind on‑chain proofs:
-- Pay‑to‑use flows for protected endpoints (e.g., premium analysis, data products).
-- Clean handoff from “402 Payment Required” to “200 OK” once a valid payment proof is submitted.
-- Designed to be composable with your app and simple to audit.
+- `GET /health`, `GET /api`
+- `POST /chat`
+- `POST /token-analysis`
+- `POST /images/*`
+- `GET/POST /payments/*` (when payments are enabled)
 
-[Test x402](https://api-v2.fluxpointstudios.com/x402/)
+If you have additional capabilities enabled for your deployment, you’ll receive separate documentation for those routes.
 
-### 🌟 Core Features
+---
 
-#### 1. **Chat with the AI Assistant**
+## 1) Chat (`POST /chat`)
 
-The main chat endpoint provides conversational AI with advanced capabilities:
+Send a message and receive a reply. Use `session_id` to preserve context across turns.
+
+### Basic example
 
 ```python
 import requests
 
-response = requests.post(
+r = requests.post(
     "https://api-v2.fluxpointstudios.com/chat",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "message": "Research the latest developments in blockchain technology",
-        "session_id": "my-session-123"  # Optional: maintains conversation context
-    }
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={"message": "What is Cardano?", "session_id": "my-session-1"},
 )
-
-print(response.json()["reply"])
+print(r.json()["reply"])
 ```
 
-**Features:**
+### Structured output (optional)
 
-* Remembers conversation context within sessions
-* Can process images (send `image_data` as base64)
-* Uses external tools (web search, data analysis) automatically
-* Supports complex research queries
-
-#### 2. **Background Tasks for Heavy Work**
-
-For complex analysis that might take several minutes:
-
-```python
-# Start a background task
-bg_task = requests.post(
-    "https://api-v2.fluxpointstudios.com/background/create",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "model": "advanced",  # Uses our most powerful AI model
-        "input": "Provide a comprehensive analysis of DeFi trends in 2025",
-        "analysis_depth": "high"  # For complex analytical tasks
-    }
-)
-
-task_id = bg_task.json()["id"]
-
-# Poll for results
-import time
-while True:
-    status = requests.get(
-        f"https://api-v2.fluxpointstudios.com/background/{task_id}",
-        headers={"api-key": "YOUR_API_KEY"}
-    ).json()
-    
-    if status["status"] == "completed":
-        print(status["output_text"])
-        break
-    elif status["status"] == "failed":
-        print("Task failed:", status.get("error"))
-        break
-    
-    time.sleep(10)  # Check every 10 seconds
-```
-
-#### 3. **Autonomous Agent System**
-
-The platform includes specialized autonomous agents that work behind the scenes:
-
-**Available Agents:**
-
-* **Research Agent**: Web research and fact-finding
-* **Blockchain Agent**: Crypto market monitoring
-* **Consolidation Agent**: Knowledge graph optimization
-* **Maintenance Agent**: System health monitoring
-
-These agents automatically enhance your chat interactions and can be triggered through background tasks for specific analysis types.
-
-### General vs. Custom Endpoints
-
-- **General endpoints** (recommended starting points)
-  - `/chat`: Conversational assistant (can ground answers in your documents/graphs).
-  - `/background`: Long‑running tasks with polling/streaming.
-  - `/files`: File upload and vector store management.
-  - `/images`: Image generation/editing; image analysis workflows.
-  - `/graph`: Knowledge graph CRUD and querying.
-- **Custom endpoints**
-  - For turnkey workflows (e.g., single‑purpose extract/verify pipelines), we can expose dedicated endpoints that compose multiple tools. These remain private to your integration.
-
-#### 4. **File Upload & Search**
-
-Create searchable document collections:
-
-```python
-# 1. Create a vector store for your documents
-store = requests.post(
-    "https://api-v2.fluxpointstudios.com/files/vector-stores",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "name": "my-documents",
-        "description": "My company's documentation"
-    }
-).json()
-
-store_id = store["id"]
-
-# 2. Upload a file
-file_response = requests.post(
-    "https://api-v2.fluxpointstudios.com/files/upload-url",
-    headers={"api-key": "YOUR_API_KEY"},
-    params={"url": "https://example.com/whitepaper.pdf"}
-).json()
-
-# 3. Add file to vector store
-requests.post(
-    f"https://api-v2.fluxpointstudios.com/files/vector-stores/{store_id}/files",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"file_id": file_response["file_id"]}
-)
-
-# 4. Now you can search across your documents in chat!
-search_response = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"message": "Search my documents for information about tokenomics"}
-)
-```
-
-##### Document Knowledge (Vector Stores)
-
-Attach your own domain documents to T and query them:
-- Create private vector stores and upload documents.
-- Ask `/chat` targeted questions; answers can be grounded in your sources.
-- Stores are isolated per client; you decide which stores `/chat` can use on each request.
-
-#### 5. **Image Generation & Editing**
-
-Generate and edit images from text:
-
-```python
-# Generate a new image
-image_response = requests.post(
-    "https://api-v2.fluxpointstudios.com/images/generate",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "prompt": "A futuristic AI agent working with blockchain data",
-        "size": "1024x1024",
-        "quality": "high"
-    }
-).json()
-
-if image_response["success"]:
-    # Images are returned as base64 data
-    base64_images = image_response["images"]
-    print(f"Generated {len(base64_images)} images!")
-```
-
-##### Image Analysis & OCR
-
-T can analyze images and (optionally) run OCR for scanned documents to extract text fields. This enables:
-- License/document verification workflows.
-- OCR‑backed document extraction for scanned PDFs or images.
-
-#### 6. **Knowledge Graph Access**
-
-Explore and query the temporal knowledge graph:
-
-```python
-# List accessible graphs
-graphs = requests.get(
-    "https://api-v2.fluxpointstudios.com/graph/accessible",
-    headers={"api-key": "YOUR_API_KEY"}
-).json()
-
-# Query a specific graph
-if graphs["graphs"]:
-    graph_id = graphs["graphs"][0]["id"]
-    results = requests.get(
-        f"https://api-v2.fluxpointstudios.com/graph/{graph_id}/query?query=blockchain",
-        headers={"api-key": "YOUR_API_KEY"}
-    ).json()
-```
-
-### 🔧 Common Use Cases
-
-#### Research & Analysis
-
-```python
-# Deep research on a complex topic
-research_task = requests.post(
-    "https://api-v2.fluxpointstudios.com/background/create",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "input": "Research and analyze the impact of AI agents on financial markets",
-        "analysis_depth": "high"
-    }
-)
-```
-
-#### Document Q\&A System
-
-```python
-# Upload company docs to vector store, then ask questions
-response = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"message": "Based on our uploaded documentation, what is our API rate limiting policy?"}
-)
-```
-
-#### Market Monitoring
-
-```python
-# Ask about crypto trends (uses blockchain agent automatically)
-market_response = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"message": "What are the current market conditions for Cardano and recent developments?"}
-)
-```
-
-#### Multi-turn Image Editing
-
-```python
-# Generate an image, then refine it
-initial_image = requests.post(
-    "https://api-v2.fluxpointstudios.com/images/generate",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"prompt": "A modern office workspace"}
-).json()
-
-# Edit the generated image
-if initial_image["success"]:
-    edited_image = requests.post(
-        "https://api-v2.fluxpointstudios.com/images/edit",
-        headers={"api-key": "YOUR_API_KEY"},
-        json={
-            "prompt": "Add some plants and natural lighting",
-            "input_images": initial_image["images"]
-        }
-    )
-```
-
-### 📊 Monitoring Your Usage
-
-```python
-# Check background task history
-tasks = requests.get(
-    "https://api-v2.fluxpointstudios.com/background/",
-    headers={"api-key": "YOUR_API_KEY"}
-).json()
-
-print(f"You have {len(tasks['responses'])} background tasks")
-
-# View your vector stores
-stores = requests.get(
-    "https://api-v2.fluxpointstudios.com/files/vector-stores",
-    headers={"api-key": "YOUR_API_KEY"}
-).json()
-
-for store in stores:
-    print(f"Store: {store['name']} (ID: {store['id']})")
-
-# Check system health
-health = requests.get(
-    "https://api-v2.fluxpointstudios.com/health",
-    headers={"api-key": "YOUR_API_KEY"}
-).json()
-```
-
-### 🛠️ Advanced Features
-
-#### Background Task Types
-
-You can create specialized background tasks for different agent types:
-
-```python
-# Research-focused task
-research_task = requests.post(
-    "https://api-v2.fluxpointstudios.com/background/create",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "input": "research latest blockchain trends",
-        "task_type": "research"
-    }
-)
-
-# Consolidation task for knowledge optimization
-consolidation_task = requests.post(
-    "https://api-v2.fluxpointstudios.com/background/create", 
-    headers={"api-key": "YOUR_API_KEY"},
-    json={
-        "input": "consolidate recent knowledge and optimize storage",
-        "task_type": "consolidation"
-    }
-)
-```
-
-#### Streaming Results
-
-For real-time updates on long-running tasks:
+If you want a JSON object back (when the assistant returns JSON), set `output=structured` (query param) or `output_mode="structured"` (body):
 
 ```python
 import requests
 
-# Create a background task
-task = requests.post(
-    "https://api-v2.fluxpointstudios.com/background/create",
-    headers={"api-key": "YOUR_API_KEY"},
-    json={"input": "Analyze market trends", "stream": True}
-).json()
-
-# Stream the results
-response = requests.get(
-    f"https://api-v2.fluxpointstudios.com/background/{task['id']}/stream",
-    headers={"api-key": "YOUR_API_KEY"},
-    stream=True
+r = requests.post(
+    "https://api-v2.fluxpointstudios.com/chat?output=structured",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={
+        "message": "Return JSON with keys: summary, risks (array), next_steps (array).",
+        "session_id": "my-session-2",
+        "output_mode": "structured",
+    },
 )
-
-for line in response.iter_lines():
-    if line:
-        print(line.decode('utf-8'))
+print(r.json().get("reply_json"))
 ```
 
-### 🚨 Important Notes
+### Streaming (Server‑Sent Events)
 
-* **Rate Limits**: Be mindful of API usage, especially with background tasks
-* **Session IDs**: Use consistent session IDs to maintain conversation context
-* **Background Tasks**: Use for analysis that takes more than 30 seconds
-* **File Limits**: Maximum 25MB per file upload
-* **Model Choice**: Use "advanced" model for complex reasoning tasks
-* **API Keys**: Keep your API keys secure and never commit them to version control
-
-### 🆘 Troubleshooting
-
-**Common Issues:**
-
-1. **401 Unauthorized**: Check your API key is correct and active
-2. **403 Forbidden**: You may not have access to that graph/resource
-3. **408 Timeout**: Use background tasks for long-running operations
-4. **413 File Too Large**: Files must be under 25MB
-5. **422 Unprocessable Entity**: Check your request format matches the API specification
-
-**Getting Help:**
-
-* Check the interactive API docs at `/docs` endpoint
-* Review system health at `GET /health`
-* Contact the Flux Point Team via email: <contact@fluxpointstudios.com> OR Discord: <https://discord.gg/MfYUMnfrJM> for API key issues or permission problems
-
-**Debug Tips:**
+Set `"stream": true` to stream tokens as SSE (client must support SSE):
 
 ```python
-# Always check response status
-response = requests.post(url, headers=headers, json=data)
-if response.status_code != 200:
-    print(f"Error {response.status_code}: {response.text}")
+import requests
+
+with requests.post(
+    "https://api-v2.fluxpointstudios.com/chat",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={"message": "Summarize Cardano in 5 bullets.", "session_id": "sse-1", "stream": True},
+    stream=True,
+) as resp:
+    resp.raise_for_status()
+    for line in resp.iter_lines():
+        if line:
+            print(line.decode("utf-8"))
+```
+
+### Image input (optional)
+
+Provide `image_data` as a base64 data URI:
+
+```python
+import requests
+
+r = requests.post(
+    "https://api-v2.fluxpointstudios.com/chat",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={
+        "message": "What’s in this image?",
+        "session_id": "vision-1",
+        "image_data": "data:image/png;base64,AAAA...",  # your base64
+    },
+)
+print(r.json()["reply"])
+```
+
+---
+
+## 2) Token Analysis (`POST /token-analysis`)
+
+Analyze a token by ticker and policy id (Cardano).
+
+```python
+import requests
+
+r = requests.post(
+    "https://api-v2.fluxpointstudios.com/token-analysis",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={
+        "token": "SNEK",
+        "policyId": "279c909f348e533da5808898f87f9a14bb2c3dfbbacccd631d927a3f",
+        "network": "cardano",
+    },
+)
+print(r.json())
+```
+
+Notes:
+- The endpoint may cache results for performance.
+- You can bypass cache using `x-bypass-cache: 1`.
+
+---
+
+## 3) Images (`/images/*`)
+
+### Generate (`POST /images/generate`)
+
+```python
+import requests
+
+r = requests.post(
+    "https://api-v2.fluxpointstudios.com/images/generate",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={"prompt": "A futuristic Cardano validator node in space", "size": "1024x1024", "n": 1},
+)
+data = r.json()
+if data.get("success"):
+    print("images:", len(data.get("images") or []))
 else:
-    result = response.json()
+    print("error:", data)
 ```
 
-### Data Isolation & Behavior Notes
+### Edit (`POST /images/edit`)
 
-- **Key‑scoped by design**: everything stored (graphs, memories, vector knowledge) is isolated to your API key. No cross‑tenant leakage.
-- **Duplicate & caching**: by default, re‑sending the same document reprocesses it. Deterministic caching/dedupe can be enabled per workflow on request (e.g., cache‑by‑document ID with optional [...]
+- `input_images` is a list of base64 images
+- Each image is validated to **<= 25MB**
 
-### 📚 Additional Resources
+```python
+import requests
 
-* **API Documentation**: Visit `/docs` for interactive API explorer
+r = requests.post(
+    "https://api-v2.fluxpointstudios.com/images/edit",
+    headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
+    json={
+        "prompt": "Add plants and warm natural lighting",
+        "input_images": ["data:image/png;base64,AAAA..."],
+        "n": 1,
+        "size": "1024x1024",
+    },
+)
+print(r.json())
+```
 
-### 🎉 You're Ready!
+### Upload + edit (`POST /images/upload-and-edit`)
 
-Your T Backend autonomous agent platform is ready for:
+Use this if you want to upload an image file directly instead of base64. Refer to Swagger docs for the exact multipart form fields.
 
-* **Intelligent conversations** with memory
-* **Deep research and analysis**
-* **Automated monitoring** and insights
-* **Document processing** and search
-* **Image generation** and editing
-* **Knowledge graph exploration**
+### Variations (`POST /images/variations`)
 
-Start with simple chat requests and gradually explore the advanced features. The autonomous agents work behind the scenes to enhance your interactions automatically!
+This endpoint is **API-key only** (not pay-per-call). Refer to Swagger docs for the request format.
 
-**Quick Start Checklist:**
+---
 
-* [ ] Get your API key from administrator
-* [ ] Test with `GET /health` endpoint
-* [ ] Try a simple chat request
-* [ ] Upload a document and create a vector store
-* [ ] Create your first background task
+## Payments & Access Control (x402)
+
+### What a 402 invoice looks like
+
+When payment is required, you’ll get HTTP 402 with a body like:
+
+```json
+{
+  "detail": {
+    "version": "0.1",
+    "invoiceId": "…",
+    "chain": "cardano-mainnet",
+    "asset": "ADA",
+    "amountUnits": "10000000",
+    "decimals": 6,
+    "payTo": "addr1…",
+    "timeout": 300,
+    "extra": {
+      "lovelace": true,
+      "babel": false,
+      "partner": "your_partner_name",
+      "batchTarget": 100
+    }
+  }
+}
+```
+
+Key fields:
+- **`payTo`**: destination address
+- **`amountUnits` + `decimals`**: what to pay
+- **`asset` + `chain`**: network/asset label
+
+### Revenue share / split outputs (optional)
+
+If your partner tier has revenue share enabled, the invoice may include `detail.extra.outputs` / `detail.extra.split`.
+
+In that case, your payment transaction must include those outputs; the verifier enforces them.
+
+### Paying + retrying
+
+After you pay, retry the original request with:
+
+- `X-Invoice-Id: <invoiceId>`
+- `X-Payment: <tx_hash_or_signed_cbor>`
+
+Example (retrying `/chat`):
+
+```bash
+curl -s https://api-v2.fluxpointstudios.com/chat \
+  -H "X-Partner: your_partner_name" \
+  -H "X-Wallet-Address: addr1..." \
+  -H "X-Invoice-Id: YOUR_INVOICE_ID" \
+  -H "X-Payment: YOUR_TX_HASH_OR_SIGNED_CBOR" \
+  -H "Content-Type: application/json" \
+  -d '{"message":"hello","session_id":"pay-1"}'
+```
+
+### Payment helpers
+
+- **Poll invoice status**:
+
+```bash
+curl -s https://api-v2.fluxpointstudios.com/payments/status/YOUR_INVOICE_ID
+```
+
+- **Check prepaid balance (ADA partners)**:
+
+```bash
+curl -s "https://api-v2.fluxpointstudios.com/payments/balance?partner=your_partner_name&wallet=addr1..."
+```
+
+---
+
+## Operational Notes
+
+### Request IDs
+
+You may send `X-Request-Id` and the server will echo `X-Request-ID` back on responses. This helps correlate logs and support requests.
+
+### Common status codes
+
+- **401**: missing/invalid `api-key`
+- **402**: payment required (x402 invoice returned)
+- **403**: forbidden (insufficient privileges)
+- **413**: payload too large (commonly for image base64 uploads)
+- **422**: invalid request body
+- **5xx**: transient server or upstream failures; retry with backoff
+
+---
+
+## Troubleshooting
+
+### 1) “401 Unauthorized”
+- Ensure `api-key` header is present and correct.
+- Confirm the key is active (contact support if unsure).
+
+### 2) “402 Payment Required”
+- Read the `invoiceId`, `asset`, `amountUnits`, `decimals`, and `payTo`.
+- Pay on-chain.
+- Retry with `X-Invoice-Id` + `X-Payment`.
+
+### 3) “wallet_address_required_for_prepaid_batches”
+- Some partner billing modes require `X-Wallet-Address` so prepaid balance can be tracked.
+
+### Debug tip
+
+```python
+import requests
+
+resp = requests.post(url, headers=headers, json=payload)
+print(resp.status_code, resp.text)
+```
+
+---
+
+## Additional Resources
+
+- **Swagger docs**: [API Docs](https://api-v2.fluxpointstudios.com/docs)
+
+---
+
+## You’re Ready
+
+Quick checklist:
+- [ ] Get an API key (or partner config for x402)
+- [ ] `GET /health`
+- [ ] `POST /chat`
+- [ ] `POST /token-analysis`
+- [ ] `POST /images/generate`
+- [ ] If using x402: run a full 402 → pay → retry loop
 * [ ] Generate an image
 * [ ] Explore the knowledge graphs
