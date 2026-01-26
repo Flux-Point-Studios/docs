@@ -133,7 +133,7 @@ Daily reward = `833 × (101,150 / total_effective_weight)` → rounded as above.
 * **Can I add to an existing stake?**\
   No. You will need to claim and then re-stake to add additional assets to a stake.
 * **Is there a minimum amount I need to stake to start earning rewards?**\
-  Yes. Rewards and the amount needed changes daily depending on the amount of token rewards in the treasury, amount staked, etc. You can see the updated amount at [https://fluxpointstudios.com/tokens](https://fluxpointstudios.com/tokens) in the header widget.
+  Yes. Rewards and the amount needed changes daily depending on the amount of token rewards in the treasury, amount staked, etc. You can see the updated amount at [https://fluxpoint.ada-anvil.io/en/](https://fluxpoint.ada-anvil.io/en/) in the header widget.
 
 ***
 
