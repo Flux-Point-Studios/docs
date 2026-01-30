@@ -194,9 +194,33 @@ After payment verification:
 
 ### Pricing
 
-- **Mainnet**: ~2-3 ADA per anchor
-- **No monthly fees or minimums**
-- **Volume discounts available** for enterprise
+#### Pay-Per-Use (Self-Service)
+
+Use your own Cardano wallet with the x402 payment protocol:
+
+- **~2-3 ADA per anchor** (at current network fees)
+- No monthly fees or minimums
+- Pay only when you anchor
+
+#### Enterprise Plans (Managed Accounts)
+
+For teams that need managed accounts with prepaid credits—no wallet required:
+
+| Tier | Monthly | Included Anchors | Overage |
+|------|---------|------------------|---------|
+| **Starter** | $49/mo | 500 anchors | $0.15/anchor |
+| **Growth** | $199/mo | 2,500 anchors | $0.10/anchor |
+| **Enterprise** | Custom | Unlimited | Volume pricing |
+
+**Enterprise features include:**
+- No wallet management required
+- API key authentication (X-Partner header)
+- Usage dashboard and billing
+- Pay via invoice (USD)
+- Dedicated support
+- SLA available
+
+Contact [sales@fluxpointstudios.com](mailto:sales@fluxpointstudios.com) for enterprise pricing.
 
 ---
 
