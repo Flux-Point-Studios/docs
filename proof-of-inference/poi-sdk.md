@@ -194,7 +194,7 @@ After payment verification:
 
 ### Pricing
 
-- **Mainnet**: ~2-3 ADA per anchor (~$1-2 USD)
+- **Mainnet**: ~2-3 ADA per anchor
 - **No monthly fees or minimums**
 - **Volume discounts available** for enterprise
 
