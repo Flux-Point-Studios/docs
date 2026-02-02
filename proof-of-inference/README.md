@@ -2,6 +2,8 @@
 
 Proof-of-Inference (PoI) is Flux Point Studios' framework for **verifiable AI** on blockchain. It provides cryptographic proof that AI systems did what they claimed—with immutable audit trails stored on Cardano.
 
+**Orynq** is the umbrella platform that powers Proof-of-Inference anchoring and other AI verification services.
+
 ## Overview
 
 PoI addresses the fundamental challenge of AI transparency: how do you prove what an AI did, with which inputs, producing which outputs? Our solution combines:
@@ -21,7 +23,7 @@ PoI addresses the fundamental challenge of AI transparency: how do you prove wha
 <td>Technical specification of the PoI protocol, economics, and architecture</td>
 </tr>
 <tr>
-<td><strong>PoI SDK</strong></td>
+<td><strong>Orynq SDK</strong></td>
 <td>Developer toolkit for integrating PoI anchoring into your applications</td>
 </tr>
 <tr>
@@ -48,6 +50,6 @@ Anchor experimental AI runs to enable independent verification of research resul
 ## Quick Links
 
 - [Litepaper](litepaper.md) - Full technical specification
-- [PoI SDK](poi-sdk.md) - Developer documentation
+- [Orynq SDK](poi-sdk.md) - Developer documentation
 - [Anchor-as-a-Service](https://fluxpointstudios.com/anchor) - Try the live demo
-- [GitHub](https://github.com/Flux-Point-Studios/poi-sdk) - Source code
+- [GitHub](https://github.com/Flux-Point-Studios/orynq-sdk) - Source code

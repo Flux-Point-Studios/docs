@@ -2,9 +2,11 @@
 description: Developer SDK for Proof-of-Inference anchoring and verification
 ---
 
-# PoI SDK
+# Orynq SDK
 
-The PoI SDK provides tools for anchoring AI process traces to the Cardano blockchain and verifying those anchors. It supports both direct integration and a managed Anchor-as-a-Service API.
+The Orynq SDK provides tools for anchoring AI process traces to the Cardano blockchain and verifying those anchors. It supports both direct integration and a managed Anchor-as-a-Service API.
+
+**Orynq** is the umbrella platform for AI verification and attestation services, with **Proof-of-Inference anchoring** as its core capability.
 
 ## Features
 
@@ -21,22 +23,22 @@ The PoI SDK provides tools for anchoring AI process traces to the Cardano blockc
 
 ```bash
 # Core package
-npm install @fluxpointstudios/poi-sdk-core
+npm install @fluxpointstudios/orynq-sdk-core
 
 # Client with auto-pay
-npm install @fluxpointstudios/poi-sdk-client
+npm install @fluxpointstudios/orynq-sdk-client
 
 # Cardano payer (browser wallets)
-npm install @fluxpointstudios/poi-sdk-payer-cardano-cip30
+npm install @fluxpointstudios/orynq-sdk-payer-cardano-cip30
 
 # Cardano payer (server-side)
-npm install @fluxpointstudios/poi-sdk-payer-cardano-node
+npm install @fluxpointstudios/orynq-sdk-payer-cardano-node
 ```
 
 ### Python
 
 ```bash
-pip install poi-sdk
+pip install orynq-sdk
 ```
 
 ---
@@ -46,14 +48,14 @@ pip install poi-sdk
 ### Anchoring a Process Trace
 
 ```typescript
-import { PoiClient } from '@fluxpointstudios/poi-sdk-client';
-import { createCip30Payer } from '@fluxpointstudios/poi-sdk-payer-cardano-cip30';
+import { OrynqClient } from '@fluxpointstudios/orynq-sdk-client';
+import { createCip30Payer } from '@fluxpointstudios/orynq-sdk-payer-cardano-cip30';
 
 // Connect to a CIP-30 wallet (Nami, Eternl, etc.)
 const payer = await createCip30Payer(window.cardano.nami);
 
 // Create client with auto-pay enabled
-const client = new PoiClient({
+const client = new OrynqClient({
   payer,
   autoPay: true,
   budget: {
@@ -96,9 +98,9 @@ console.log('Anchored:', result.txHash);
 ### Python Example
 
 ```python
-from poi_sdk import PoiClient, BudgetConfig
+from orynq_sdk import OrynqClient, BudgetConfig
 
-client = PoiClient(
+client = OrynqClient(
     payer=my_payer,
     auto_pay=True,
     budget=BudgetConfig(
@@ -212,10 +214,14 @@ For teams that need managed accounts with prepaid credits—no wallet required:
 | **Growth** | $199/mo | 2,500 anchors | $0.10/anchor |
 | **Enterprise** | Custom | Unlimited | Volume pricing |
 
+**Subscribe now:**
+- [Starter Plan ($49/mo)](https://buy.stripe.com/test_6oU9AT1cD7cE74d6gxfrW01)
+- [Growth Plan ($199/mo)](https://buy.stripe.com/test_4gMeVd8F57cE3S134lfrW02)
+
 **Enterprise features include:**
 - No wallet management required
 - API key authentication (X-Partner header)
-- Usage dashboard and billing
+- Usage dashboard at [fluxpointstudios.com/orynq/enterprise-dashboard](https://fluxpointstudios.com/orynq/enterprise-dashboard)
 - Pay via invoice (USD)
 - Dedicated support
 - SLA available
@@ -275,7 +281,7 @@ The metadata under label `2222` contains:
 
 ## On-Chain Data Format
 
-PoI anchors are stored under Cardano metadata **label 2222** with the following schema:
+Orynq anchors are stored under Cardano metadata **label 2222** with the following schema:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -294,13 +300,13 @@ PoI anchors are stored under Cardano metadata **label 2222** with the following 
 
 | Package | Description |
 |---------|-------------|
-| `@fluxpointstudios/poi-sdk-core` | Protocol-neutral types and utilities |
-| `@fluxpointstudios/poi-sdk-client` | Auto-pay HTTP client with budget tracking |
-| `@fluxpointstudios/poi-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
-| `@fluxpointstudios/poi-sdk-payer-cardano-node` | Server-side Cardano payer |
-| `@fluxpointstudios/poi-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
-| `@fluxpointstudios/poi-sdk-server-middleware` | Express/Fastify payment middleware |
-| `poi-sdk` (Python) | Python SDK with async support |
+| `@fluxpointstudios/orynq-sdk-core` | Protocol-neutral types and utilities |
+| `@fluxpointstudios/orynq-sdk-client` | Auto-pay HTTP client with budget tracking |
+| `@fluxpointstudios/orynq-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
+| `@fluxpointstudios/orynq-sdk-payer-cardano-node` | Server-side Cardano payer |
+| `@fluxpointstudios/orynq-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
+| `@fluxpointstudios/orynq-sdk-server-middleware` | Express/Fastify payment middleware |
+| `orynq-sdk` (Python) | Python SDK with async support |
 
 ---
 
@@ -310,7 +316,7 @@ PoI anchors are stored under Cardano metadata **label 2222** with the following 
 
 Try anchoring on testnet for free—no wallet required.
 
-**GitHub**: [github.com/Flux-Point-Studios/poi-sdk](https://github.com/Flux-Point-Studios/poi-sdk)
+**GitHub**: [github.com/Flux-Point-Studios/orynq-sdk](https://github.com/Flux-Point-Studios/orynq-sdk)
 
 ---
 
