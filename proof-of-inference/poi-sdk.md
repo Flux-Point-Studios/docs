@@ -204,21 +204,21 @@ Use your own Cardano wallet with the x402 payment protocol:
 - No monthly fees or minimums
 - Pay only when you anchor
 
-#### Enterprise Plans (Managed Accounts)
+#### Managed Anchoring
 
-For teams that need managed accounts with prepaid credits—no wallet required:
+No crypto wallet needed • API key authentication • Pay by card
 
 | Tier | Monthly | Included Anchors | Overage |
 |------|---------|------------------|---------|
 | **Starter** | $49/mo | 500 anchors | $0.15/anchor |
 | **Growth** | $199/mo | 2,500 anchors | $0.10/anchor |
-| **Enterprise** | Custom | Unlimited | Volume pricing |
+| **Scale** | Custom | Unlimited | Volume pricing |
 
 **Subscribe now:**
 - [Starter Plan ($49/mo)](https://buy.stripe.com/test_6oU9AT1cD7cE74d6gxfrW01)
 - [Growth Plan ($199/mo)](https://buy.stripe.com/test_4gMeVd8F57cE3S134lfrW02)
 
-**Enterprise features include:**
+**All plans include:**
 - No wallet management required
 - API key authentication (X-Partner header)
 - Usage dashboard at [fluxpointstudios.com/orynq/enterprise-dashboard](https://fluxpointstudios.com/orynq/enterprise-dashboard)
@@ -226,7 +226,7 @@ For teams that need managed accounts with prepaid credits—no wallet required:
 - Dedicated support
 - SLA available
 
-Contact [sales@fluxpointstudios.com](mailto:sales@fluxpointstudios.com) for enterprise pricing.
+Contact [sales@fluxpointstudios.com](mailto:sales@fluxpointstudios.com) for custom Scale pricing.
 
 ---
 
