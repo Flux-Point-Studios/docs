@@ -215,8 +215,8 @@ No crypto wallet needed • API key authentication • Pay by card
 | **Scale** | Custom | Unlimited | Volume pricing |
 
 **Subscribe now:**
-- [Starter Plan ($49/mo)](https://buy.stripe.com/test_6oU9AT1cD7cE74d6gxfrW01)
-- [Growth Plan ($199/mo)](https://buy.stripe.com/test_4gMeVd8F57cE3S134lfrW02)
+- [Starter Plan ($49/mo)](https://buy.stripe.com/7sY7sL6wXgNe9cl9sJfrW09)
+- [Growth Plan ($199/mo)](https://buy.stripe.com/fZu14n7B168A88h0WdfrW0a)
 
 **All plans include:**
 - No wallet management required
