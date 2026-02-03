@@ -312,7 +312,7 @@ Orynq anchors are stored under Cardano metadata **label 2222** with the followin
 
 ## Try It Now
 
-**Live Demo**: [fluxpointstudios.com/anchor](https://fluxpointstudios.com/anchor)
+**Live Demo**: [fluxpointstudios.com/orynq](https://fluxpointstudios.com/orynq)
 
 Try anchoring on testnet for free—no wallet required.
 
