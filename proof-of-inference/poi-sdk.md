@@ -11,6 +11,7 @@ The Orynq SDK provides tools for anchoring AI process traces to the Cardano bloc
 ## Features
 
 - **Process Trace Anchoring** - Commit cryptographic proofs of AI execution to Cardano
+- **OpenClaw Integration** - Zero-config anchoring for OpenClaw AI coding sessions
 - **Dual Protocol Support** - x402 (Coinbase standard) for EVM and Flux protocol for Cardano
 - **Multi-Chain Payments** - Pay for anchoring in ADA, $AGENT, or EVM stablecoins
 - **Auto-Pay Client** - Automatic 402 payment handling with budget controls
@@ -39,6 +40,93 @@ npm install @fluxpointstudios/orynq-sdk-payer-cardano-node
 
 ```bash
 pip install orynq-sdk
+```
+
+---
+
+## OpenClaw Integration
+
+Automatically anchor your [OpenClaw](https://openclaw.ai) AI coding sessions to the blockchain with zero configuration. Every coding session becomes a verifiable, tamper-proof record.
+
+### One-Line Install
+
+```bash
+# Linux/macOS
+curl -fsSL https://raw.githubusercontent.com/Flux-Point-Studios/orynq-sdk/main/scripts/install-openclaw.sh | bash
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/Flux-Point-Studios/orynq-sdk/main/scripts/install-openclaw.ps1 | iex
+```
+
+This installs:
+1. **OpenClaw** (official installer)
+2. **Orynq OpenClaw recorder** as a background daemon
+
+### Manual Install
+
+```bash
+npx @fluxpointstudios/orynq-openclaw install --service
+```
+
+### Configuration
+
+After installation, add your Orynq partner key to enable on-chain anchoring:
+
+```bash
+# Linux/macOS
+echo "ORYNQ_PARTNER_KEY=your_key_here" >> ~/.config/orynq-openclaw/service.env
+
+# Windows
+echo ORYNQ_PARTNER_KEY=your_key_here >> %APPDATA%\orynq-openclaw\service.env
+```
+
+Without a partner key, the recorder still creates local process traces—they just won't be anchored to the blockchain.
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `orynq-openclaw status` | Check daemon status |
+| `orynq-openclaw logs -f` | View logs (follow mode) |
+| `orynq-openclaw start` | Run in foreground |
+| `orynq-openclaw restart-service` | Restart the daemon |
+| `orynq-openclaw doctor` | Check configuration |
+| `orynq-openclaw uninstall --service --purge` | Remove completely |
+
+### How It Works
+
+```
+OpenClaw Session → JSONL Logs → Orynq Recorder → Process Trace → Cardano Anchor
+```
+
+1. **Tails** OpenClaw JSONL session logs in real-time
+2. **Builds** cryptographic process traces with:
+   - Rolling hash chains for event ordering
+   - Merkle trees for selective disclosure
+   - SHA-256 content hashes for integrity
+3. **Anchors** manifests to Cardano via Orynq API
+4. **Stores** local bundles, manifests, and receipts
+
+**Privacy**: Only cryptographic hashes are sent to the blockchain—never raw prompts, code, or responses.
+
+### Daemon Support
+
+| Platform | Daemon Type | Location |
+|----------|-------------|----------|
+| Linux | systemd user service | `~/.config/systemd/user/` |
+| macOS | launchd LaunchAgent | `~/Library/LaunchAgents/` |
+| Windows | Task Scheduler | User tasks |
+
+### Output Structure
+
+```
+~/.openclaw/orynq/recorder/
+├── spool/           # Pending events by bundle
+├── bundles/         # Complete process trace bundles
+├── manifests/       # Anchor manifests (hashes only)
+├── receipts/        # Anchor confirmations with txHash
+├── chunks/          # Large bundle chunks
+└── state/           # Tail position & anchor state
 ```
 
 ---
@@ -302,10 +390,13 @@ Orynq anchors are stored under Cardano metadata **label 2222** with the followin
 |---------|-------------|
 | `@fluxpointstudios/orynq-sdk-core` | Protocol-neutral types and utilities |
 | `@fluxpointstudios/orynq-sdk-client` | Auto-pay HTTP client with budget tracking |
+| `@fluxpointstudios/orynq-sdk-process-trace` | Cryptographic process trace builder |
 | `@fluxpointstudios/orynq-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
 | `@fluxpointstudios/orynq-sdk-payer-cardano-node` | Server-side Cardano payer |
 | `@fluxpointstudios/orynq-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
 | `@fluxpointstudios/orynq-sdk-server-middleware` | Express/Fastify payment middleware |
+| `@fluxpointstudios/orynq-openclaw` | OpenClaw integration CLI with daemon |
+| `@fluxpointstudios/orynq-sdk-recorder-openclaw` | OpenClaw session recorder library |
 | `orynq-sdk` (Python) | Python SDK with async support |
 
 ---
