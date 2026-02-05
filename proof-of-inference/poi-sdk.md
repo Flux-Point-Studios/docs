@@ -11,7 +11,8 @@ The Orynq SDK provides tools for anchoring AI process traces to the Cardano bloc
 ## Features
 
 - **Process Trace Anchoring** - Commit cryptographic proofs of AI execution to Cardano
-- **OpenClaw Integration** - Zero-config anchoring for OpenClaw AI coding sessions
+- **Self-Hosted Anchoring** - Use your own wallet to anchor directly—no API fees
+- **OpenClaw/Claude Code Integration** - Zero-config anchoring for AI coding sessions
 - **Dual Protocol Support** - x402 (Coinbase standard) for EVM and Flux protocol for Cardano
 - **Multi-Chain Payments** - Pay for anchoring in ADA, $AGENT, or EVM stablecoins
 - **Auto-Pay Client** - Automatic 402 payment handling with budget controls
@@ -23,23 +24,22 @@ The Orynq SDK provides tools for anchoring AI process traces to the Cardano bloc
 ### TypeScript/JavaScript
 
 ```bash
-# Core package
-npm install @fluxpointstudios/orynq-sdk-core
+# Process tracing (instrument your AI agent)
+npm install @fluxpointstudios/poi-sdk-process-trace
 
-# Client with auto-pay
-npm install @fluxpointstudios/orynq-sdk-client
+# Self-hosted anchoring (use your own wallet)
+npm install @fluxpointstudios/poi-sdk-anchors-cardano lucid-cardano
 
-# Cardano payer (browser wallets)
-npm install @fluxpointstudios/orynq-sdk-payer-cardano-cip30
-
-# Cardano payer (server-side)
-npm install @fluxpointstudios/orynq-sdk-payer-cardano-node
+# OR use the managed API with auto-pay client
+npm install @fluxpointstudios/poi-sdk-client
+npm install @fluxpointstudios/poi-sdk-payer-cardano-cip30  # Browser wallets
+npm install @fluxpointstudios/poi-sdk-payer-cardano-node   # Server-side
 ```
 
 ### Python
 
 ```bash
-pip install orynq-sdk
+pip install poi-sdk
 ```
 
 ---
@@ -318,6 +318,121 @@ Contact [sales@fluxpointstudios.com](mailto:sales@fluxpointstudios.com) for cust
 
 ---
 
+## Self-Hosted Anchoring
+
+For maximum control and privacy, you can anchor directly to Cardano using your own wallet—no API or service fees required. This is ideal for:
+
+- **Privacy-conscious users** who don't want to route through a third-party API
+- **High-volume anchoring** where per-anchor fees add up
+- **Air-gapped environments** with no external API access
+- **Custom integrations** with existing Cardano infrastructure
+
+### Installation
+
+```bash
+npm install @fluxpointstudios/poi-sdk-process-trace \
+            @fluxpointstudios/poi-sdk-anchors-cardano \
+            lucid-cardano
+```
+
+### Complete Example
+
+```typescript
+import {
+  createTrace,
+  addSpan,
+  addEvent,
+  closeSpan,
+  finalizeTrace,
+} from "@fluxpointstudios/poi-sdk-process-trace";
+
+import {
+  createAnchorEntryFromBundle,
+  buildAnchorMetadata,
+  serializeForCbor,
+  POI_METADATA_LABEL,
+} from "@fluxpointstudios/poi-sdk-anchors-cardano";
+
+import { Lucid, Blockfrost } from "lucid-cardano";
+
+// 1. Instrument your AI agent
+const run = await createTrace({ agentId: "my-agent" });
+const span = addSpan(run, { name: "task" });
+
+await addEvent(run, span.id, {
+  kind: "observation",
+  content: "User requested code review",
+  visibility: "public",
+});
+
+await addEvent(run, span.id, {
+  kind: "decision",
+  content: "Will check for security issues first",
+  visibility: "public",
+});
+
+await closeSpan(run, span.id);
+const bundle = await finalizeTrace(run);
+
+// 2. Build anchor metadata
+const entry = createAnchorEntryFromBundle(bundle);
+const metadata = serializeForCbor(buildAnchorMetadata(entry));
+
+// 3. Submit with your own wallet
+const lucid = await Lucid.new(
+  new Blockfrost("https://cardano-mainnet.blockfrost.io/api/v0", "your-project-id"),
+  "Mainnet"
+);
+lucid.selectWalletFromSeed("your seed phrase here");
+
+const tx = await lucid
+  .newTx()
+  .attachMetadata(POI_METADATA_LABEL, metadata[POI_METADATA_LABEL])
+  .complete();
+
+const txHash = await tx.sign().complete().then(t => t.submit());
+console.log("Anchored:", txHash);
+```
+
+### Cost
+
+- **Mainnet**: ~0.2-0.3 ADA per anchor (~$0.10-0.20 USD) — just the Cardano tx fee
+- **Preprod testnet**: Free (get test ADA from the [faucet](https://docs.cardano.org/cardano-testnets/tools/faucet/))
+
+No service fees, no subscriptions—you pay only the blockchain transaction fee.
+
+### cardano-cli Alternative
+
+If you prefer cardano-cli over Lucid:
+
+```typescript
+import { serializeForCardanoCli } from "@fluxpointstudios/poi-sdk-anchors-cardano";
+
+const cliJson = serializeForCardanoCli(buildAnchorMetadata(entry));
+fs.writeFileSync("metadata.json", cliJson);
+```
+
+```bash
+cardano-cli transaction build \
+  --tx-in <UTXO> \
+  --change-address <YOUR_ADDRESS> \
+  --metadata-json-file metadata.json \
+  --out-file tx.raw
+
+cardano-cli transaction sign \
+  --tx-body-file tx.raw \
+  --signing-key-file payment.skey \
+  --out-file tx.signed
+
+cardano-cli transaction submit --tx-file tx.signed
+```
+
+### Full Example
+
+See the complete runnable example: [github.com/Flux-Point-Studios/poi-sdk/tree/main/examples/self-anchor](https://github.com/Flux-Point-Studios/poi-sdk/tree/main/examples/self-anchor)
+
+---
+
 ## Verification
 
 ### Verify via API
@@ -388,16 +503,15 @@ Orynq anchors are stored under Cardano metadata **label 2222** with the followin
 
 | Package | Description |
 |---------|-------------|
-| `@fluxpointstudios/orynq-sdk-core` | Protocol-neutral types and utilities |
-| `@fluxpointstudios/orynq-sdk-client` | Auto-pay HTTP client with budget tracking |
-| `@fluxpointstudios/orynq-sdk-process-trace` | Cryptographic process trace builder |
-| `@fluxpointstudios/orynq-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
-| `@fluxpointstudios/orynq-sdk-payer-cardano-node` | Server-side Cardano payer |
-| `@fluxpointstudios/orynq-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
-| `@fluxpointstudios/orynq-sdk-server-middleware` | Express/Fastify payment middleware |
-| `@fluxpointstudios/orynq-openclaw` | OpenClaw integration CLI with daemon |
-| `@fluxpointstudios/orynq-sdk-recorder-openclaw` | OpenClaw session recorder library |
-| `orynq-sdk` (Python) | Python SDK with async support |
+| `@fluxpointstudios/poi-sdk-process-trace` | Cryptographic process trace builder |
+| `@fluxpointstudios/poi-sdk-anchors-cardano` | Cardano anchor builder & verifier (for self-hosted anchoring) |
+| `@fluxpointstudios/poi-sdk-core` | Protocol-neutral types and utilities |
+| `@fluxpointstudios/poi-sdk-client` | Auto-pay HTTP client with budget tracking |
+| `@fluxpointstudios/poi-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
+| `@fluxpointstudios/poi-sdk-payer-cardano-node` | Server-side Cardano payer |
+| `@fluxpointstudios/poi-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
+| `@fluxpointstudios/poi-sdk-server-middleware` | Express/Fastify payment middleware |
+| `poi-sdk` (Python) | Python SDK with async support |
 
 ---
 
