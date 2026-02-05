@@ -29,7 +29,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 
 - **[Proof-of-Inference Litepaper](proof-of-inference/litepaper.md)** - Technical specification for verifiable AI
 - **[PoI SDK Documentation](proof-of-inference/poi-sdk.md)** - Anchor AI traces to blockchain
-- **[Anchor-as-a-Service Demo](https://fluxpointstudios.com/anchor)** - Try anchoring on testnet
+- **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
 
