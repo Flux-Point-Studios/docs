@@ -429,7 +429,7 @@ cardano-cli transaction submit --tx-file tx.signed
 
 ### Full Example
 
-See the complete runnable example: [github.com/Flux-Point-Studios/poi-sdk/tree/main/examples/self-anchor](https://github.com/Flux-Point-Studios/poi-sdk/tree/main/examples/self-anchor)
+See the complete runnable example: [github.com/Flux-Point-Studios/orynq-sdk/tree/main/examples/self-anchor](https://github.com/Flux-Point-Studios/orynq-sdk/tree/main/examples/self-anchor)
 
 ---
 

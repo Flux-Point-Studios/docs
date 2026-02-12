@@ -46,5 +46,5 @@ description: Unreal Engine SDK (CORE)
 
 ### Support
 
-* Docs: https://docs.fluxpointstudios.com/cardano-ue-sdk/core
+* Docs: https://docs.fluxpointstudios.com/cardano-ue-sdk
 * Discord: https://discord.gg/fluxpointstudios

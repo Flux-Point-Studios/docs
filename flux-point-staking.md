@@ -110,7 +110,7 @@ Daily reward = `833 × (101,150 / total_effective_weight)` → rounded as above.
   * Games: [https://fluxpointstudios.com/games/trib3](https://fluxpointstudios.com/games/trib3)
   * Tools: [https://fluxpointstudios.com/cardano-ue-sdk](https://fluxpointstudios.com/cardano-ue-sdk)
 * **AGENT stakers** receive:
-  * **28%** of revenue from **Proof‑of‑Inference (PoI)** jobs — [https://docs.fluxpointstudios.com/proof-of-inference-litepaper](https://docs.fluxpointstudios.com/proof-of-inference-litepaper)
+  * **28%** of revenue from **Proof‑of‑Inference (PoI)** jobs — [https://docs.fluxpointstudios.com/proof-of-inference/litepaper](https://docs.fluxpointstudios.com/proof-of-inference/litepaper)
   * **25%** of **AGENT Babel fees** returned via **ADAM** txs — [https://fluxpointstudios.com/adam](https://fluxpointstudios.com/adam)
   * **25%** of **FPS revenue from SaturnSwap.io** as staking rewards.
 
