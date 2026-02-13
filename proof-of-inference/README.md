@@ -50,6 +50,6 @@ Anchor experimental AI runs to enable independent verification of research resul
 ## Quick Links
 
 - [Litepaper](litepaper.md) - Full technical specification
-- [Orynq SDK](poi-sdk.md) - Developer documentation
+- [Orynq SDK](orynq-sdk.md) - Developer documentation
 - [Anchor-as-a-Service](https://fluxpointstudios.com/anchor) - Try the live demo
 - [GitHub](https://github.com/Flux-Point-Studios/orynq-sdk) - Source code

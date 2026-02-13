@@ -7,7 +7,7 @@
 
 * [Overview](proof-of-inference/README.md)
 * [Litepaper](proof-of-inference/litepaper.md)
-* [Orynq SDK](proof-of-inference/poi-sdk.md)
+* [Orynq SDK](proof-of-inference/orynq-sdk.md)
 
 ## Products
 

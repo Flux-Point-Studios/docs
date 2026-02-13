@@ -8,7 +8,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
-<td><a href="proof-of-inference/poi-sdk">PoI SDK</a><br>Developer toolkit for anchoring AI process traces to Cardano</td>
+<td><a href="proof-of-inference/orynq-sdk">Orynq SDK</a><br>Developer toolkit for anchoring AI process traces to Cardano</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
@@ -28,7 +28,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 ## Quick Links
 
 - **[Proof-of-Inference Litepaper](proof-of-inference/litepaper.md)** - Technical specification for verifiable AI
-- **[PoI SDK Documentation](proof-of-inference/poi-sdk.md)** - Anchor AI traces to blockchain
+- **[Orynq SDK Documentation](proof-of-inference/orynq-sdk.md)** - Anchor AI traces to blockchain
 - **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation

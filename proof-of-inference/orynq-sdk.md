@@ -1,5 +1,5 @@
 ---
-description: Developer SDK for Proof-of-Inference anchoring and verification
+description: Developer SDK for Orynq anchoring and verification
 ---
 
 # Orynq SDK
@@ -25,21 +25,21 @@ The Orynq SDK provides tools for anchoring AI process traces to the Cardano bloc
 
 ```bash
 # Process tracing (instrument your AI agent)
-npm install @fluxpointstudios/poi-sdk-process-trace
+npm install @fluxpointstudios/orynq-sdk-process-trace
 
 # Self-hosted anchoring (use your own wallet)
-npm install @fluxpointstudios/poi-sdk-anchors-cardano lucid-cardano
+npm install @fluxpointstudios/orynq-sdk-anchors-cardano lucid-cardano
 
 # OR use the managed API with auto-pay client
-npm install @fluxpointstudios/poi-sdk-client
-npm install @fluxpointstudios/poi-sdk-payer-cardano-cip30  # Browser wallets
-npm install @fluxpointstudios/poi-sdk-payer-cardano-node   # Server-side
+npm install @fluxpointstudios/orynq-sdk-client
+npm install @fluxpointstudios/orynq-sdk-payer-cardano-cip30  # Browser wallets
+npm install @fluxpointstudios/orynq-sdk-payer-cardano-node   # Server-side
 ```
 
 ### Python
 
 ```bash
-pip install poi-sdk
+pip install orynq-sdk
 ```
 
 ---
@@ -330,8 +330,8 @@ For maximum control and privacy, you can anchor directly to Cardano using your o
 ### Installation
 
 ```bash
-npm install @fluxpointstudios/poi-sdk-process-trace \
-            @fluxpointstudios/poi-sdk-anchors-cardano \
+npm install @fluxpointstudios/orynq-sdk-process-trace \
+            @fluxpointstudios/orynq-sdk-anchors-cardano \
             lucid-cardano
 ```
 
@@ -344,14 +344,14 @@ import {
   addEvent,
   closeSpan,
   finalizeTrace,
-} from "@fluxpointstudios/poi-sdk-process-trace";
+} from "@fluxpointstudios/orynq-sdk-process-trace";
 
 import {
   createAnchorEntryFromBundle,
   buildAnchorMetadata,
   serializeForCbor,
   POI_METADATA_LABEL,
-} from "@fluxpointstudios/poi-sdk-anchors-cardano";
+} from "@fluxpointstudios/orynq-sdk-anchors-cardano";
 
 import { Lucid, Blockfrost } from "lucid-cardano";
 
@@ -406,7 +406,7 @@ No service fees, no subscriptions—you pay only the blockchain transaction fee.
 If you prefer cardano-cli over Lucid:
 
 ```typescript
-import { serializeForCardanoCli } from "@fluxpointstudios/poi-sdk-anchors-cardano";
+import { serializeForCardanoCli } from "@fluxpointstudios/orynq-sdk-anchors-cardano";
 
 const cliJson = serializeForCardanoCli(buildAnchorMetadata(entry));
 fs.writeFileSync("metadata.json", cliJson);
@@ -503,15 +503,15 @@ Orynq anchors are stored under Cardano metadata **label 2222** with the followin
 
 | Package | Description |
 |---------|-------------|
-| `@fluxpointstudios/poi-sdk-process-trace` | Cryptographic process trace builder |
-| `@fluxpointstudios/poi-sdk-anchors-cardano` | Cardano anchor builder & verifier (for self-hosted anchoring) |
-| `@fluxpointstudios/poi-sdk-core` | Protocol-neutral types and utilities |
-| `@fluxpointstudios/poi-sdk-client` | Auto-pay HTTP client with budget tracking |
-| `@fluxpointstudios/poi-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
-| `@fluxpointstudios/poi-sdk-payer-cardano-node` | Server-side Cardano payer |
-| `@fluxpointstudios/poi-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
-| `@fluxpointstudios/poi-sdk-server-middleware` | Express/Fastify payment middleware |
-| `poi-sdk` (Python) | Python SDK with async support |
+| `@fluxpointstudios/orynq-sdk-process-trace` | Cryptographic process trace builder |
+| `@fluxpointstudios/orynq-sdk-anchors-cardano` | Cardano anchor builder & verifier (for self-hosted anchoring) |
+| `@fluxpointstudios/orynq-sdk-core` | Protocol-neutral types and utilities |
+| `@fluxpointstudios/orynq-sdk-client` | Auto-pay HTTP client with budget tracking |
+| `@fluxpointstudios/orynq-sdk-payer-cardano-cip30` | CIP-30 browser wallet payer |
+| `@fluxpointstudios/orynq-sdk-payer-cardano-node` | Server-side Cardano payer |
+| `@fluxpointstudios/orynq-sdk-payer-evm-x402` | EIP-3009 gasless EVM payer |
+| `@fluxpointstudios/orynq-sdk-server-middleware` | Express/Fastify payment middleware |
+| `orynq-sdk` (Python) | Python SDK with async support |
 
 ---
 
