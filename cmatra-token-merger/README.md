@@ -17,7 +17,7 @@ Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-
 | ----------------------- | ---------------------------------------------- |
 | Output token            | cMATRA / MATRA                                 |
 | Max supply              | 1,000,000,000                                  |
-| Decimals                | 12                                             |
+| Decimals                | 6                                              |
 | Validator reserve       | 150,000,000 (15%)                              |
 | Public redemption pool  | 850,000,000 (85%)                              |
 | Public window           | 6 months from launch                           |
@@ -204,7 +204,7 @@ The following rates are based on 7-day TWAP data from February 2026 and the curr
 | T1 ADAM Launch Pass           | 128,397,011          | 43 NFTs            | ~2,985,977 per NFT     |
 | T2 ADAM Launch Pass           | 14,286,129           | 95 NFTs            | ~150,380 per NFT       |
 
-*All values in display units (12 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
+*All values in display units (6 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
 
 ### Rate publication conditions
 

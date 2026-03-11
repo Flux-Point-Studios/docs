@@ -52,7 +52,7 @@ MOTRA is the network capacity token. It is non-transferable, generated from MATR
 
 ### 7. Is the supply fixed?
 
-Yes. The current design uses a fixed maximum supply of 1,000,000,000 MATRA/cMATRA with 12 decimals.
+Yes. The current design uses a fixed maximum supply of 1,000,000,000 MATRA/cMATRA with 6 decimals.
 
 ### 8. How is the supply split at genesis?
 
