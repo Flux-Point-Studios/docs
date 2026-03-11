@@ -120,6 +120,12 @@ The following categories do not compete with the public redemption pool:
 | `addr1w9u9mw864yszpqk7374wtwtwludpa0rc9dmante78c7c9sqqdlyy9`      | FPS DAO Treasury       |
 | `addr1wx84ytuumke8gxex0l8par4852ey7l4eq6h325rnez0yluc56x0dj`      | $TALOS Treasury Wallet |
 
+#### Why treasury balances are waived
+
+Since the creation of both on-chain treasuries, there has been a complete lack of independent DAO proposals — the only proposals submitted were those proposed by the FPS Team itself. Given this, it makes the most sense for these funds to be returned to the team where they can be put to better use with more flexibility, rather than sitting idle in governance structures that have seen no community participation. The same rationale applies to the $TALOS treasury.
+
+All waived balances are published transparently so any holder can verify them on-chain.
+
 ### LP farms, DEX positions, and DeFi custody
 
 If AGENT or SHARDS are in a Minswap or WingRiders liquidity pool, a farm, a lending protocol, or another script-controlled DeFi position, the holder must first **unfarm / withdraw / remove liquidity** so the underlying tokens return to a wallet they control.
