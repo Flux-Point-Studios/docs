@@ -23,6 +23,10 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href="cardano-ue-sdk">Cardano UE SDK</a><br>Unreal Engine integration for Cardano blockchain</td>
 <td><a href="https://bairesdev.mo.cloudinary.net/blog/2022/08/ue-logo-1400x788-1400x788-8f185e1e3635-1.jpg?tx=w_1920,q_auto">UE Logo</a></td>
 </tr>
+<tr>
+<td><a href="cmatra-token-merger/">cMATRA Token Merger</a><br>Surrender-and-redeem model for the 7-asset cMATRA transition</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
 </tbody></table>
 
 ## Quick Links
@@ -31,6 +35,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 - **[Orynq SDK Documentation](proof-of-inference/orynq-sdk.md)** - Anchor AI traces to blockchain
 - **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
+- **[cMATRA Token Merger](cmatra-token-merger/)** - Eligibility rules and FAQ for the 7-asset merger
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
 
 ## Community
