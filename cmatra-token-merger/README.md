@@ -115,10 +115,11 @@ The following categories do not compete with the public redemption pool:
 
 #### Disclosed Team treasury addresses
 
-| Address                                                            | Label                  |
-| ------------------------------------------------------------------ | ---------------------- |
-| `addr1w9u9mw864yszpqk7374wtwtwludpa0rc9dmante78c7c9sqqdlyy9`      | FPS DAO Treasury       |
-| `addr1wx84ytuumke8gxex0l8par4852ey7l4eq6h325rnez0yluc56x0dj`      | $TALOS Treasury Wallet |
+| Address                                                            | Label                  | AGENT Waived   | SHARDS Waived     |
+| ------------------------------------------------------------------ | ---------------------- | -------------- | ----------------- |
+| `addr1w9u9mw864yszpqk7374wtwtwludpa0rc9dmante78c7c9sqqdlyy9`      | FPS DAO Treasury       | 9,902          | 446,969.70        |
+| `addr1wx84ytuumke8gxex0l8par4852ey7l4eq6h325rnez0yluc56x0dj`      | $TALOS Treasury Wallet | 29,634,754     | 0                 |
+| **Total waived**                                                   |                        | **29,644,656** | **446,969.70**    |
 
 #### Why treasury balances are waived
 
@@ -189,6 +190,22 @@ asset_bucket = asset_weight × 850,000,000
 per_nft_redemption = asset_bucket / final_redeemable_nft_count
 ```
 
+### Reference rate table (draft — March 11, 2026)
+
+The following rates are based on 7-day TWAP data from February 2026 and the current team waiver balances. **These are reference rates, not final.** Final rates will be recalculated with fresh TWAP data closer to launch.
+
+| Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Unit (cMATRA) |
+| ----------------------------- | -------------------: | -----------------: | ---------------------: |
+| AGENT                         | 567,181,483          | 970,355,344        | ~0.5845                |
+| SHARDS                        | 101,537,022          | 2,641,564.75       | ~0.0000384 per base    |
+| Flux Point Team Pass          | 25,985,675           | 401 NFTs           | ~64,802 per NFT        |
+| SE Brawlers                   | 7,990,232            | 242 NFTs           | ~33,017 per NFT        |
+| Brawl Pass: Enter the Dragon  | 4,622,448            | 44 NFTs            | ~105,056 per NFT       |
+| T1 ADAM Launch Pass           | 128,397,011          | 43 NFTs            | ~2,985,977 per NFT     |
+| T2 ADAM Launch Pass           | 14,286,129           | 95 NFTs            | ~150,380 per NFT       |
+
+*All values in display units (12 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
+
 ### Rate publication conditions
 
 Final fixed redemption rates are published only after:
@@ -227,4 +244,4 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 3.0 | **Date:** March 10, 2026 | **Status:** Public / governance draft
+**Version:** 3.1 | **Date:** March 11, 2026 | **Status:** Public / governance draft

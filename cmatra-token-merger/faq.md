@@ -84,6 +84,13 @@ Three ways:
 
 The Team is taking the first visible hit through a treasury-waiver policy. Disclosed Team treasury balances are not meant to compete with public redeemers for cMATRA from the public redemption pool.
 
+The current waived balances are:
+
+* **AGENT:** 29,644,656 (FPS DAO: 9,902 + $TALOS: 29,634,754)
+* **SHARDS:** 446,969.70 display units (all at FPS DAO)
+
+Since the creation of both on-chain treasuries, there has been a complete lack of independent DAO proposals — the only proposals submitted were those proposed by the FPS Team itself. These funds are being returned to the team where they can be put to better use with more flexibility. All waived balances are published transparently so any holder can verify them on-chain.
+
 ***
 
 ## Eligibility
@@ -319,5 +326,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 6.0 | **Date:** March 10, 2026 | **Status:** Public / governance draft\
+**Version:** 6.1 | **Date:** March 11, 2026 | **Status:** Public / governance draft\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
