@@ -20,6 +20,11 @@
 * [Overview & Eligibility](cmatra-token-merger/README.md)
 * [FAQ](cmatra-token-merger/faq.md)
 
+## Materios Partner Chain
+
+* [Overview](materios/README.md)
+* [Node Requirements](materios/node-requirements.md)
+
 ## Governance
 
 * [PoI Governance](poi-governance.md)
