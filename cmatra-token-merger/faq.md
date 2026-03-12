@@ -125,6 +125,10 @@ Yes, as long as:
 
 The public path is based on possession and surrender during the window, not just on historical snapshot ownership.
 
+### 15a. What about Flux Point NFTs that aren't on the eligible list, like banners or weapons?
+
+NFTs with direct in-game utility (e.g. TRIB3 banners, weapons) are **not** part of the merger. They retain their original function in-game and would lose that utility if converted to a fungible token. Only the seven assets listed in Q13 are eligible for cMATRA redemption.
+
 ### 16. Do I need to use the same wallet that held the asset at the reference snapshot?
 
 No, not for the ordinary public redemption path.
@@ -140,6 +144,12 @@ The important thing is that you control the eligible asset when you surrender it
 No.
 
 AGENT is **not** 1:1 with cMATRA, and neither are the other legacy assets. The merger uses a weighted redemption model, not a same-supply shortcut.
+
+### 17a. Why do I get less than 1 cMATRA per AGENT if the supply is also 1 billion?
+
+Because this is not a simple 1:1 token rename. Seven separate assets — AGENT, SHARDS, and five NFT collections — are merging into a single token. The 850,000,000 public redemption pool is split across all of them weighted by market value.
+
+The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the combined ecosystem, not a per-unit supply match.
 
 ### 18. So what is the AGENT or SHARDS conversion rate?
 
