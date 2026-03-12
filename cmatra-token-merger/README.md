@@ -190,19 +190,19 @@ asset_bucket = asset_weight × 850,000,000
 per_nft_redemption = asset_bucket / final_redeemable_nft_count
 ```
 
-### Reference rate table (draft — March 11, 2026)
+### Reference rate table (draft — March 12, 2026)
 
-The following rates are based on 7-day TWAP data from February 2026 and the current team waiver balances. **These are reference rates, not final.** Final rates will be recalculated with fresh TWAP data closer to launch.
+The following rates are based on 7-day TWAP data from March 12, 2026 and the current team waiver balances. **These are reference rates, not final.** Final rates will be recalculated with fresh TWAP data closer to launch.
 
 | Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Unit (cMATRA) |
 | ----------------------------- | -------------------: | -----------------: | ---------------------: |
-| AGENT                         | 567,181,483          | 970,355,344        | ~0.5845                |
-| SHARDS                        | 101,537,022          | 2,641,564.75       | ~0.0000384 per base    |
-| Flux Point Team Pass          | 25,985,675           | 401 NFTs           | ~64,802 per NFT        |
-| SE Brawlers                   | 7,990,232            | 242 NFTs           | ~33,017 per NFT        |
-| Brawl Pass: Enter the Dragon  | 4,622,448            | 44 NFTs            | ~105,056 per NFT       |
-| T1 ADAM Launch Pass           | 128,397,011          | 43 NFTs            | ~2,985,977 per NFT     |
-| T2 ADAM Launch Pass           | 14,286,129           | 95 NFTs            | ~150,380 per NFT       |
+| AGENT                         | 528,433,002          | 970,355,344        | ~0.5446                |
+| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.0000342 per base    |
+| Flux Point Team Pass          | 32,679,426           | 401 NFTs           | ~81,495 per NFT        |
+| SE Brawlers                   | 10,048,467           | 242 NFTs           | ~41,523 per NFT        |
+| Brawl Pass: Enter the Dragon  | 5,813,163            | 44 NFTs            | ~132,117 per NFT       |
+| T1 ADAM Launch Pass           | 161,471,298          | 43 NFTs            | ~3,755,146 per NFT     |
+| T2 ADAM Launch Pass           | 21,049,701           | 95 NFTs            | ~221,576 per NFT       |
 
 *All values in display units (6 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
 
