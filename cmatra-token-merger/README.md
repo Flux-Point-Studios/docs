@@ -191,9 +191,25 @@ asset_bucket = asset_weight × 850,000,000
 per_nft_redemption = asset_bucket / final_redeemable_nft_count
 ```
 
-### Reference rate table (draft — March 12, 2026)
+### What you get (reference rates — March 12, 2026)
 
-The following rates are based on 7-day TWAP data from March 12, 2026 and the current team waiver balances. **These are reference rates, not final.** Final rates will be recalculated with fresh TWAP data closer to launch.
+The following table shows how much cMATRA you receive for each legacy asset you surrender. **These are reference rates, not final.** Final rates will be recalculated with fresh market data closer to launch.
+
+| You surrender            | You receive (cMATRA)         |
+| ------------------------ | ---------------------------: |
+| 1 AGENT                  | ~0.5446                      |
+| 1 SHARDS                 | ~34.2                        |
+| 1 Flux Point Team Pass   | ~81,495                      |
+| 1 SE Brawler             | ~41,523                      |
+| 1 Brawl Pass: Enter the Dragon | ~132,117                |
+| 1 T1 ADAM Launch Pass    | ~3,755,146                   |
+| 1 T2 ADAM Launch Pass    | ~221,576                     |
+
+*Rates are fixed for the full 6-month redemption window once published. You can redeem in multiple transactions.*
+
+### Detailed rate breakdown
+
+The rates above are derived from a 7-day TWAP valuation of each asset's market price, weighted against the 850,000,000 cMATRA public redemption pool.
 
 | Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Base Unit | Rate per Display Unit |
 | ----------------------------- | -------------------: | -----------------: | -----------------: | --------------------: |
