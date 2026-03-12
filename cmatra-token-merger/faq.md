@@ -91,6 +91,16 @@ The current waived balances are:
 
 Since the creation of both on-chain treasuries, there has been a complete lack of independent DAO proposals — the only proposals submitted were those proposed by the FPS Team itself. These funds are being returned to the team where they can be put to better use with more flexibility. All waived balances are published transparently so any holder can verify them on-chain.
 
+Because these tokens are held in on-chain Agora DAOs and cannot be withdrawn without governance quorum (which has historically been unachievable), the team receives their cMATRA directly at mint time at the same published rates as public holders. The DAO treasuries effectively become dead wallets — the legacy tokens remain locked there permanently. This does not change public rates because the waiver already excluded these balances from the rate denominator.
+
+### 12a. Why doesn't the team surrender through the pool like everyone else?
+
+The AGENT and SHARDS treasury tokens are locked in on-chain Agora DAOs that require governance votes to move funds. Historically, there has not been enough voter participation to pass any proposals. Rather than risk the team allocation being permanently stuck, the equivalent cMATRA is minted directly to the team at the same published rate. This is economically identical to surrendering through the pool.
+
+### 12b. Does the team carve-out change public rates?
+
+No. The waiver already excluded the team's treasury balances from the rate denominator when computing per-unit rates. The carve-out simply delivers the corresponding cMATRA at those same rates and reduces the surrender pool by that amount (~31.3M cMATRA out of 850M). Public holders redeem at exactly the same rate regardless.
+
 ***
 
 ## Eligibility

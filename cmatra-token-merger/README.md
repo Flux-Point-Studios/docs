@@ -54,6 +54,7 @@ The merger uses a fixed supply model with a validator reserve carved out at gene
 * The **15% validator reserve** is non-circulating at launch and exists to fund Materios validators over time.
 * The **85% public redemption pool** is the only pool used for ordinary public redemptions.
 * **Team treasury softening** is handled through explicit waiver and disclosure, not by pretending the reserve does not exist.
+* **Team carve-out:** Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~31.3M cMATRA) but does not change public rates. See [FAQ](faq.md) for details.
 
 ***
 
@@ -206,6 +207,18 @@ The following rates are based on 7-day TWAP data from March 12, 2026 and the cur
 
 *All values in display units (6 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
 
+### Team carve-out (from public pool)
+
+The following amounts are minted directly to the team at the same published rates. The surrender pool is funded with the remainder.
+
+| Treasury | Asset | Waived Balance | Rate | cMATRA Received |
+| -------- | ----- | -------------: | ---: | --------------: |
+| FPS DAO  | AGENT | 29,644,656     | 0.5446 | ~16,143,768  |
+| FPS DAO  | SHARDS | 446,969,700,000 base | 0.0000342/base | ~15,196,970 |
+| **Total** | | | | **~31,340,738 cMATRA** |
+
+**Surrender pool after carve: ~818,659,262 cMATRA** (96.3% of public pool).
+
 ### Rate publication conditions
 
 Final fixed redemption rates are published only after:
@@ -244,4 +257,4 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 3.1 | **Date:** March 11, 2026 | **Status:** Public / governance draft
+**Version:** 3.2 | **Date:** March 12, 2026 | **Status:** Public / governance draft
