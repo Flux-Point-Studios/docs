@@ -193,7 +193,7 @@ per_nft_redemption = asset_bucket / final_redeemable_nft_count
 
 ### What you get (reference rates — March 12, 2026)
 
-The following table shows how much cMATRA you receive for each legacy asset you surrender. **These are reference rates, not final.** Final rates will be recalculated with fresh market data closer to launch.
+The following table shows how much cMATRA you receive for each legacy asset you surrender. **These are reference rates, not final.** The TWAP-derived weights (how the pool is split between assets) are locked. Rates may shift slightly before final publication only if legacy reward materialization changes an asset's redeemable supply count.
 
 | You surrender            | You receive (cMATRA)         |
 | ------------------------ | ---------------------------: |

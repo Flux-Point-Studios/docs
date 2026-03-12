@@ -176,6 +176,16 @@ Then:
 * Fungible rate = asset bucket / final redeemable supply for that asset
 * NFT rate = asset bucket / final redeemable NFT count for that collection
 
+### 20a. Can NFT holders manipulate the floor price to game their allocation?
+
+The allocation weights are derived from a **7-day time-weighted average price (TWAP)**, not a single spot price. A 7-day window makes short-term wash trading or floor manipulation expensive and impractical — you would need to sustain artificial volume for an entire week to move the average meaningfully.
+
+Additionally, the TWAP data used for the published reference rates has **already been captured**. The rate weights are locked. Even if someone manipulated a floor price today, it would not change the published allocation.
+
+### 20b. Will rates be recalculated with new market data before launch?
+
+No. The TWAP-derived **weights** (how the pool is split between assets) are locked based on the published reference data. The only thing that may cause a minor rate adjustment before final publication is a change in the **redeemable supply denominator** — specifically, if legacy reward materialization adds units to an asset's redeemable count. The market-price side of the formula is not being re-run.
+
 ### 21. Why are final fungible rates not frozen today?
 
 Because Materios is choosing to materialize valid legacy rewards into actual redeemable old units before launch. Until that is finished, the final redeemable fungible supply is not fully reconciled.
@@ -265,6 +275,10 @@ You need to regain normal wallet control of the NFT before redeeming it. The rig
 
 No. Only the user token counts for redemption. The reference token does not.
 
+### 33a. I hold a T1 or T2 ADAM Launch Pass — will I lose access to ADAM if I surrender it?
+
+No. ADAM v2 will no longer require a pass or subscription to access. ADAM v2 will charge per-transaction fees only. The merger is essentially buying out the ADAM passes with cMATRA, since the passes will have no utility under the new ADAM v2 model.
+
 ### 34. What if I wait until the last day and the marketplace, DeFi venue, or network is congested?
 
 Do not wait until the last day.
@@ -346,5 +360,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 6.1 | **Date:** March 11, 2026 | **Status:** Public / governance draft\
+**Version:** 6.2 | **Date:** March 12, 2026 | **Status:** Public / governance draft\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
