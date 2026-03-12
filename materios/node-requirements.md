@@ -46,7 +46,9 @@ External attestation committee members run only the cert daemon, not a full Subs
 
 ### Container Image
 
-The Materios node is distributed as a Docker image built from the monorepo:
+The Materios node is distributed as a Docker image built from the monorepo.
+
+> **Note**: A pre-built container image is not yet publicly available. For now, you must build from source (see below). A published image on GHCR will be announced once the repository is public.
 
 ```bash
 docker build -t materios-node:latest -f partnerchain/Dockerfile .
