@@ -15,15 +15,12 @@
 * [T Backend Developer Guide](t-backend-developer-guide.md)
 * [Cardano UE SDK](cardano-ue-sdk.md)
 
-## cMATRA Token Merger
-
-* [Overview & Eligibility](cmatra-token-merger/README.md)
-* [FAQ](cmatra-token-merger/faq.md)
-
 ## Materios Partner Chain
 
 * [Overview](materios/README.md)
 * [Node Requirements](materios/node-requirements.md)
+* [cMATRA Token Merger](materios/cmatra-token-merger/README.md)
+* [cMATRA FAQ](materios/cmatra-token-merger/faq.md)
 
 ## Governance
 
