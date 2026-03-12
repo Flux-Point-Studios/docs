@@ -117,13 +117,13 @@ The following categories do not compete with the public redemption pool:
 
 | Address                                                            | Label                  | AGENT Waived   | SHARDS Waived     |
 | ------------------------------------------------------------------ | ---------------------- | -------------- | ----------------- |
-| `addr1w9u9mw864yszpqk7374wtwtwludpa0rc9dmante78c7c9sqqdlyy9`      | FPS DAO Treasury       | 9,902          | 446,969.70        |
-| `addr1wx84ytuumke8gxex0l8par4852ey7l4eq6h325rnez0yluc56x0dj`      | $TALOS Treasury Wallet | 29,634,754     | 0                 |
+| `addr1w9u9mw864yszpqk7374wtwtwludpa0rc9dmante78c7c9sqqdlyy9`      | $SHARDS DAO Treasury   | 9,902          | 446,969.70        |
+| `addr1wx84ytuumke8gxex0l8par4852ey7l4eq6h325rnez0yluc56x0dj`      | $AGENT DAO Treasury    | 29,634,754     | 0                 |
 | **Total waived**                                                   |                        | **29,644,656** | **446,969.70**    |
 
 #### Why treasury balances are waived
 
-Since the creation of both on-chain treasuries, there has been a complete lack of independent DAO proposals — the only proposals submitted were those proposed by the FPS Team itself. Given this, it makes the most sense for these funds to be returned to the team where they can be put to better use with more flexibility, rather than sitting idle in governance structures that have seen no community participation. The same rationale applies to the $TALOS treasury.
+Since the creation of both on-chain treasuries, there has been a complete lack of independent DAO proposals — the only proposals submitted were those proposed by the FPS Team itself. Given this, it makes the most sense for these funds to be returned to the team where they can be put to better use with more flexibility, rather than sitting idle in governance structures that have seen no community participation. The same rationale applies to the $AGENT DAO treasury.
 
 All waived balances are published transparently so any holder can verify them on-chain.
 
