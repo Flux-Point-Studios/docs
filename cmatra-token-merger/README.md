@@ -195,26 +195,26 @@ per_nft_redemption = asset_bucket / final_redeemable_nft_count
 
 The following rates are based on 7-day TWAP data from March 12, 2026 and the current team waiver balances. **These are reference rates, not final.** Final rates will be recalculated with fresh TWAP data closer to launch.
 
-| Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Unit (cMATRA) |
-| ----------------------------- | -------------------: | -----------------: | ---------------------: |
-| AGENT                         | 528,433,002          | 970,355,344        | ~0.5446                |
-| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.0000342 per base    |
-| Flux Point Team Pass          | 32,679,426           | 401 NFTs           | ~81,495 per NFT        |
-| SE Brawlers                   | 10,048,467           | 242 NFTs           | ~41,523 per NFT        |
-| Brawl Pass: Enter the Dragon  | 5,813,163            | 44 NFTs            | ~132,117 per NFT       |
-| T1 ADAM Launch Pass           | 161,471,298          | 43 NFTs            | ~3,755,146 per NFT     |
-| T2 ADAM Launch Pass           | 21,049,701           | 95 NFTs            | ~221,576 per NFT       |
+| Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Base Unit | Rate per Display Unit |
+| ----------------------------- | -------------------: | -----------------: | -----------------: | --------------------: |
+| AGENT                         | 528,433,002          | 970,355,344        | ~0.5446            | ~0.5446 per AGENT     |
+| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.0000342         | ~34.2 per SHARDS      |
+| Flux Point Team Pass          | 32,679,426           | 401 NFTs           | —                  | ~81,495 per NFT       |
+| SE Brawlers                   | 10,048,467           | 242 NFTs           | —                  | ~41,523 per NFT       |
+| Brawl Pass: Enter the Dragon  | 5,813,163            | 44 NFTs            | —                  | ~132,117 per NFT      |
+| T1 ADAM Launch Pass           | 161,471,298          | 43 NFTs            | —                  | ~3,755,146 per NFT    |
+| T2 ADAM Launch Pass           | 21,049,701           | 95 NFTs            | —                  | ~221,576 per NFT      |
 
-*All values in display units (6 decimal places). Buckets sum to exactly 850,000,000 cMATRA.*
+*All values in display units (6 decimal places). AGENT has 0 decimals so base = display. SHARDS has 6 decimals (1 SHARDS = 1,000,000 base units). Buckets sum to exactly 850,000,000 cMATRA.*
 
 ### Team carve-out (from public pool)
 
 The following amounts are minted directly to the team at the same published rates. The surrender pool is funded with the remainder.
 
-| Treasury | Asset | Waived Balance | Rate | cMATRA Received |
-| -------- | ----- | -------------: | ---: | --------------: |
-| FPS DAO  | AGENT | 29,644,656     | 0.5446 | ~16,143,768  |
-| FPS DAO  | SHARDS | 446,969,700,000 base | 0.0000342/base | ~15,196,970 |
+| Treasury | Asset | Waived Balance | Rate per Display Unit | cMATRA Received |
+| -------- | ----- | -------------: | --------------------: | --------------: |
+| FPS DAO  | AGENT | 29,644,656     | ~0.5446 per AGENT     | ~16,143,768     |
+| FPS DAO  | SHARDS | 446,969.70    | ~34.2 per SHARDS      | ~15,196,970     |
 | **Total** | | | | **~31,340,738 cMATRA** |
 
 **Surrender pool after carve: ~818,659,262 cMATRA** (96.3% of public pool).
