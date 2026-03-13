@@ -19,6 +19,7 @@
 
 * [Overview](materios/README.md)
 * [Node Requirements](materios/node-requirements.md)
+* [Operator Guide](materios/operator-guide.md)
 * [cMATRA Token Merger](materios/cmatra-token-merger/README.md)
 * [cMATRA FAQ](materios/cmatra-token-merger/faq.md)
 

@@ -72,4 +72,5 @@ Materios Chain          Cardano L1
 
 ## Next Steps
 
-- [Node Requirements](node-requirements.md) — Hardware, software, and configuration for running a Materios node
+- [Operator Guide](operator-guide.md) — Become an attestation operator with a single command
+- [Node Requirements](node-requirements.md) — Hardware, software, and configuration for running a full Materios node
