@@ -7,7 +7,7 @@ description: >-
 
 # cMATRA Token Merger
 
-Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-side transitional token for [Materios](https://materios.network). cMATRA is intended to converge into **MATRA** as the native capital token of the Materios network.
+Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-side transitional token for [Materios](https://materios.fluxpointstudios.com). cMATRA is intended to converge into **MATRA** as the native capital token of the Materios network.
 
 ***
 
