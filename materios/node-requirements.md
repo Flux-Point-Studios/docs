@@ -48,18 +48,13 @@ External attestation committee members run only the cert daemon, not a full Subs
 
 The Materios node is distributed as a Docker image built from the monorepo.
 
-> **Note**: A pre-built container image is not yet publicly available. For now, you must build from source (see below). A published image on GHCR will be announced once the repository is public.
-
 ```bash
-docker build -t materios-node:latest -f partnerchain/Dockerfile .
+docker pull ghcr.io/flux-point-studios/materios-node:v105
 ```
 
-**Build toolchain** (if building from source):
-- Rust 1.88.0 with `wasm32-unknown-unknown` target
-- System packages: `protobuf-compiler`, `clang`, `libclang-dev`, `libssl-dev`, `pkg-config`, `make`, `cmake`
-- Polkadot SDK: `polkadot-stable2409-5`
+The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
 
-The resulting image is ~224 MB uncompressed (~56 MB compressed).
+Image size: ~224 MB uncompressed (~56 MB compressed).
 
 ### Runtime
 
@@ -83,7 +78,7 @@ The resulting image is ~224 MB uncompressed (~56 MB compressed).
 
 ```bash
 materios-node \
-  --chain staging \
+  --chain local \
   --base-path /data/materios \
   --validator \
   --name your-node-name \
@@ -98,7 +93,7 @@ materios-node \
 
 | Flag | Purpose |
 |------|---------|
-| `--chain staging` | Use the Materios staging chain spec |
+| `--chain local` | Use the Materios local chain spec |
 | `--validator` | Enable block production and finality voting |
 | `--base-path` | Where chain data is stored |
 | `--node-key` | Persistent P2P identity (32 hex bytes). Generate with `subkey generate-node-key` |
@@ -108,7 +103,7 @@ materios-node \
 
 ```bash
 materios-node \
-  --chain staging \
+  --chain local \
   --base-path /data/materios \
   --name your-node-name \
   --rpc-port 9944 \
@@ -128,7 +123,13 @@ RUST_LOG=info,materios=debug
 
 ### Bootnodes
 
-New nodes need at least one bootnode to discover peers. Bootnodes will be provided during the onboarding process. Contact the Flux Point Studios team for current bootnode addresses.
+New nodes need at least one bootnode to discover peers:
+
+```
+/ip4/5.78.94.109/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
+```
+
+Add this to your node's `--bootnodes` flag. The install script configures this automatically.
 
 ## Session Keys
 
@@ -187,7 +188,7 @@ To verify you have the correct chain spec:
 
 ```bash
 # Expected genesis hash
-8f6e531be80341a12a0ae1b04484770fcaa797bb49dcc1cc9e79788f770a41b3
+5663079a485b93fdc9e386b862b4cf8d25499427df6b8c5f018535acfd2e5020
 ```
 
 ## Monitoring
@@ -219,7 +220,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: materios-node:latest
+    image: ghcr.io/flux-point-studios/materios-node:v105
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -233,7 +234,7 @@ services:
       - RUST_LOG=info,materios=debug
     command:
       - --chain
-      - staging
+      - local
       - --base-path
       - /data/materios
       - --validator
