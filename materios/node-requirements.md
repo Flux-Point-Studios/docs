@@ -59,7 +59,7 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 ### Runtime
 
 - **spec\_name**: `materios`
-- **spec\_version**: 105
+- **spec\_version**: 107
 - **Block time**: 6 seconds
 
 ## Network Ports

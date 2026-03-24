@@ -104,6 +104,7 @@ Once activated, your operator runs two services:
 3. **Produces blocks** when it's your turn in the Aura round-robin schedule
 4. **Participates in Grandpa finality** — votes to finalize blocks with BFT consensus
 5. **Serves RPC** locally for the cert daemon
+6. **Earns tMATRA** — block production rewards distributed every era (~24h), proportional to blocks you produce
 
 ### Cert Daemon
 
@@ -112,8 +113,48 @@ Once activated, your operator runs two services:
 3. **Verifies** blob integrity (SHA-256 chunk hashes)
 4. **Signs** an attestation and submits it on-chain
 5. **Sends heartbeats** every 30 seconds so the network knows you're online
+6. **Earns tMATRA** — attestation rewards paid instantly when a receipt is certified (10 tMATRA per certification)
 
 All of this happens automatically. No manual intervention needed.
+
+***
+
+## Rewards
+
+Operators earn tMATRA from two separate reward pools:
+
+### Block Production Rewards (Full Validators Only)
+
+| Parameter | Value |
+|-----------|-------|
+| **Reserve** | 150M MATRA (15% of total supply) |
+| **Era length** | ~24 hours (14,400 blocks) |
+| **Distribution** | Proportional to blocks produced per era |
+| **Mechanism** | Automatic — credited to your account at each era boundary |
+
+Validators who produce more blocks (better uptime) earn a larger share. If you're offline during an era, you miss those rewards — but there's no slashing or penalty beyond missed earnings.
+
+### Attestation Rewards (All Committee Members)
+
+| Parameter | Value |
+|-----------|-------|
+| **Reserve** | 50M MATRA (5% of total supply) |
+| **Reward per certification** | 10 tMATRA per signer |
+| **Distribution** | Instant — paid the moment a receipt is certified |
+| **Mechanism** | Automatic — every committee member who attested receives the reward |
+
+Attestation rewards are earned by **both** full validators and cert-daemon-only operators. Every time you help certify a receipt (by signing an attestation that meets the committee threshold), you receive 10 tMATRA immediately.
+
+### Cert Daemon Only
+
+Community members who run a cert daemon without a full validator node earn attestation rewards only. This is a low-cost way to contribute to network security and earn tMATRA:
+
+- **Hardware**: 1 vCPU, 512 MB RAM, 1 GB disk
+- **Network**: Outbound only (no ports to open, works behind NAT)
+- **Earnings**: 10 tMATRA per receipt you help certify
+- **Setup**: Same installer, lower resource requirements
+
+To request a cert-daemon-only invite, ask in the [Flux Point Studios Discord](https://discord.gg/MfYUMnfrJM).
 
 ***
 
