@@ -271,3 +271,21 @@ During sync, the node will show `isSyncing: true` in the health check. Wait for 
 | Not producing blocks | Keys not inserted or wrong key type | Re-insert keys, restart node |
 | Finality stalled | Grandpa key mismatch or <2/3 validators online | Check key insertion, check peer connectivity |
 | High memory (>4 GB) | Possible leak or archive mode on limited RAM | Restart node, check `--pruning` setting |
+
+## Platform Support
+
+The Materios node Docker image supports multiple platforms:
+
+| Platform | Architecture | How to Run |
+|----------|-------------|------------|
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v105` |
+| **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
+| **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
+| **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
+| **Windows** | amd64/arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) with WSL2 backend, then same command |
+
+Docker automatically pulls the correct architecture for your machine. No special flags needed.
+
+### Raspberry Pi / ARM SBCs
+
+The arm64 image runs on Raspberry Pi 4/5 and other ARM64 single-board computers with at least 2 GB RAM. Performance is acceptable for validator operation given the lightweight chain requirements.
