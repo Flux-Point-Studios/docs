@@ -87,8 +87,8 @@ docker compose restart
 # Stop
 docker compose down
 
-# Update to latest version
-docker compose pull && docker compose up -d
+# Update (handles chain forks automatically)
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/update.sh | bash
 ```
 
 ***
@@ -216,6 +216,27 @@ docker compose down
 # Update to the latest version
 docker compose pull && docker compose up -d
 ```
+
+***
+
+## Updating Your Node
+
+Run a single command to update images, detect chain forks, and restart:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/update.sh | bash
+```
+
+This works for both validators and attestors. If the network has forked to a new chain (e.g. after a consensus reset), the update script automatically:
+
+1. Detects the genesis mismatch
+2. Downloads the correct chain spec
+3. Wipes chain data (your keystore and identity are preserved)
+4. Updates your configuration
+5. Restarts and re-syncs
+6. Regenerates session keys (validators only — share them with the team)
+
+If there's no fork, it simply pulls latest images and restarts.
 
 ***
 
