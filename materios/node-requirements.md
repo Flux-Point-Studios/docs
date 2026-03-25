@@ -1,10 +1,16 @@
 ---
-description: Hardware, software, and configuration for running a Materios node
+description: Hardware, software, and configuration for running a Materios node or attestor
 ---
 
 # Node Requirements
 
-This page covers what you need to run a Materios node, whether as a **validator** (block producer + finalizer) or a **full node** (sync and serve RPC).
+This page covers what you need to participate in the Materios network. There are three roles:
+
+| Role | Purpose | Approval |
+|------|---------|----------|
+| **Full Validator** | Block production + finality + attestation | Invite required |
+| **Attestor** | Blob verification + attestation rewards | **No approval needed** |
+| **Full Node** | Sync chain + serve RPC queries | None |
 
 ## Hardware Requirements
 
@@ -31,16 +37,25 @@ Actual observed usage on the staging network: ~800 MiB RAM, <1% CPU, ~12 GB disk
 
 Archive nodes retain all historical state and serve RPC queries. They require more disk and memory than validators.
 
-### External Operator (Cert Daemon Only)
+### Attestor (Cert Daemon Only)
 
-External attestation committee members run only the cert daemon, not a full Substrate node. Requirements are minimal:
+Attestors run a cert daemon without a full Substrate node. They connect to the public Materios RPC endpoint and earn attestation rewards (10 tMATRA per certified receipt). **No invite token or approval required.**
 
 | Resource | Minimum |
 |----------|---------|
 | **CPU** | 1 vCPU |
 | **RAM** | 512 MB |
 | **Disk** | 1 GB |
-| **Network** | Outbound HTTPS + WSS |
+| **Network** | Outbound HTTPS + WSS only (no ports to open) |
+| **OS** | Linux, macOS, or Windows with Docker |
+
+One-command install:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor
+```
+
+See the [Operator Guide](operator-guide.md#attestor-permissionless) for full details.
 
 ## Software
 
@@ -49,7 +64,7 @@ External attestation committee members run only the cert daemon, not a full Subs
 The Materios node is distributed as a Docker image built from the monorepo.
 
 ```bash
-docker pull ghcr.io/flux-point-studios/materios-node:v105
+docker pull ghcr.io/flux-point-studios/materios-node:v109
 ```
 
 The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
@@ -59,7 +74,7 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 ### Runtime
 
 - **spec\_name**: `materios`
-- **spec\_version**: 107
+- **spec\_version**: 109
 - **Block time**: 6 seconds
 
 ## Network Ports
@@ -220,7 +235,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v105
+    image: ghcr.io/flux-point-studios/materios-node:v109
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -278,7 +293,7 @@ The Materios node Docker image supports multiple platforms:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v105` |
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v109` |
 | **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
 | **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
 | **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |

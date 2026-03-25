@@ -1,55 +1,143 @@
 ---
-description: How to become a Materios validator in one command
+description: How to join the Materios network as a validator or attestor
 ---
 
 # Operator Guide
 
-This guide covers how to join the Materios network as a **validator operator**. Validator operators run a full Materios node (block production + finality) and a cert daemon (threshold attestation) — earning rewards for securing the network.
+There are **two ways** to participate in the Materios network and earn tMATRA rewards:
+
+| Role | What You Do | Rewards | Approval |
+|------|------------|---------|----------|
+| **Full Validator** | Produce blocks + finalize + attest | Block rewards + attestation rewards | Invite required |
+| **Attestor** | Verify blobs and sign attestations | Attestation rewards | No approval needed |
+
+Both roles contribute to network security. Full validators secure consensus (block production + finality). Attestors secure data integrity (verifying that game scores are real).
 
 ***
 
-## Prerequisites
+## Attestor (Permissionless)
+
+Anyone can become an attestor. No invite token, no approval, no waiting. You run a single command and start earning tMATRA for every receipt you help certify.
+
+### Requirements
 
 | Requirement | Details |
-| ----------- | ------- |
+|-------------|---------|
+| **Docker** | Docker Engine 20+ with Compose v2 |
+| **CPU** | 1 vCPU |
+| **RAM** | 512 MB |
+| **Disk** | 1 GB |
+| **Network** | Outbound HTTPS + WSS only (no ports to open) |
+| **OS** | Linux, macOS, or Windows with Docker |
+
+### Quick Start
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor
+```
+
+That's it. The installer:
+
+1. Checks Docker and system requirements
+2. Generates a fresh sr25519 keypair
+3. Pulls the cert daemon Docker image
+4. Writes a `docker-compose.yml` with the cert daemon connected to the public Materios RPC
+5. Starts the cert daemon
+6. Submits a `join_committee` transaction to add you to the attestor set on-chain
+7. Begins polling for receipts to verify
+
+When it finishes, you'll see:
+
+```
+  Materios Attestor Online
+
+  SS58 Address   : 5YourAddress...
+  Label          : your-node-name
+  Mode           : attestor (cert daemon only)
+  Daemon Health  : http://localhost:8080/status
+  Mnemonic       : ~/materios-attestor/.secret-mnemonic
+```
+
+### What Your Daemon Does
+
+1. **Polls** the Materios chain for new unverified receipts
+2. **Fetches** the associated blob data from the Materios Blob Gateway
+3. **Verifies** blob integrity (SHA-256 chunk hashes match the on-chain content hash)
+4. **Validates** blob content against the registered schema (field types, bounds, computed checks)
+5. **Signs** an attestation and submits it on-chain
+6. **Earns tMATRA** — 10 tMATRA paid instantly each time a receipt you attested reaches certification threshold
+7. **Sends heartbeats** every 30 seconds so the network knows you're online
+
+All automatic. No manual intervention.
+
+### Managing Your Attestor
+
+```bash
+cd ~/materios-attestor
+
+# View logs
+docker compose logs -f cert-daemon
+
+# Check status
+curl -s http://localhost:8080/status | python3 -m json.tool
+
+# Restart
+docker compose restart
+
+# Stop
+docker compose down
+
+# Update to latest version
+docker compose pull && docker compose up -d
+```
+
+***
+
+## Full Validator (Invite Required)
+
+Full validators run a Materios node (block production + finality) **and** a cert daemon (attestation). You earn from both reward pools.
+
+### Requirements
+
+| Requirement | Details |
+|-------------|---------|
 | **Docker** | Docker Engine 20+ with Compose v2 |
 | **CPU** | 2+ vCPU |
 | **RAM** | 2 GB minimum |
 | **Disk** | 50 GB SSD |
 | **Network** | Port 30333 open inbound (P2P), outbound HTTPS + WSS |
-| **OS** | Linux (x86\_64 only) |
+| **OS** | Linux (x86\_64 or arm64), macOS (Apple Silicon or Intel) |
 
-***
+### Why do validators need an invite?
 
-## Quick Start
+On testnet, the invite token acts as a stand-in for economic stake. Full validators have consensus power (block production + finality voting), so an unchecked authority set is vulnerable to Sybil attacks at zero cost. On mainnet, the invite is replaced by MATRA staking — anyone who stakes sufficient MATRA can become a validator without approval.
 
-### 1. Get an invite token
+### Quick Start
 
-Join the [Flux Point Studios Discord](https://discord.gg/MfYUMnfrJM) and request an invite token in the #materios channel. You will receive a single-use token that looks like a 64-character hex string.
+#### 1. Get an invite token
 
-### 2. Open port 30333
+Join the [Flux Point Studios Discord](https://discord.gg/MfYUMnfrJM) and request an invite token in the #materios channel. You will receive a single-use token (64-character hex string).
 
-Your node needs port **30333 TCP** open for incoming P2P connections. This is how other validators find and communicate with your node.
+#### 2. Open port 30333
+
+Your node needs port **30333 TCP** open for incoming P2P connections.
 
 ```bash
 # UFW example
 sudo ufw allow 30333/tcp
-
-# iptables example
-sudo iptables -A INPUT -p tcp --dport 30333 -j ACCEPT
 ```
 
-### 3. Run the installer
+#### 3. Run the installer
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --token YOUR_INVITE_TOKEN
 ```
 
-That's it. The installer handles everything:
+The installer handles everything:
 
 * Checks that Docker, Compose v2, disk, and RAM meet requirements
 * Pulls the validator node and cert daemon Docker images
-* Generates a fresh sr25519 keypair (inside a container — nothing to install on your host)
+* Generates a fresh sr25519 keypair
 * Redeems your invite token to register with the Materios gateway
 * Writes a fully configured `docker-compose.yml` with both services
 * Starts the validator node and waits for chain sync
@@ -73,94 +161,34 @@ When it finishes, you'll see:
   Mnemonic       : ~/materios-operator/.secret-mnemonic
 ```
 
-### 4. Back up your mnemonic
+#### 4. Back up your mnemonic
 
-Your 24-word mnemonic is saved at `~/materios-operator/.secret-mnemonic`. **Back it up immediately** to a password manager or secure offline storage. This is your validator identity — if you lose it, you lose your authority seat.
+Your 24-word mnemonic is saved at `~/materios-operator/.secret-mnemonic`. **Back it up immediately.** This is your validator identity.
 
-### 5. Wait for activation
+#### 5. Wait for activation
 
 After your node syncs and reports session keys, the Materios team will:
 
-1. Add you to the attestation committee
-2. Add you to the validator authority set (Aura block production + Grandpa finality)
-3. Fund your account with MATRA tokens
+1. Add you to the validator authority set (Aura block production + Grandpa finality)
+2. Fund your account with MATRA tokens
 
-This typically happens within a few hours. You can check your status at any time:
+Your cert daemon automatically joins the attestation committee on-chain (no approval needed for attestation — only block production requires activation).
 
-* **Explorer**: [materios.fluxpointstudios.com/explorer/#/committee](https://materios.fluxpointstudios.com/explorer/#/committee) — look for your node's label
-* **Local health**: `curl http://localhost:8080/status`
-* **Public heartbeat API**: `curl https://materios.fluxpointstudios.com/blobs/heartbeats/status`
+### What Your Validator Does
 
-***
-
-## What Your Node Does
-
-Once activated, your operator runs two services:
-
-### Validator Node (materios-node)
+#### Validator Node (materios-node)
 
 1. **Connects** to the Materios P2P network via port 30333
 2. **Syncs** the full blockchain state
 3. **Produces blocks** when it's your turn in the Aura round-robin schedule
 4. **Participates in Grandpa finality** — votes to finalize blocks with BFT consensus
 5. **Serves RPC** locally for the cert daemon
-6. **Earns tMATRA** — block production rewards distributed every era (~24h), proportional to blocks you produce
 
-### Cert Daemon
+#### Cert Daemon
 
-1. **Polls** for new receipts that need attestation
-2. **Fetches** the associated blob data from the gateway
-3. **Verifies** blob integrity (SHA-256 chunk hashes)
-4. **Signs** an attestation and submits it on-chain
-5. **Sends heartbeats** every 30 seconds so the network knows you're online
-6. **Earns tMATRA** — attestation rewards paid instantly when a receipt is certified (10 tMATRA per certification)
+Same as the attestor role above — polls, fetches, verifies, attests, earns.
 
-All of this happens automatically. No manual intervention needed.
-
-***
-
-## Rewards
-
-Operators earn tMATRA from two separate reward pools:
-
-### Block Production Rewards (Full Validators Only)
-
-| Parameter | Value |
-|-----------|-------|
-| **Reserve** | 150M MATRA (15% of total supply) |
-| **Era length** | ~24 hours (14,400 blocks) |
-| **Distribution** | Proportional to blocks produced per era |
-| **Mechanism** | Automatic — credited to your account at each era boundary |
-
-Validators who produce more blocks (better uptime) earn a larger share. If you're offline during an era, you miss those rewards — but there's no slashing or penalty beyond missed earnings.
-
-### Attestation Rewards (All Committee Members)
-
-| Parameter | Value |
-|-----------|-------|
-| **Reserve** | 50M MATRA (5% of total supply) |
-| **Reward per certification** | 10 tMATRA per signer |
-| **Distribution** | Instant — paid the moment a receipt is certified |
-| **Mechanism** | Automatic — every committee member who attested receives the reward |
-
-Attestation rewards are earned by **both** full validators and cert-daemon-only operators. Every time you help certify a receipt (by signing an attestation that meets the committee threshold), you receive 10 tMATRA immediately.
-
-### Cert Daemon Only
-
-Community members who run a cert daemon without a full validator node earn attestation rewards only. This is a low-cost way to contribute to network security and earn tMATRA:
-
-- **Hardware**: 1 vCPU, 512 MB RAM, 1 GB disk
-- **Network**: Outbound only (no ports to open, works behind NAT)
-- **Earnings**: 10 tMATRA per receipt you help certify
-- **Setup**: Same installer, lower resource requirements
-
-To request a cert-daemon-only invite, ask in the [Flux Point Studios Discord](https://discord.gg/MfYUMnfrJM).
-
-***
-
-## Managing Your Node
-
-All commands are run from `~/materios-operator/`:
+### Managing Your Validator
 
 ```bash
 cd ~/materios-operator
@@ -191,15 +219,53 @@ docker compose pull && docker compose up -d
 
 ***
 
+## Rewards
+
+Operators earn tMATRA from two separate reward pools:
+
+### Block Production Rewards (Full Validators Only)
+
+| Parameter | Value |
+|-----------|-------|
+| **Reserve** | 150M MATRA (15% of total supply) |
+| **Era length** | ~24 hours (14,400 blocks) |
+| **Distribution** | Proportional to blocks produced per era |
+| **Mechanism** | Automatic — credited at each era boundary |
+
+Validators who produce more blocks (better uptime) earn a larger share. Offline during an era = missed rewards (no slashing).
+
+### Attestation Rewards (All Attestors)
+
+| Parameter | Value |
+|-----------|-------|
+| **Reserve** | 50M MATRA (5% of total supply) |
+| **Reward per certification** | 10 tMATRA per signer |
+| **Distribution** | Instant — paid the moment a receipt reaches threshold |
+| **Mechanism** | Automatic — every attestor who signed receives the reward |
+
+Attestation rewards are earned by **both** full validators and standalone attestors. Every time you help certify a receipt (by signing an attestation that meets the committee threshold), you receive 10 tMATRA immediately.
+
+### Reward Comparison
+
+| | Full Validator | Attestor Only |
+|---|---|---|
+| **Block rewards** | ~14.7K tMATRA/day (split among validators) | - |
+| **Attestation rewards** | 10 tMATRA per certified receipt | 10 tMATRA per certified receipt |
+| **Hardware cost** | 2 vCPU, 2 GB RAM, 50 GB SSD | 1 vCPU, 512 MB RAM, 1 GB |
+| **Network** | Port 30333 open | Outbound only |
+| **Approval** | Invite token (testnet only — replaced by staking on mainnet) | None |
+
+***
+
 ## Optional: Custom Label
 
-You can pass a `--label` flag during installation to set a human-readable name for your node:
-
 ```bash
+# Attestor
+curl -sSL .../install.sh | bash -s -- --mode attestor --label "my-attestor-01"
+
+# Full validator
 curl -sSL .../install.sh | bash -s -- --token YOUR_TOKEN --label "my-datacenter-01"
 ```
-
-If omitted, the installer generates a label from your hostname.
 
 ***
 
@@ -208,54 +274,54 @@ If omitted, the installer generates a label from your hostname.
 The cert daemon exposes a local HTTP server on port 8080:
 
 | Endpoint | Purpose |
-| -------- | ------- |
+|----------|---------|
 | `GET /health` | Basic liveness check. Returns `200` if the process is running. |
-| `GET /ready` | Readiness check. Returns `200` if connected to the chain and recently polled. Returns `503` otherwise. |
-| `GET /status` | Full daemon state: block height, finality gap, pending receipts, substrate connection, uptime, version. |
+| `GET /ready` | Readiness check. Returns `200` if connected to the chain and recently polled. |
+| `GET /status` | Full daemon state: block height, finality gap, pending receipts, uptime, version. |
 | `GET /metrics` | Prometheus metrics for monitoring integration. |
 
 ***
 
-## If Sync Times Out
+## If Sync Times Out (Full Validators)
 
-If your node is still syncing when the installer finishes, session keys won't be generated automatically. Once the node catches up, run:
+If your node is still syncing when the installer finishes, session keys won't be generated automatically. Once the node catches up:
 
 ```bash
 cd ~/materios-operator
 bash generate-session-keys.sh
 ```
 
-This generates session keys and reports them to the gateway so the Materios team can activate your authority seat.
-
 ***
 
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
-| ------- | ------------ | --- |
+|---------|-------------|-----|
 | Installer fails at "Pulling image" | Docker not running or no internet | Start Docker: `sudo systemctl start docker` |
-| "Invalid invite token" | Token already used or mistyped | Request a new token from the Materios team |
-| "Unsupported architecture" | Not running x86\_64 | The validator node requires amd64 hardware |
+| "Invalid invite token" | Token already used or mistyped | Request a new token (full validators only) |
 | Node stuck syncing | No peers found | Ensure port 30333 is open: `sudo ufw allow 30333/tcp` |
-| `/ready` returns 503 | Daemon still connecting | Wait 1–2 minutes. Check logs: `docker compose logs -f cert-daemon` |
-| Heartbeat not showing in explorer | Authority seat not yet activated | Contact the Materios team to confirm activation |
-| "Permission denied" on Docker | User not in `docker` group | Run: `sudo usermod -aG docker $USER` then log out and back in |
-| Blocks not finalizing after activation | Grandpa key mismatch | Check `docker compose logs materios-node` for Grandpa errors |
+| `/ready` returns 503 | Daemon still connecting | Wait 1-2 minutes. Check logs: `docker compose logs -f cert-daemon` |
+| Heartbeat not showing | Daemon not yet connected | Check daemon logs for RPC connection |
+| "Permission denied" on Docker | User not in docker group | Run: `sudo usermod -aG docker $USER` then log out/in |
+| "AlreadyCommitteeMember" | Daemon tried to join but already in committee | Normal — the daemon handles this gracefully |
+| Not earning attestation rewards | Account not funded with MATRA for TX fees | Request testnet tMATRA in Discord |
 
 ***
 
 ## Security
 
-* **Your mnemonic never leaves your machine.** It is generated locally inside a throwaway container and saved to `~/.secret-mnemonic`.
-* **Session keys are generated locally.** The `author_rotateKeys` RPC runs on your local node. Only the public keys are reported to the gateway.
-* **The invite token is single-use.** Once redeemed, it cannot be used again.
-* **RPC is localhost-only.** Port 9944 is bound to 127.0.0.1 — not accessible from the internet.
-* **P2P port 30333 only carries Substrate protocol traffic.** No sensitive data is exposed.
-* **Heartbeat signatures are verifiable.** Your daemon signs each heartbeat with sr25519 — anyone can verify your identity on-chain.
+* **Your mnemonic never leaves your machine.** Generated locally inside a throwaway container.
+* **Session keys are generated locally.** Only public keys are reported to the gateway.
+* **RPC is localhost-only.** Port 9944 is bound to 127.0.0.1 (full validators).
+* **P2P port 30333 only carries Substrate protocol traffic** (full validators).
+* **Heartbeat signatures are verifiable.** Signed with sr25519 — anyone can verify on-chain.
+* **Attestors use the public RPC.** No sensitive ports are opened.
 
 ***
 
-## Architecture Overview
+## Architecture
+
+### Full Validator
 
 ```
 ┌─────────────────────────────────────────┐
@@ -277,14 +343,24 @@ This generates session keys and reports them to the gateway so the Materios team
     Network            (HTTPS)
 ```
 
-***
+### Attestor Only
 
-## Requirements Summary
-
-| You Need | You Don't Need |
-| -------- | -------------- |
-| Docker + Compose v2 | Python, Rust, or Node.js |
-| 2+ vCPU, 2 GB+ RAM, 50 GB SSD | To build anything from source |
-| Port 30333 open inbound | Static IP |
-| Outbound HTTPS + WSS | Complex firewall rules |
-| An invite token from the Materios team | Prior blockchain experience |
+```
+┌────────────────────────────────┐
+│       Your Machine              │
+│                                 │
+│  ┌──────────────┐               │
+│  │ cert-daemon  │               │
+│  │              │               │
+│  │ Attestation  │               │
+│  │ Heartbeats   │               │
+│  └──────┬───────┘               │
+│         │                       │
+│    port 8080                    │
+│    (health, local)              │
+└─────────┼───────────────────────┘
+          │
+          ▼
+    Public Materios RPC    Blob Gateway
+    (wss://materios...)    (HTTPS)
+```
