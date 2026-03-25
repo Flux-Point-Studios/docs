@@ -197,7 +197,7 @@ Keys persist to the node's keystore on disk. After insertion, restart the node f
 
 ## Chain Spec
 
-The chain specification file defines genesis state, initial authorities, and network parameters. The raw chain spec for the staging network is included in the repository at `ops/chain-spec-raw.json`.
+The chain specification file defines genesis state, initial authorities, and network parameters. The raw chain spec is available at [`chain-spec/chain-spec-raw.json`](https://github.com/Flux-Point-Studios/materios/blob/main/chain-spec/chain-spec-raw.json).
 
 To verify you have the correct chain spec:
 
