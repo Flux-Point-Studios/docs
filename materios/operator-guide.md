@@ -42,9 +42,10 @@ That's it. The installer:
 2. Generates a fresh sr25519 keypair
 3. Pulls the cert daemon Docker image
 4. Writes a `docker-compose.yml` with the cert daemon connected to the public Materios RPC
-5. Starts the cert daemon
-6. Submits a `join_committee` transaction to add you to the attestor set on-chain
-7. Begins polling for receipts to verify
+5. Requests a MATRA faucet drip (funds your account for transaction fees)
+6. Starts the cert daemon
+7. Daemon auto-joins the attestation committee on-chain
+8. Begins polling for receipts to verify and earn tMATRA rewards
 
 When it finishes, you'll see:
 
