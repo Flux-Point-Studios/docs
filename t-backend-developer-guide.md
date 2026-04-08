@@ -6,8 +6,8 @@
 
 ### Quick Links
 
-- **Base URL**: `https://api-v2.fluxpointstudios.com`
-- **Swagger API Docs**: [API Docs](https://api-v2.fluxpointstudios.com/docs)
+- **Base URL**: `https://api-v3.fluxpointstudios.com`
+- **Swagger API Docs**: [API Docs](https://api-v3.fluxpointstudios.com/docs)
 - **Support**: `contact@fluxpointstudios.com` · [Discord](https://discord.gg/MfYUMnfrJM)
 
 ---
@@ -19,7 +19,7 @@
 All authenticated requests use an `api-key` header:
 
 ```bash
-curl -s https://api-v2.fluxpointstudios.com/health \
+curl -s https://api-v3.fluxpointstudios.com/health \
   -H "api-key: YOUR_API_KEY_HERE"
 ```
 
@@ -63,7 +63,7 @@ Send a message and receive a reply. Use `session_id` to preserve context across 
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
+    "https://api-v3.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={"message": "What is Cardano?", "session_id": "my-session-1"},
 )
@@ -78,7 +78,7 @@ If you want a JSON object back (when the assistant returns JSON), set `output=st
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat?output=structured",
+    "https://api-v3.fluxpointstudios.com/chat?output=structured",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={
         "message": "Return JSON with keys: summary, risks (array), next_steps (array).",
@@ -97,7 +97,7 @@ Set `"stream": true` to stream tokens as SSE (client must support SSE):
 import requests
 
 with requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
+    "https://api-v3.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={"message": "Summarize Cardano in 5 bullets.", "session_id": "sse-1", "stream": True},
     stream=True,
@@ -116,7 +116,7 @@ Provide `image_data` as a base64 data URI:
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/chat",
+    "https://api-v3.fluxpointstudios.com/chat",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={
         "message": "What’s in this image?",
@@ -137,7 +137,7 @@ Analyze a token by ticker and policy id (Cardano).
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/token-analysis",
+    "https://api-v3.fluxpointstudios.com/token-analysis",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={
         "token": "SNEK",
@@ -162,7 +162,7 @@ Notes:
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/images/generate",
+    "https://api-v3.fluxpointstudios.com/images/generate",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={"prompt": "A futuristic Cardano validator node in space", "size": "1024x1024", "n": 1},
 )
@@ -182,7 +182,7 @@ else:
 import requests
 
 r = requests.post(
-    "https://api-v2.fluxpointstudios.com/images/edit",
+    "https://api-v3.fluxpointstudios.com/images/edit",
     headers={"api-key": "YOUR_API_KEY", "Content-Type": "application/json"},
     json={
         "prompt": "Add plants and warm natural lighting",
@@ -252,7 +252,7 @@ After you pay, retry the original request with:
 Example (retrying `/chat`):
 
 ```bash
-curl -s https://api-v2.fluxpointstudios.com/chat \
+curl -s https://api-v3.fluxpointstudios.com/chat \
   -H "X-Partner: your_partner_name" \
   -H "X-Wallet-Address: addr1..." \
   -H "X-Invoice-Id: YOUR_INVOICE_ID" \
@@ -266,13 +266,13 @@ curl -s https://api-v2.fluxpointstudios.com/chat \
 - **Poll invoice status**:
 
 ```bash
-curl -s https://api-v2.fluxpointstudios.com/payments/status/YOUR_INVOICE_ID
+curl -s https://api-v3.fluxpointstudios.com/payments/status/YOUR_INVOICE_ID
 ```
 
 - **Check prepaid balance (ADA partners)**:
 
 ```bash
-curl -s "https://api-v2.fluxpointstudios.com/payments/balance?partner=your_partner_name&wallet=addr1..."
+curl -s "https://api-v3.fluxpointstudios.com/payments/balance?partner=your_partner_name&wallet=addr1..."
 ```
 
 ---
@@ -321,7 +321,7 @@ print(resp.status_code, resp.text)
 
 ## Additional Resources
 
-- **Swagger docs**: [API Docs](https://api-v2.fluxpointstudios.com/docs)
+- **Swagger docs**: [API Docs](https://api-v3.fluxpointstudios.com/docs)
 
 ---
 
