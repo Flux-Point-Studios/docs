@@ -38,7 +38,7 @@ Score is provably real — anyone can verify
 
 ## Step 1: Define Your Schema
 
-Every game defines a **validation schema** that tells the attestor network what fields to expect and what bounds are plausible. Schemas live in the [schema registry](https://github.com/Flux-Point-Studios/materios-monorepo/blob/main/cert-daemon/schemas/registry.json).
+Every game defines a **validation schema** that tells the attestor network what fields to expect and what bounds are plausible. Schemas live in the [schema registry](https://github.com/Flux-Point-Studios/materios/blob/main/cert-daemon/schemas/registry.json).
 
 ### Schema Format
 
@@ -95,7 +95,7 @@ For more sophisticated validation, computed checks evaluate expressions against 
 
 ### Submitting Your Schema
 
-Open a PR to the [materios-monorepo](https://github.com/Flux-Point-Studios/materios-monorepo) adding your schema to `cert-daemon/schemas/registry.json`, or contact the Materios team in [Discord](https://discord.gg/MfYUMnfrJM).
+Open a PR to the [materios](https://github.com/Flux-Point-Studios/materios) adding your schema to `cert-daemon/schemas/registry.json`, or contact the Materios team in [Discord](https://discord.gg/MfYUMnfrJM).
 
 You will also need a version number assigned in the `schema_lookup` table:
 
@@ -313,7 +313,7 @@ Clay Monster Dash is the first game integrated with Materios. Its schema (v1) va
 - **Duration minimum**: Run must last at least 3 seconds
 - **Difficulty range**: Must be within the game's difficulty settings
 
-[View the Clay Monster Dash schema](https://github.com/Flux-Point-Studios/materios-monorepo/blob/main/cert-daemon/schemas/registry.json)
+[View the Clay Monster Dash schema](https://github.com/Flux-Point-Studios/materios/blob/main/cert-daemon/schemas/registry.json)
 
 ***
 
