@@ -72,5 +72,6 @@ Materios Chain          Cardano L1
 
 ## Next Steps
 
+- [Cardano L1 Anchoring](cardano-anchoring.md) — Metadata format for Materios checkpoint transactions on Cardano mainnet
 - [Operator Guide](operator-guide.md) — Become an attestation operator with a single command
 - [Node Requirements](node-requirements.md) — Hardware, software, and configuration for running a full Materios node
