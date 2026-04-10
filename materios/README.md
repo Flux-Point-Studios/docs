@@ -60,18 +60,23 @@ Materios Chain          Cardano L1
 | `Balances` | MATRA transfers and account management |
 | `Grandpa` | BFT finality (standard Substrate) |
 | `Aura` | Block authoring schedule (standard Substrate) |
-| `Sudo` | Governance (temporary, will be replaced by council governance) |
+| `Sudo` | Governance (2-of-3 multisig, transitioning to Cardano governance contracts) |
+| `Multisig` | Multi-signature call dispatch for governance actions |
+| `Utility` | Batch call execution through multisig |
 
 ## Current Network
 
 - **Chain**: `materios_staging`
-- **Runtime version**: 113
+- **Runtime version**: 114
 - **Validators**: 5 authorities
-- **Attestation committee**: 9 members, threshold 2-of-9
+- **Attestation committee**: 10 members, threshold 2-of-10
+- **Governance**: 2-of-3 multisig sudo
+- **Cardano anchoring**: Mainnet, label `8746`
 - **Explorer**: [materios.fluxpointstudios.com/explorer](https://materios.fluxpointstudios.com/explorer/)
 
 ## Next Steps
 
+- [Mainnet Roadmap](mainnet-roadmap.md) — Current status and remaining milestones for mainnet
 - [Cardano L1 Anchoring](cardano-anchoring.md) — Metadata format for Materios checkpoint transactions on Cardano mainnet
 - [Operator Guide](operator-guide.md) — Become an attestation operator with a single command
 - [Node Requirements](node-requirements.md) — Hardware, software, and configuration for running a full Materios node
