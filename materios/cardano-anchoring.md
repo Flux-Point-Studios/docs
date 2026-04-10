@@ -56,11 +56,11 @@ All anchor transactions carry a JSON metadata payload under label `8746`:
 
 ## Example Transaction
 
-The first mainnet anchor was submitted on April 10, 2026:
+First mainnet anchor with v2 metadata, submitted April 10, 2026:
 
-**TX hash:** `5e95655fda9b64f4e39ea1ea88467646ee15793f539dfa500220ae17ded93763`
+**TX hash:** `b2b55a984af345b3ae758d7c92ee033e3066b24c17b7b1755f07a30e9bababf3`
 
-View it on cexplorer: [cexplorer.io/tx/5e95655fda9b64f4e39ea1ea88467646ee15793f539dfa500220ae17ded93763](https://cexplorer.io/tx/5e95655fda9b64f4e39ea1ea88467646ee15793f539dfa500220ae17ded93763)
+View it on cexplorer: [cexplorer.io/tx/b2b55a984af345b3ae758d7c92ee033e3066b24c17b7b1755f07a30e9bababf3](https://cexplorer.io/tx/b2b55a984af345b3ae758d7c92ee033e3066b24c17b7b1755f07a30e9bababf3)
 
 ## Anchor Frequency and Cost
 
