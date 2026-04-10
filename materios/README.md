@@ -65,9 +65,9 @@ Materios Chain          Cardano L1
 ## Current Network
 
 - **Chain**: `materios_staging`
-- **Runtime version**: 105
-- **Validators**: 4 authorities
-- **Attestation committee**: 4 members, threshold 2-of-4
+- **Runtime version**: 113
+- **Validators**: 5 authorities
+- **Attestation committee**: 9 members, threshold 2-of-9
 - **Explorer**: [materios.fluxpointstudios.com/explorer](https://materios.fluxpointstudios.com/explorer/)
 
 ## Next Steps

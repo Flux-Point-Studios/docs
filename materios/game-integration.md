@@ -304,14 +304,28 @@ This gives you **Cardano-grade finality** for game scores.
 
 ## Example: Clay Monster Dash (Reference)
 
-Clay Monster Dash is the first game integrated with Materios. Its schema (v1) validates:
+Clay Monster Dash is the first game integrated with Materios. Its schema (v1) requires these fields:
 
-- **Score bounds**: Score must be explainable by distance, crystals, and obstacles
-- **Speed limits**: Player can't travel faster than the max game speed
-- **Crystal density**: Can't collect more crystals than the track generates
-- **Event density**: Near-miss and slide events can't exceed spawn rate
-- **Duration minimum**: Run must last at least 3 seconds
-- **Difficulty range**: Must be within the game's difficulty settings
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `v` | int | `1` | Schema version |
+| `score` | int | `>= 0` | Final score |
+| `dist` | float | `>= 0` | Distance in meters |
+| `dur` | float | `>= 3.0` | Duration in seconds |
+| `crystals` | int | `>= 0` | Crystals collected |
+| `combo` | int | `0-10` | Max combo achieved |
+| `near_miss` | int | `>= 0` | Near-miss events |
+| `slides` | int | `>= 0` | Slide events |
+| `diff` | int | `1-20` | Difficulty level |
+| `peak_mult` | float | `1.0-10.0` | Peak score multiplier |
+| `player` | string | — | Player identifier |
+
+Plausibility checks:
+
+- **Speed**: `dist / dur` must be < 30 m/s
+- **Crystal density**: `crystals / dist` must be < 0.65/m
+- **Event density**: `(near_miss + slides) / dist` must be < 0.25/m
+- **Score cap**: Score must be below a computed theoretical maximum based on distance, crystals, events, and peak multiplier
 
 [View the Clay Monster Dash schema](https://github.com/Flux-Point-Studios/materios/blob/main/cert-daemon/schemas/registry.json)
 
@@ -333,7 +347,7 @@ Extra fields in the blob are ignored. Only fields defined in the schema are vali
 
 ### How many attestors need to verify?
 
-The current threshold is **2** attestors. This means at least 2 independent cert daemons must verify and sign before a receipt is certified.
+The current threshold is **2 of 9** committee members. This means at least 2 independent cert daemons from the 9-member committee must verify and sign before a receipt is certified. In practice, certification takes ~12 seconds.
 
 ### What does it cost?
 

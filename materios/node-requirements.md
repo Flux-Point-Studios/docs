@@ -64,7 +64,7 @@ See the [Operator Guide](operator-guide.md#attestor-permissionless) for full det
 The Materios node is distributed as a Docker image built from the monorepo.
 
 ```bash
-docker pull ghcr.io/flux-point-studios/materios-node:v109
+docker pull ghcr.io/flux-point-studios/materios-node:v113
 ```
 
 The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
@@ -74,7 +74,7 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 ### Runtime
 
 - **spec\_name**: `materios`
-- **spec\_version**: 109
+- **spec\_version**: 113
 - **Block time**: 6 seconds
 
 ## Network Ports
@@ -235,7 +235,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v109
+    image: ghcr.io/flux-point-studios/materios-node:v113
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -293,7 +293,7 @@ The Materios node Docker image supports multiple platforms:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v109` |
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v113` |
 | **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
 | **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
 | **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
