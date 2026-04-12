@@ -13,6 +13,8 @@ There are **two ways** to participate in the Materios network and earn tMATRA re
 
 Both roles contribute to network security. Full validators secure consensus (block production + finality). Attestors secure data integrity (verifying that game scores are real).
 
+> **No API key required.** Submitting receipts to Materios is permissionless — anyone with an sr25519 keypair and MATRA for TX fees (available from the faucet on testnet) can submit. The blob gateway also accepts sr25519-signed uploads without API keys.
+
 ***
 
 ## Attestor (Permissionless)

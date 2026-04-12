@@ -48,7 +48,7 @@ The staging network uses the same codebase, pallets, and protocols that will run
 | Milestone | Status | Details |
 |-----------|--------|---------|
 | Multisig governance | Done | Runtime v114 — `pallet-multisig` + `pallet-utility`. Sudo requires 2-of-3 approval. |
-| Validator key rotation | Planned | Migrate from development keys to production keypairs |
+| Validator key rotation | Done | Production keypairs (mnemonic-derived, April 12 2026) |
 | Cardano governance contracts | Planned | On-chain voting by MATRA/cMATRA holders via Cardano smart contracts |
 
 ### Token Economics
@@ -63,11 +63,7 @@ The staging network uses the same codebase, pallets, and protocols that will run
 
 ## Remaining Milestones
 
-### 1. Validator Key Rotation
-
-Migrate validator and attestor signing keys from development accounts to production keypairs. This is an operational change — the chain continues running without interruption.
-
-### 2. cMATRA Token Merger
+### 1. cMATRA Token Merger
 
 Seven legacy Cardano assets (AGENT, SHARDS, and 5 NFT collections) will consolidate into **cMATRA**, a Cardano-native transitional token. cMATRA will bridge to become native **MATRA** on the Materios mainnet.
 
@@ -78,11 +74,11 @@ Seven legacy Cardano assets (AGENT, SHARDS, and 5 NFT collections) will consolid
 
 See the full merger specification: [cMATRA Token Merger](https://docs.fluxpointstudios.com/materios-partner-chain/cmatra-token-merger)
 
-### 3. Stake-Weighted Validator Rewards
+### 2. Stake-Weighted Validator Rewards
 
 Transition from the current block-count reward model to stake-weighted distribution, aligning validator incentives with network security contribution.
 
-### 4. Cardano Governance
+### 3. Cardano Governance
 
 Long-term governance will be managed through Cardano smart contracts, enabling MATRA/cMATRA holders to participate in on-chain governance proposals. This aligns with the Cardano Partner Chains vision where ADA holders benefit from partner chain participation.
 
@@ -95,7 +91,7 @@ Long-term governance will be managed through Cardano smart contracts, enabling M
 | Runtime version | 114 | TBD |
 | Block time | 6 seconds | 6 seconds |
 | Finality | GRANDPA BFT | GRANDPA BFT |
-| Validators | 5 | 7–15+ |
+| Validators | 5 (production keypairs) | 7–15+ |
 | Attestation threshold | 2-of-N | 2-of-N (scales with committee) |
 | Cardano anchoring | Mainnet, label `8746` | Same |
 | Governance | 2-of-3 multisig | Cardano governance contracts |
@@ -106,7 +102,7 @@ Long-term governance will be managed through Cardano smart contracts, enabling M
 
 The mainnet transition depends primarily on the cMATRA token merger, which requires a 6-month public redemption window. The merger defines the initial MATRA distribution, which is a prerequisite for stake-weighted rewards and Cardano governance.
 
-All infrastructure milestones (pipeline, anchoring, attestation, multisig governance) are already complete. The remaining work is token economics and decentralization.
+All infrastructure milestones (pipeline, anchoring, attestation, multisig governance, validator key rotation) are already complete. The remaining work is token economics and decentralization.
 
 ***
 

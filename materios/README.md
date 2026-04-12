@@ -71,6 +71,7 @@ Materios Chain          Cardano L1
 - **Validators**: 5 authorities
 - **Attestation committee**: 10 members, threshold 2-of-10
 - **Governance**: 2-of-3 multisig sudo
+- **Validator keys**: Production keypairs (rotated from development accounts, April 12 2026)
 - **Cardano anchoring**: Mainnet, label `8746`
 - **Explorer**: [materios.fluxpointstudios.com/explorer](https://materios.fluxpointstudios.com/explorer/)
 

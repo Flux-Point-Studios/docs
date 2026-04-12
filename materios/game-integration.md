@@ -8,6 +8,8 @@ Materios provides **on-chain proof that a game score is real**. When a player fi
 
 This gives you tamper-proof, publicly auditable leaderboards with zero backend trust.
 
+> **Permissionless by default.** Submitting receipts to Materios does not require an API key — any sr25519 keypair can sign and submit. Games need MATRA tokens for TX fees (free from the faucet on testnet). Blob uploads also use sr25519 signature auth with no API key. The **Orynq managed service** (API key) is an optional offering for studios that want Flux Point Studios to manage the full pipeline on their behalf.
+
 ***
 
 ## How It Works
@@ -135,10 +137,11 @@ Your blob must be valid JSON with at minimum:
 ### Upload API
 
 ```bash
-# 1. Upload the blob
+# 1. Upload the blob (sr25519 signature auth — no API key needed)
 curl -X POST https://materios.fluxpointstudios.com/blobs/blobs \
   -H "Content-Type: application/json" \
-  -H "X-Api-Key: YOUR_API_KEY" \
+  -H "X-Public-Key: YOUR_SR25519_PUBLIC_KEY" \
+  -H "X-Signature: SR25519_SIGNATURE_OF_BODY" \
   -d '{
     "data": "{\"v\":2,\"score\":4500,\"level\":12,\"dur\":45.3,\"player\":\"5Grw...\"}",
     "content_type": "application/json"
@@ -155,9 +158,9 @@ Response:
 
 The `contentHash` is a SHA-256 hash of the blob data. You need this for the on-chain receipt.
 
-### Getting an API Key
+The blob gateway authenticates uploads via **sr25519 signature** — no API key is required. Sign the request body with your sr25519 keypair and include the public key and signature in headers.
 
-Contact the Materios team in [Discord](https://discord.gg/MfYUMnfrJM) to get a blob gateway API key for your game studio.
+> **Orynq managed service (optional):** Studios that prefer a managed pipeline can request an API key from the Materios team in [Discord](https://discord.gg/MfYUMnfrJM). The Orynq service handles blob uploads, receipt submission, and monitoring on your behalf.
 
 ***
 
@@ -347,7 +350,7 @@ Extra fields in the blob are ignored. Only fields defined in the schema are vali
 
 ### How many attestors need to verify?
 
-The current threshold is **2 of 9** committee members. This means at least 2 independent cert daemons from the 9-member committee must verify and sign before a receipt is certified. In practice, certification takes ~12 seconds.
+The current threshold is **2 of 10** committee members. This means at least 2 independent cert daemons from the 10-member committee must verify and sign before a receipt is certified. In practice, certification takes ~12 seconds.
 
 ### What does it cost?
 
