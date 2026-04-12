@@ -18,6 +18,8 @@
 ## Materios Partner Chain
 
 * [Overview](materios/README.md)
+* [Mainnet Roadmap](materios/mainnet-roadmap.md)
+* [Cardano L1 Anchoring](materios/cardano-anchoring.md)
 * [Node Requirements](materios/node-requirements.md)
 * [Operator Guide](materios/operator-guide.md)
 * [Game Integration](materios/game-integration.md)
