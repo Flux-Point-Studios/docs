@@ -198,7 +198,7 @@ The following table shows how much cMATRA you receive for each legacy asset you 
 | You surrender            | You receive (cMATRA)         |
 | ------------------------ | ---------------------------: |
 | 1 AGENT                  | ~0.5446                      |
-| 1 SHARDS                 | ~34.2                        |
+| 1 SHARDS                 | ~34.0                        |
 | 1 Flux Point Team Pass   | ~81,495                      |
 | 1 SE Brawler             | ~41,523                      |
 | 1 Brawl Pass: Enter the Dragon | ~132,117                |
@@ -214,7 +214,7 @@ The rates above are derived from a 7-day TWAP valuation of each asset's market p
 | Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Base Unit | Rate per Display Unit |
 | ----------------------------- | -------------------: | -----------------: | -----------------: | --------------------: |
 | AGENT                         | 528,433,002          | 970,355,344        | ~0.5446            | ~0.5446 per AGENT     |
-| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.0000342         | ~34.2 per SHARDS      |
+| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.000034          | ~34.0 per SHARDS      |
 | Flux Point Team Pass          | 32,679,426           | 401 NFTs           | —                  | ~81,495 per NFT       |
 | SE Brawlers                   | 10,048,467           | 242 NFTs           | —                  | ~41,523 per NFT       |
 | Brawl Pass: Enter the Dragon  | 5,813,163            | 44 NFTs            | —                  | ~132,117 per NFT      |
@@ -230,7 +230,7 @@ The following amounts are minted directly to the team at the same published rate
 | Treasury | Asset | Waived Balance | Rate per Display Unit | cMATRA Received |
 | -------- | ----- | -------------: | --------------------: | --------------: |
 | FPS DAO  | AGENT | 29,644,656     | ~0.5446 per AGENT     | ~16,143,768     |
-| FPS DAO  | SHARDS | 446,969.70    | ~34.2 per SHARDS      | ~15,196,970     |
+| FPS DAO  | SHARDS | 446,969.70    | ~34.0 per SHARDS      | ~15,196,970     |
 | **Total** | | | | **~31,340,738 cMATRA** |
 
 **Surrender pool after carve: ~818,659,262 cMATRA** (96.3% of public pool).
