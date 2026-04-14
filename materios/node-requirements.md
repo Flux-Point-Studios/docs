@@ -64,7 +64,7 @@ See the [Operator Guide](operator-guide.md#attestor-permissionless) for full det
 The Materios node is distributed as a Docker image built from the monorepo.
 
 ```bash
-docker pull ghcr.io/flux-point-studios/materios-node:v113
+docker pull ghcr.io/flux-point-studios/materios-node:v109
 ```
 
 The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
@@ -93,7 +93,7 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 
 ```bash
 materios-node \
-  --chain local \
+  --chain /path/to/chain-spec-raw.json \
   --base-path /data/materios \
   --validator \
   --name your-node-name \
@@ -108,7 +108,7 @@ materios-node \
 
 | Flag | Purpose |
 |------|---------|
-| `--chain local` | Use the Materios local chain spec |
+| `--chain /path/to/chain-spec-raw.json` | Use the Materios local chain spec |
 | `--validator` | Enable block production and finality voting |
 | `--base-path` | Where chain data is stored |
 | `--node-key` | Persistent P2P identity (32 hex bytes). Generate with `subkey generate-node-key` |
@@ -118,7 +118,7 @@ materios-node \
 
 ```bash
 materios-node \
-  --chain local \
+  --chain /path/to/chain-spec-raw.json \
   --base-path /data/materios \
   --name your-node-name \
   --rpc-port 9944 \
@@ -235,7 +235,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v113
+    image: ghcr.io/flux-point-studios/materios-node:v109
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -293,14 +293,52 @@ The Materios node Docker image supports multiple platforms:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v113` |
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v109` |
 | **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
 | **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
 | **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
-| **Windows** | amd64/arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) with WSL2 backend, then same command |
+| **Windows** | amd64/arm64 | Install Docker Desktop with WSL2 backend (see below) |
 
 Docker automatically pulls the correct architecture for your machine. No special flags needed.
+
+### Windows Setup (Detailed)
+
+Windows requires Docker Desktop with WSL2. Here's the full setup:
+
+1. **Install WSL2** (if not already enabled):
+   ```powershell
+   # Run in PowerShell as Administrator
+   wsl --install
+   # Restart your computer when prompted
+   ```
+
+2. **Install Docker Desktop**: Download from [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/). During installation, ensure **"Use WSL 2 instead of Hyper-V"** is checked.
+
+3. **Open Ubuntu terminal**: After WSL installs, search for "Ubuntu" in the Start menu and open it. This is where you'll run all commands.
+
+4. **Verify Docker works in WSL**:
+   ```bash
+   docker --version        # Should show Docker Engine 20+
+   docker compose version  # Should show Compose v2
+   ```
+
+5. **Open port 30333** (for validators): Windows Firewall > Advanced Settings > Inbound Rules > New Rule > Port > TCP > 30333 > Allow.
+
+6. **Run the installer** (inside the Ubuntu terminal, NOT PowerShell):
+   ```bash
+   curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator
+   ```
+
+> **Important:** All Materios commands must be run inside the WSL Ubuntu terminal. The install script is a bash script and does not run natively in PowerShell or Command Prompt.
 
 ### Raspberry Pi / ARM SBCs
 
 The arm64 image runs on Raspberry Pi 4/5 and other ARM64 single-board computers with at least 2 GB RAM. Performance is acceptable for validator operation given the lightweight chain requirements.
+
+### Chain Spec
+
+The installer automatically downloads the chain spec. If you need it manually:
+
+```bash
+curl -sSLO https://fluxpointstudios.com/materios/chain-spec-raw.json
+```

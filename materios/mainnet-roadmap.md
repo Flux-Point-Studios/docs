@@ -48,7 +48,8 @@ The staging network uses the same codebase, pallets, and protocols that will run
 | Milestone | Status | Details |
 |-----------|--------|---------|
 | Multisig governance | Done | Runtime v114 — `pallet-multisig` + `pallet-utility`. Sudo requires 2-of-3 approval. |
-| Validator key rotation | Done | Production keypairs (mnemonic-derived, April 12 2026) |
+| MOTRA projected balance | Done | Runtime v115 — `motra_getBalance` RPC returns projected balance for fresh accounts immediately. |
+| Validator key rotation | Done | Production keypairs (mnemonic-derived, April 12 2026). External validators joining. |
 | Cardano governance contracts | Planned | On-chain voting by MATRA/cMATRA holders via Cardano smart contracts |
 
 ### Token Economics
@@ -88,7 +89,7 @@ Long-term governance will be managed through Cardano smart contracts, enabling M
 
 | Parameter | Current (staging) | Mainnet target |
 |-----------|------------------|----------------|
-| Runtime version | 114 | TBD |
+| Runtime version | 115 | TBD |
 | Block time | 6 seconds | 6 seconds |
 | Finality | GRANDPA BFT | GRANDPA BFT |
 | Validators | 5 (production keypairs) | 7–15+ |

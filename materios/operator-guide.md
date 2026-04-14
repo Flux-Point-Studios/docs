@@ -96,7 +96,7 @@ curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator
 
 ***
 
-## Full Validator (Invite Required)
+## Full Validator
 
 Full validators run a Materios node (block production + finality) **and** a cert daemon (attestation). You earn from both reward pools.
 
@@ -109,39 +109,58 @@ Full validators run a Materios node (block production + finality) **and** a cert
 | **RAM** | 2 GB minimum |
 | **Disk** | 50 GB SSD |
 | **Network** | Port 30333 open inbound (P2P), outbound HTTPS + WSS |
-| **OS** | Linux (x86\_64 or arm64), macOS (Apple Silicon or Intel) |
+| **OS** | Linux, macOS, or Windows (see platform notes below) |
 
-### Why do validators need an invite?
+### Quick Start (Linux / macOS)
 
-On testnet, the invite token acts as a stand-in for economic stake. Full validators have consensus power (block production + finality voting), so an unchecked authority set is vulnerable to Sybil attacks at zero cost. On mainnet, the invite is replaced by MATRA staking — anyone who stakes sufficient MATRA can become a validator without approval.
-
-### Quick Start
-
-#### 1. Get an invite token
-
-Join the [Flux Point Studios Discord](https://discord.gg/MfYUMnfrJM) and request an invite token in the #materios channel. You will receive a single-use token (64-character hex string).
-
-#### 2. Open port 30333
+#### 1. Open port 30333
 
 Your node needs port **30333 TCP** open for incoming P2P connections.
 
 ```bash
-# UFW example
+# UFW example (Linux)
 sudo ufw allow 30333/tcp
 ```
 
-#### 3. Run the installer
+#### 2. Run the installer
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --token YOUR_INVITE_TOKEN
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator
 ```
 
-The installer handles everything:
+No invite token needed. The installer auto-registers via the faucet.
+
+### Quick Start (Windows / PowerShell)
+
+#### Prerequisites
+
+1. **Install Docker Desktop**: Download from [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/). Enable WSL2 backend during installation.
+2. **Enable WSL2** (if not already): Open PowerShell as Administrator and run:
+   ```powershell
+   wsl --install
+   ```
+   Restart if prompted, then open the **Ubuntu** terminal from the Start menu.
+3. **Verify Docker in WSL**: In the Ubuntu terminal:
+   ```bash
+   docker --version
+   docker compose version
+   ```
+
+#### Run the installer (inside WSL Ubuntu terminal)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator
+```
+
+> **Note for Windows users:** The installer must run inside WSL (Ubuntu terminal), not native PowerShell. Docker Desktop's WSL integration makes Docker available inside WSL automatically. Port 30333 will need to be opened in Windows Firewall (Settings > Firewall > Advanced Settings > Inbound Rules > New Rule > Port > TCP 30333).
+
+### What the installer does
 
 * Checks that Docker, Compose v2, disk, and RAM meet requirements
-* Pulls the validator node and cert daemon Docker images
+* Downloads the official Materios chain spec
+* Pulls the validator node (v109) and cert daemon Docker images
 * Generates a fresh sr25519 keypair
-* Redeems your invite token to register with the Materios gateway
+* Auto-registers with the Materios gateway via faucet
 * Writes a fully configured `docker-compose.yml` with both services
 * Starts the validator node and waits for chain sync
 * Generates session keys (Aura + Grandpa) for block production and finality

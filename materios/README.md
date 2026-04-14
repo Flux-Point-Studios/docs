@@ -67,8 +67,8 @@ Materios Chain          Cardano L1
 ## Current Network
 
 - **Chain**: `materios_staging`
-- **Runtime version**: 114
-- **Validators**: 5 authorities
+- **Runtime version**: 115
+- **Validators**: 5 authorities (+ external validators joining)
 - **Attestation committee**: 10 members, threshold 2-of-10
 - **Governance**: 2-of-3 multisig sudo
 - **Validator keys**: Production keypairs (rotated from development accounts, April 12 2026)
