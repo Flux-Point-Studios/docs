@@ -295,7 +295,9 @@ The public redemption window closes. Unredeemed legacy assets no longer have an 
 
 ### 36. What happens to any unreleased cMATRA from the 850M public redemption pool after the deadline?
 
-That will follow the published post-deadline policy in the final launch package. It should not be left vague or handled by surprise later.
+After the six-month window closes, the administrator withdraws any remaining cMATRA from the surrender pool. No further public surrenders are possible once the deadline has passed. The on-chain validator enforces this — the `ProcessSurrender` spending path is permanently disabled after the deadline, and only the `AdminWithdraw` path is available.
+
+Unclaimed cMATRA returns to the project treasury for future allocation decisions (validator incentives, ecosystem development, or other uses to be determined by governance).
 
 ***
 
@@ -356,9 +358,8 @@ It is a public / governance draft aligned to the current policy direction. The c
 * Legacy reward materialization
 * Final Team waiver amounts
 * Final fixed rate table
-* Final post-deadline handling
 
 ***
 
-**Version:** 6.2 | **Date:** March 12, 2026 | **Status:** Public / governance draft\
+**Version:** 6.3 | **Date:** April 14, 2026 | **Status:** Public / governance draft\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec

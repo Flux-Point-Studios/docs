@@ -254,8 +254,9 @@ Surrendered legacy assets are **not** intended to remain in free circulation. Wh
 ## Deadline and After-Window Handling
 
 * The ordinary public window closes **6 months** after launch.
-* After the deadline, the normal public surrender path is closed unless an explicit extension or exceptional remedy is formally announced.
-* Any unreleased portion of the public pool follows the **published post-deadline policy** in the final launch package.
+* After the deadline, the normal public surrender path is permanently closed. The on-chain validator enforces this — the `ProcessSurrender` spending path is disabled after the deadline.
+* Any unreleased cMATRA remaining in the pool is withdrawn by the administrator and returned to the project treasury for future allocation decisions (validator incentives, ecosystem development, or other uses to be determined by governance).
+* No extension or exceptional late-surrender mechanism is planned. Holders are encouraged to redeem well before the deadline.
 
 ***
 
