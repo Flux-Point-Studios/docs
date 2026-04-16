@@ -321,25 +321,23 @@ From the MATRA validator reserve, not from burned MOTRA fees. The reserve is mea
 
 This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation, making SPO delegation rewards a legitimate use of the validator reserve.
 
-### 39a. What is the TALOS SPO Delegation Rewards Program?
+### 39a. How do Cardano SPO delegators earn MATRA?
 
-For a time-limited period, delegators to the **TALOS** stake pool receive cMATRA rewards proportional to their ADA delegation, in addition to their normal ADA staking rewards.
+Through cross-validation, Cardano stake pool operators participate in Materios consensus alongside dedicated Materios validators. Delegators to participating pools (starting with **TALOS**) contribute to Materios network security through their delegation, and receive cMATRA from the validator reserve in proportion to their stake.
 
 * **Source:** The 150,000,000 MATRA validator reserve (15% of total supply).
-* **Rationale:** With cross-validation (Minotaur), TALOS delegators directly contribute to Materios network security. Rewarding them from the validator reserve is consistent with the reserve's stated purpose — funding validators.
-* **Duration:** Time-limited program. Start and end dates will be published before the program begins.
-* **Rate:** A fixed cMATRA-per-ADA-per-epoch rate, published before the program begins.
-* **Distribution:** Periodic airdrop to delegator wallets based on epoch snapshots.
-* **Impact on public pool:** None. This program draws exclusively from the validator reserve, not the 850,000,000 public redemption pool. Public redemption rates are completely unaffected.
-* **Disclosure:** Full program parameters (rate, duration, total allocation, distribution schedule) will be published before the first distribution.
-
-This program also serves to bootstrap initial cMATRA distribution and DEX liquidity ahead of the Materios mainnet launch.
+* **Rationale:** Cross-validation (Minotaur) means SPO delegators directly secure the Materios network. Distributing validator rewards to them is the reserve doing its job.
+* **Duration:** An initial distribution period with published start and end dates. Duration and rates are published before the first distribution.
+* **Rate:** A fixed cMATRA-per-ADA-per-epoch rate, published in advance.
+* **Distribution:** Periodic distribution to delegator wallets based on epoch snapshots.
+* **Impact on public pool:** None. Delegation rewards draw exclusively from the validator reserve, not the 850,000,000 public redemption pool. Public redemption rates are completely unaffected.
+* **ADA rewards:** Delegators continue to receive their normal ADA staking rewards. cMATRA delegation rewards are additional.
 
 ### 40. Can unused validator reserve be repurposed later?
 
 Not casually. The reserve is not discretionary operating capital. Any later reassignment of clearly surplus reserve should require governance and should be communicated explicitly.
 
-The TALOS delegation rewards program (Q39a) is not a repurposing — it is a direct use of the validator reserve for its stated purpose (rewarding participants who contribute to network security), distributed on Cardano L1 before the full cross-chain bridge is operational.
+Distributing delegation rewards to SPO delegators who secure Materios through cross-validation (Q39a) is not a repurposing — it is the validator reserve fulfilling its stated purpose on Cardano L1 before the full cross-chain bridge is operational.
 
 ***
 

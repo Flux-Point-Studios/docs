@@ -51,7 +51,7 @@ Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-
 
 The merger uses a fixed supply model with a validator reserve carved out at genesis.
 
-* The **15% validator reserve** is non-circulating at launch and exists to fund Materios validators over time. This includes Cardano SPO delegation rewards for participating pools (see [FAQ Q39a](faq.md#39a-what-is-the-talos-spo-delegation-rewards-program)).
+* The **15% validator reserve** is non-circulating at launch and exists to fund Materios validators over time. This includes delegation rewards for Cardano SPO delegators who secure Materios through cross-validation (see [FAQ Q39a](faq.md#39a-how-do-cardano-spo-delegators-earn-matra)).
 * The **85% public redemption pool** is the only pool used for ordinary public redemptions. SPO delegation rewards do not draw from this pool.
 * **Team treasury softening** is handled through explicit waiver and disclosure, not by pretending the reserve does not exist.
 * **Team carve-out:** Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~31.3M cMATRA) but does not change public rates. See [FAQ](faq.md) for details.
