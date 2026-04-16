@@ -4,20 +4,22 @@ description: Materios mainnet readiness tracker — current status and remaining
 
 # Mainnet Roadmap
 
-Materios is currently running as a **staging network** with live data, real game integrations, and mainnet Cardano anchoring. This page tracks what's done and what remains before the network is designated as mainnet.
+Materios is currently running as a **preprod network** (`materios_preprod`, runtime v117) with live data, real game integrations, and mainnet Cardano anchoring. This page tracks what's done and what remains before the network is designated as mainnet.
 
 ***
 
-## Current Status: Staging Network
+## Current Status: Preprod Network
 
-The Materios staging network is fully operational with real workloads:
+The Materios preprod network (`materios_preprod`) is fully operational with real workloads:
 
 - **Live game integration** — Clay Monster Dash submits certified receipts through the full pipeline
 - **Cardano mainnet anchoring** — Checkpoint transactions are submitted to Cardano L1 with label `8746` ([view format](cardano-anchoring.md))
 - **Permissionless attestation** — External operators can join the committee with a single command ([operator guide](operator-guide.md))
 - **~12-second certification** — Receipts go from submitted to certified in approximately 12 seconds
+- **Clean genesis** — Runtime v117 with all fixes baked in, no WASM overrides needed
+- **GRANDPA finality** — Working with 3 validators (Gemtek + 2 GMKtec Ultra 6 mini PCs)
 
-The staging network uses the same codebase, pallets, and protocols that will run on mainnet. The transition is about token economics and governance, not a rewrite.
+The preprod network uses the same codebase, pallets, and protocols that will run on mainnet. The transition is about token economics and governance, not a rewrite. The previous staging/preview network is deprecated.
 
 ***
 
@@ -27,12 +29,12 @@ The staging network uses the same codebase, pallets, and protocols that will run
 
 | Milestone | Status | Details |
 |-----------|--------|---------|
-| Substrate chain (Aura + GRANDPA) | Done | 5 validators, 6-second blocks, BFT finality |
+| Substrate chain (Aura + GRANDPA) | Done | 3 validators (preprod), 6-second blocks, BFT finality |
 | Receipt pipeline (submit → certify → anchor) | Done | End-to-end proven, ~12s certification |
 | Cardano L1 anchoring | Done | Mainnet metadata TXs, label `8746`, v2 format |
 | Blob gateway + locator registry | Done | Off-chain data storage with integrity verification |
 | Content validation schemas | Done | Per-game plausibility checks (Clay Monster Dash v1 live) |
-| Explorer dashboard | Done | [materios.fluxpointstudios.com/explorer](https://materios.fluxpointstudios.com/explorer/) |
+| Explorer dashboard | Done | [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) (Preprod/Preview toggle) |
 
 ### Attestation Committee
 
@@ -49,6 +51,7 @@ The staging network uses the same codebase, pallets, and protocols that will run
 |-----------|--------|---------|
 | Multisig governance | Done | Runtime v114 — `pallet-multisig` + `pallet-utility`. Sudo requires 2-of-3 approval. |
 | MOTRA projected balance | Done | Runtime v115 — `motra_getBalance` RPC returns projected balance for fresh accounts immediately. |
+| Preprod chain launch | Done | Runtime v117 — Clean genesis (`materios_preprod`), 3 validators, no WASM overrides, GRANDPA finality working. |
 | Validator key rotation | Done | Production keypairs (mnemonic-derived, April 12 2026). External validators joining. |
 | Cardano governance contracts | Planned | On-chain voting by MATRA/cMATRA holders via Cardano smart contracts |
 
@@ -87,15 +90,17 @@ Long-term governance will be managed through Cardano smart contracts, enabling M
 
 ## Network Parameters
 
-| Parameter | Current (staging) | Mainnet target |
+| Parameter | Current (preprod) | Mainnet target |
 |-----------|------------------|----------------|
-| Runtime version | 115 | TBD |
+| Runtime version | 117 | TBD |
+| Chain ID | `materios_preprod` | `materios` |
 | Block time | 6 seconds | 6 seconds |
 | Finality | GRANDPA BFT | GRANDPA BFT |
-| Validators | 5 (production keypairs) | 7–15+ |
+| Validators | 3 (Gemtek + 2 GMKtec) | 7–15+ |
 | Attestation threshold | 2-of-N | 2-of-N (scales with committee) |
 | Cardano anchoring | Mainnet, label `8746` | Same |
 | Governance | 2-of-3 multisig | Cardano governance contracts |
+| WASM overrides | None needed | None |
 
 ***
 
@@ -109,7 +114,7 @@ All infrastructure milestones (pipeline, anchoring, attestation, multisig govern
 
 ## Links
 
-- [Explorer](https://materios.fluxpointstudios.com/explorer/) — Live network dashboard
+- [Explorer](https://fluxpointstudios.com/materios/explorer) — Live network dashboard (Preprod/Preview toggle)
 - [Operator Guide](operator-guide.md) — Run an attestor node
 - [Cardano L1 Anchoring](cardano-anchoring.md) — Metadata format for anchor transactions
 - [Game Integration](game-integration.md) — Add certified anti-cheat to your game

@@ -8,7 +8,7 @@ This page covers what you need to participate in the Materios network. There are
 
 | Role | Purpose | Approval |
 |------|---------|----------|
-| **Full Validator** | Block production + finality + attestation | Invite required |
+| **Full Validator** | Block production + finality + attestation | No approval needed |
 | **Attestor** | Blob verification + attestation rewards | **No approval needed** |
 | **Full Node** | Sync chain + serve RPC queries | None |
 
@@ -24,7 +24,7 @@ This page covers what you need to participate in the Materios network. There are
 | **Network** | 10 Mbps, static IP | 100 Mbps, static IP |
 | **OS** | Linux (x86\_64) | Ubuntu 22.04+ or Debian 12+ |
 
-Actual observed usage on the staging network: ~800 MiB RAM, <1% CPU, ~12 GB disk after several weeks of operation. Requirements will grow as chain history accumulates.
+Actual observed usage on the preprod network: ~800 MiB RAM, <1% CPU, ~12 GB disk after several weeks of operation. Requirements will grow as chain history accumulates.
 
 ### Full Node / Archive
 
@@ -39,7 +39,7 @@ Archive nodes retain all historical state and serve RPC queries. They require mo
 
 ### Attestor (Cert Daemon Only)
 
-Attestors run a cert daemon without a full Substrate node. They connect to the public Materios RPC endpoint and earn attestation rewards (10 tMATRA per certified receipt). **No invite token or approval required.**
+Attestors run a cert daemon without a full Substrate node. They connect to the public Materios RPC endpoint (`wss://materios.fluxpointstudios.com/preprod-rpc`) and earn attestation rewards (10 tMATRA per certified receipt). **No approval required.**
 
 | Resource | Minimum |
 |----------|---------|
@@ -64,7 +64,7 @@ See the [Operator Guide](operator-guide.md#attestor-permissionless) for full det
 The Materios node is distributed as a Docker image built from the monorepo.
 
 ```bash
-docker pull ghcr.io/flux-point-studios/materios-node:v109
+docker pull ghcr.io/flux-point-studios/materios-node:v117
 ```
 
 The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
@@ -74,7 +74,8 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 ### Runtime
 
 - **spec\_name**: `materios`
-- **spec\_version**: 113
+- **spec\_version**: 117
+- **Chain ID**: `materios_preprod`
 - **Block time**: 6 seconds
 
 ## Network Ports
@@ -138,13 +139,14 @@ RUST_LOG=info,materios=debug
 
 ### Bootnodes
 
-New nodes need at least one bootnode to discover peers:
+New nodes need at least one bootnode to discover peers. The preprod chain uses the following bootnodes:
 
 ```
-/ip4/5.78.94.109/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
+/ip4/166.70.250.197/tcp/30334/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
+/ip4/192.168.0.132/tcp/30334/p2p/12D3KooWPC1HMQGwB6c29PBeZcUkWzSR24frpfFEs6JUs96KgWNF
 ```
 
-Add this to your node's `--bootnodes` flag. The install script configures this automatically.
+Add these to your node's `--bootnodes` flag. The install script configures this automatically.
 
 ## Session Keys
 
@@ -197,14 +199,16 @@ Keys persist to the node's keystore on disk. After insertion, restart the node f
 
 ## Chain Spec
 
-The chain specification file defines genesis state, initial authorities, and network parameters. The raw chain spec is available at [`chain-spec/chain-spec-raw.json`](https://github.com/Flux-Point-Studios/materios/blob/main/chain-spec/chain-spec-raw.json).
+The chain specification file defines genesis state, initial authorities, and network parameters. The preprod chain spec is available at [`chain-spec/preprod-chain-spec-raw.json`](https://github.com/Flux-Point-Studios/materios/blob/main/chain-spec/preprod-chain-spec-raw.json).
 
 To verify you have the correct chain spec:
 
 ```bash
-# Expected genesis hash
-5663079a485b93fdc9e386b862b4cf8d25499427df6b8c5f018535acfd2e5020
+# Expected preprod genesis hash
+0x3d23152c6e9717b2bea57f4c6794f943598146d978f0cb9680107d9cd9ea634d
 ```
+
+> **Note**: No WASM overrides are needed for the preprod chain. All runtime fixes are baked into the genesis. If you previously ran a preview/staging node with WASM overrides, you can safely remove them.
 
 ## Monitoring
 
@@ -235,7 +239,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v109
+    image: ghcr.io/flux-point-studios/materios-node:v117
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -249,7 +253,7 @@ services:
       - RUST_LOG=info,materios=debug
     command:
       - --chain
-      - local
+      - /data/materios/preprod-chain-spec-raw.json
       - --base-path
       - /data/materios
       - --validator
@@ -273,7 +277,7 @@ volumes:
 
 ## Syncing a New Node
 
-New nodes sync from genesis by default. The staging network is young, so a full sync completes in minutes. As the chain grows, snapshot-based syncing may be offered.
+New nodes sync from genesis by default. The preprod network is young, so a full sync completes in minutes. As the chain grows, snapshot-based syncing may be offered.
 
 During sync, the node will show `isSyncing: true` in the health check. Wait for sync to complete before inserting validator keys.
 
@@ -293,7 +297,7 @@ The Materios node Docker image supports multiple platforms:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v109` |
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v117` |
 | **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
 | **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
 | **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
@@ -340,5 +344,5 @@ The arm64 image runs on Raspberry Pi 4/5 and other ARM64 single-board computers 
 The installer automatically downloads the chain spec. If you need it manually:
 
 ```bash
-curl -sSLO https://fluxpointstudios.com/materios/chain-spec-raw.json
+curl -sSLO https://fluxpointstudios.com/materios/preprod-chain-spec-raw.json
 ```

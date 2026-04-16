@@ -8,7 +8,7 @@ There are **two ways** to participate in the Materios network and earn tMATRA re
 
 | Role | What You Do | Rewards | Approval |
 |------|------------|---------|----------|
-| **Full Validator** | Produce blocks + finalize + attest | Block rewards + attestation rewards | Invite required |
+| **Full Validator** | Produce blocks + finalize + attest | Block rewards + attestation rewards | No approval needed |
 | **Attestor** | Verify blobs and sign attestations | Attestation rewards | No approval needed |
 
 Both roles contribute to network security. Full validators secure consensus (block production + finality). Attestors secure data integrity (verifying that game scores are real).
@@ -128,7 +128,7 @@ sudo ufw allow 30333/tcp
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator
 ```
 
-No invite token needed. The installer auto-registers via the faucet.
+No invite token or approval needed. The installer auto-registers via the faucet.
 
 ### Quick Start (Windows / PowerShell)
 
@@ -158,7 +158,7 @@ curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator
 
 * Checks that Docker, Compose v2, disk, and RAM meet requirements
 * Downloads the official Materios chain spec
-* Pulls the validator node (v109) and cert daemon Docker images
+* Pulls the validator node (v117) and cert daemon Docker images
 * Generates a fresh sr25519 keypair
 * Auto-registers with the Materios gateway via faucet
 * Writes a fully configured `docker-compose.yml` with both services
@@ -179,7 +179,7 @@ When it finishes, you'll see:
   P2P Port       : 30333 (ensure this is open inbound)
   Node RPC       : http://localhost:9944
   Daemon Health  : http://localhost:8080/status
-  Explorer       : https://materios.fluxpointstudios.com/explorer/#/committee
+  Explorer       : https://fluxpointstudios.com/materios/explorer
   Mnemonic       : ~/materios-operator/.secret-mnemonic
 ```
 
@@ -296,7 +296,7 @@ Attestation rewards are earned by **both** full validators and standalone attest
 | **Attestation rewards** | 10 tMATRA per certified receipt | 10 tMATRA per certified receipt |
 | **Hardware cost** | 2 vCPU, 2 GB RAM, 50 GB SSD | 1 vCPU, 512 MB RAM, 1 GB |
 | **Network** | Port 30333 open | Outbound only |
-| **Approval** | Invite token (testnet only — replaced by staking on mainnet) | None |
+| **Approval** | None (staking on mainnet) | None |
 
 ***
 
@@ -307,7 +307,7 @@ Attestation rewards are earned by **both** full validators and standalone attest
 curl -sSL .../install.sh | bash -s -- --mode attestor --label "my-attestor-01"
 
 # Full validator
-curl -sSL .../install.sh | bash -s -- --token YOUR_TOKEN --label "my-datacenter-01"
+curl -sSL .../install.sh | bash -s -- --label "my-datacenter-01"
 ```
 
 ***
@@ -341,7 +341,6 @@ bash generate-session-keys.sh
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
 | Installer fails at "Pulling image" | Docker not running or no internet | Start Docker: `sudo systemctl start docker` |
-| "Invalid invite token" | Token already used or mistyped | Request a new token (full validators only) |
 | Node stuck syncing | No peers found | Ensure port 30333 is open: `sudo ufw allow 30333/tcp` |
 | `/ready` returns 503 | Daemon still connecting | Wait 1-2 minutes. Check logs: `docker compose logs -f cert-daemon` |
 | Heartbeat not showing | Daemon not yet connected | Check daemon logs for RPC connection |
@@ -404,7 +403,7 @@ bash generate-session-keys.sh
 └─────────┼───────────────────────┘
           │
           ▼
-    Public Materios RPC    Blob Gateway
-    (wss://materios...)    (HTTPS)
+    Public Materios RPC                  Blob Gateway
+    (wss://materios..../preprod-rpc)     (HTTPS)
 ```
 

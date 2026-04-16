@@ -66,14 +66,25 @@ Materios Chain          Cardano L1
 
 ## Current Network
 
-- **Chain**: `materios_staging`
-- **Runtime version**: 115
-- **Validators**: 5 authorities (+ external validators joining)
-- **Attestation committee**: 10 members, threshold 2-of-10
-- **Governance**: 2-of-3 multisig sudo
-- **Validator keys**: Production keypairs (rotated from development accounts, April 12 2026)
+### Preprod (active)
+
+- **Chain**: `materios_preprod`
+- **Runtime version**: 117
+- **Validators**: 3 authorities (Gemtek + 2 GMKtec Ultra 6 mini PCs)
+- **Block time**: 6 seconds
+- **Finality**: GRANDPA (working, 3 validators)
+- **Governance**: 2-of-3 multisig sudo (transferred from //Alice)
 - **Cardano anchoring**: Mainnet, label `8746`
-- **Explorer**: [materios.fluxpointstudios.com/explorer](https://materios.fluxpointstudios.com/explorer/)
+- **RPC**: `wss://materios.fluxpointstudios.com/preprod-rpc`
+- **Gateway**: `https://materios.fluxpointstudios.com/preprod-blobs`
+- **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) (with Preprod/Preview toggle)
+- **Genesis hash**: `0x3d23152c6e9717b2bea57f4c6794f943598146d978f0cb9680107d9cd9ea634d`
+- **WASM overrides**: None needed (clean genesis, all fixes baked in)
+- **Install**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator`
+
+### Preview (deprecated)
+
+The original preview/staging network (`materios_staging`, runtime 115, 5 validators) is deprecated. All new operators should join the **preprod** chain. Preview will be sunset once all integrations have migrated.
 
 ## Next Steps
 
