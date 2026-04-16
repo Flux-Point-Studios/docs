@@ -92,7 +92,7 @@ Long-term governance will be managed through Cardano smart contracts, enabling M
 
 | Parameter | Current (preprod) | Mainnet target |
 |-----------|------------------|----------------|
-| Runtime version | 117 | TBD |
+| Runtime version | v3 (IOG partner-chains / Minotaur) | TBD |
 | Chain ID | `materios_preprod` | `materios` |
 | Block time | 6 seconds | 6 seconds |
 | Finality | GRANDPA BFT | GRANDPA BFT |

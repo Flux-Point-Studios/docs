@@ -180,7 +180,7 @@ curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator
 
 * Checks that Docker, Compose v2, disk, and RAM meet requirements
 * Downloads the official Materios chain spec
-* Pulls the validator node (v117) and cert daemon Docker images
+* Pulls the validator node (v3) and cert daemon Docker images
 * Generates a fresh sr25519 keypair
 * Auto-registers with the Materios gateway via faucet
 * Writes a fully configured `docker-compose.yml` with both services

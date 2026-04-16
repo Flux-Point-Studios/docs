@@ -72,7 +72,7 @@ See the [Operator Guide](operator-guide.md#attestor-permissionless) for full det
 The Materios node is distributed as a Docker image built from the monorepo.
 
 ```bash
-docker pull ghcr.io/flux-point-studios/materios-node:v117
+docker pull ghcr.io/flux-point-studios/materios-node:v3
 ```
 
 The image is publicly available on GHCR. No need to build from source unless you want to audit the code.
@@ -82,7 +82,7 @@ Image size: ~224 MB uncompressed (~56 MB compressed).
 ### Runtime
 
 - **spec\_name**: `materios`
-- **spec\_version**: 117
+- **spec\_version**: v3
 - **Chain ID**: `materios_preprod`
 - **Block time**: 6 seconds
 
@@ -150,8 +150,7 @@ RUST_LOG=info,materios=debug
 New nodes need at least one bootnode to discover peers. The preprod chain uses the following bootnodes:
 
 ```
-/ip4/166.70.250.197/tcp/30334/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
-/ip4/192.168.0.132/tcp/30334/p2p/12D3KooWPC1HMQGwB6c29PBeZcUkWzSR24frpfFEs6JUs96KgWNF
+/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
 ```
 
 Add these to your node's `--bootnodes` flag. The install script configures this automatically.
@@ -213,7 +212,7 @@ To verify you have the correct chain spec:
 
 ```bash
 # Expected preprod genesis hash
-0x3d23152c6e9717b2bea57f4c6794f943598146d978f0cb9680107d9cd9ea634d
+0x105fed4310b56550d3646a13d7a6f4b69ab82f1c1269a6c732948a2a260b1360
 ```
 
 > **Note**: No WASM overrides are needed for the preprod chain. All runtime fixes are baked into the genesis. If you previously ran a preview/staging node with WASM overrides, you can safely remove them.
@@ -247,7 +246,7 @@ If `--prometheus-port 9615` is set, metrics are available at `http://localhost:9
 version: "3.8"
 services:
   materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v117
+    image: ghcr.io/flux-point-studios/materios-node:v3
     container_name: materios-node
     restart: unless-stopped
     user: "1000:1000"
@@ -305,7 +304,7 @@ The Materios node Docker image supports multiple platforms:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v117` |
+| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v3` |
 | **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
 | **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
 | **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
@@ -352,5 +351,5 @@ The arm64 image runs on Raspberry Pi 4/5 and other ARM64 single-board computers 
 The installer automatically downloads the chain spec. If you need it manually:
 
 ```bash
-curl -sSLO https://fluxpointstudios.com/materios/preprod-chain-spec-raw.json
+curl -sSLO https://materios.fluxpointstudios.com/chain-spec-v3-raw.json
 ```

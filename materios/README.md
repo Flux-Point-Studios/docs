@@ -69,7 +69,7 @@ Materios Chain          Cardano L1
 ### Preprod (active)
 
 - **Chain**: `materios_preprod`
-- **Runtime version**: 117
+- **Runtime version**: v3 (IOG partner-chains pallets for Minotaur cross-validation)
 - **Validators**: 3 authorities (Gemtek + 2 GMKtec Ultra 6 mini PCs)
 - **Block time**: 6 seconds
 - **Finality**: GRANDPA (working, 3 validators)
@@ -78,7 +78,7 @@ Materios Chain          Cardano L1
 - **RPC**: `wss://materios.fluxpointstudios.com/preprod-rpc`
 - **Gateway**: `https://materios.fluxpointstudios.com/preprod-blobs`
 - **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) (with Preprod/Preview toggle)
-- **Genesis hash**: `0x3d23152c6e9717b2bea57f4c6794f943598146d978f0cb9680107d9cd9ea634d`
+- **Genesis hash**: `0x105fed4310b56550d3646a13d7a6f4b69ab82f1c1269a6c732948a2a260b1360`
 - **WASM overrides**: None needed (clean genesis, all fixes baked in)
 - **Install**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator`
 
