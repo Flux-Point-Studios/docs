@@ -319,9 +319,27 @@ No. The intended model is one economic supply story. cMATRA is the transitional 
 
 From the MATRA validator reserve, not from burned MOTRA fees. The reserve is meant to release over time according to the protocol's validator reward schedule.
 
+This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation, making SPO delegation rewards a legitimate use of the validator reserve.
+
+### 39a. What is the TALOS SPO Delegation Rewards Program?
+
+For a time-limited period, delegators to the **TALOS** stake pool receive cMATRA rewards proportional to their ADA delegation, in addition to their normal ADA staking rewards.
+
+* **Source:** The 150,000,000 MATRA validator reserve (15% of total supply).
+* **Rationale:** With cross-validation (Minotaur), TALOS delegators directly contribute to Materios network security. Rewarding them from the validator reserve is consistent with the reserve's stated purpose — funding validators.
+* **Duration:** Time-limited program. Start and end dates will be published before the program begins.
+* **Rate:** A fixed cMATRA-per-ADA-per-epoch rate, published before the program begins.
+* **Distribution:** Periodic airdrop to delegator wallets based on epoch snapshots.
+* **Impact on public pool:** None. This program draws exclusively from the validator reserve, not the 850,000,000 public redemption pool. Public redemption rates are completely unaffected.
+* **Disclosure:** Full program parameters (rate, duration, total allocation, distribution schedule) will be published before the first distribution.
+
+This program also serves to bootstrap initial cMATRA distribution and DEX liquidity ahead of the Materios mainnet launch.
+
 ### 40. Can unused validator reserve be repurposed later?
 
 Not casually. The reserve is not discretionary operating capital. Any later reassignment of clearly surplus reserve should require governance and should be communicated explicitly.
+
+The TALOS delegation rewards program (Q39a) is not a repurposing — it is a direct use of the validator reserve for its stated purpose (rewarding participants who contribute to network security), distributed on Cardano L1 before the full cross-chain bridge is operational.
 
 ***
 
@@ -361,5 +379,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 6.3 | **Date:** April 14, 2026 | **Status:** Public / governance draft\
+**Version:** 6.4 | **Date:** April 16, 2026 | **Status:** Public / governance draft\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
