@@ -6,12 +6,14 @@ description: How to join the Materios network as a validator or attestor
 
 There are **two ways** to participate in the Materios network and earn tMATRA rewards:
 
-| Role | What You Do | Rewards | Approval |
-|------|------------|---------|----------|
-| **Full Validator** | Produce blocks + finalize + attest | Block rewards + attestation rewards | No approval needed |
-| **Attestor** | Verify blobs and sign attestations | Attestation rewards | No approval needed |
+| Role | What You Do | Rewards | Cardano stack | Approval |
+|------|------------|---------|---------------|----------|
+| **Attestor** (Materios-only) | Verify blobs and sign attestations from a cert-daemon | Attestation rewards | No | No approval needed |
+| **Full Validator / SPO** | Full Materios node (syncs + produces blocks + finalizes) **plus** cert-daemon | Block production + attestation rewards | Yes — your own cardano-node + cardano-db-sync + Postgres | No approval needed |
 
-Both roles contribute to network security. Full validators secure consensus (block production + finality). Attestors secure data integrity (verifying that game scores are real).
+A full validator is strictly a superset of an attestor — you get both reward streams. The full-node role isn't a separate tier on this chain; the validator node IS the full node. If you don't want to run a Cardano stack, run attestor mode.
+
+Both roles contribute to network security. Full validators secure consensus (block production + finality). Attestors (and the attestor half of every validator) secure data integrity (verifying that game scores are real).
 
 > **No API key required.** Submitting receipts to Materios is permissionless — anyone with an sr25519 keypair and MATRA for TX fees (available from the faucet on testnet) can submit. The blob gateway also accepts sr25519-signed uploads without API keys.
 

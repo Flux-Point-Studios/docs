@@ -4,35 +4,16 @@ description: Hardware, software, and configuration for running a Materios node o
 
 # Node Requirements
 
-This page covers what you need to participate in the Materios network. There are three roles:
+This page covers what you need to participate in the Materios network. There are two roles:
 
-| Role | Purpose | Cardano stack? | Approval |
-|------|---------|----------------|----------|
-| **Attestor** | Blob verification + attestation rewards | **No** — just cert-daemon against our public RPC | **No approval needed** |
-| **Full Validator (SPO)** | Block production + finality + attestation | **Yes** — your own cardano-node + cardano-db-sync + Postgres | No approval needed |
-| **Full Node / RPC mirror** | Sync chain + serve RPC queries | **Yes, currently** — see note below | None |
+| Role | What you run | Rewards | Cardano stack | Approval |
+|------|--------------|---------|---------------|----------|
+| **Attestor** (Materios-only) | Cert-daemon only, talking to our public RPC | Attestation | **No** | None |
+| **Full Validator / SPO** | Full Materios node (syncs + produces blocks) + cert-daemon + your own Cardano stack | Block production **and** attestation | **Yes** — cardano-node + cardano-db-sync + Postgres | None |
 
-> **Why Cardano?** Materios v3 is an IOG partner-chain. Committee selection and the D-parameter are read from Cardano preprod on-chain state. Any Materios node that verifies blocks — validator or not — needs to re-derive those inherent values, which requires a reachable `cardano-db-sync` Postgres endpoint.
+> **A full validator is strictly a superset of an attestor.** The SPO validator runs the full Materios node (which is what "full node" means on this chain — there's no non-validator node tier separate from it) plus the same cert-daemon the attestor runs, plus a Cardano stack for mainchain data. You get both reward streams.
 >
-> **If you don't want Cardano infra, run attestor mode.** It's the supported path for operators who just want to earn rewards without running a second blockchain stack.
-
-## Choosing your role
-
-```
-Do you want to run a cert-daemon + earn attestation rewards?
-│
-├── Yes, but I don't want to run a Cardano node ────────→ Attestor (recommended)
-│
-├── Yes, and I already run a Cardano SPO (or don't mind
-│   running cardano-node + db-sync + Postgres) ─────────→ Full Validator
-│
-└── I need to sync Materios state for a dApp, explorer,
-    analytics, or RPC mirror — not participating in
-    consensus ──────────────────────────────────────────→ Full Node
-                                                           (requires db-sync
-                                                            same as validators,
-                                                            currently)
-```
+> **Why Cardano?** Materios v3 is an IOG partner-chain. Committee selection and the D-parameter are read from Cardano preprod on-chain state, so producing or verifying Materios blocks needs a reachable `cardano-db-sync` Postgres endpoint. If that's too much infrastructure, run **attestor mode** — you still earn attestation rewards and appear on the committee page, without running a node or Cardano.
 
 ## Hardware Requirements
 
@@ -50,7 +31,7 @@ These numbers are **just for the Materios node itself**. Add the Cardano stack r
 
 Actual observed usage on the preprod network: ~800 MiB RAM, <1% CPU, ~12 GB disk after several weeks of operation. Requirements will grow as chain history accumulates.
 
-### Cardano Stack (for full validators + full nodes)
+### Cardano Stack (required for full validators)
 
 Materios reads Cardano preprod state via cardano-db-sync. You need these services reachable from your Materios node:
 
@@ -207,39 +188,25 @@ materios-node \
 | `--node-key` | Persistent P2P identity (32 hex bytes). Generate with `subkey generate-node-key` |
 | `--name` | Human-readable name shown in telemetry |
 
-### Full Node (Non-Validator)
+### Mainchain environment variables (set by the installer)
 
-Full nodes omit `--validator` but **still need a reachable cardano-db-sync Postgres endpoint** because the IOG session-validator-management pallet verifies inherent data on every block import. A node with no mainchain access cannot sync past the first session rotation.
-
-```bash
-materios-node \
-  --chain /path/to/chain-spec-raw.json \
-  --base-path /data/materios \
-  --name your-node-name \
-  --rpc-port 9944 \
-  --rpc-cors all \
-  --unsafe-rpc-external \
-  --port 30333 \
-  --pruning archive
-```
-
-Required environment variables (same as validator mode):
+The Materios node reads Cardano preprod state through these variables. The installer writes them into your `docker-compose.yml`, but they're listed here for reference:
 
 ```bash
-export DB_SYNC_POSTGRES_CONNECTION_STRING='postgres://user:pass@host:5432/cexplorer'
-export MC__FIRST_EPOCH_TIMESTAMP_MILLIS=1654041600000
-export MC__EPOCH_DURATION_MILLIS=432000000
-export MC__FIRST_EPOCH_NUMBER=0
-export MC__FIRST_SLOT_NUMBER=0
-export CARDANO_SECURITY_PARAMETER=2160
-export CARDANO_ACTIVE_SLOTS_COEFF=0.05
-export PARTNER_CHAIN_GENESIS_UTXO='0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0'
-export COMMITTEE_CANDIDATE_ADDRESS='addr_test1wzr6en3y43437qps5wscegufxw0euspmy0c3976mjm95j0cwuvezm'
-export D_PARAMETER_POLICY_ID=0x7f57bb675447c65ba0d68270a6b9b93aecc8dfdacaa3aa8cd081f9f3
-export PERMISSIONED_CANDIDATES_POLICY_ID=0x70cd1c6fbbbd7b1e855f589abd842f433ec0d7b46c7a9e437194e931
+DB_SYNC_POSTGRES_CONNECTION_STRING='postgres://user:pass@host:5432/cexplorer'
+MC__FIRST_EPOCH_TIMESTAMP_MILLIS=1654041600000
+MC__EPOCH_DURATION_MILLIS=432000000
+MC__FIRST_EPOCH_NUMBER=0
+MC__FIRST_SLOT_NUMBER=0
+CARDANO_SECURITY_PARAMETER=2160
+CARDANO_ACTIVE_SLOTS_COEFF=0.05
+PARTNER_CHAIN_GENESIS_UTXO='0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0'
+COMMITTEE_CANDIDATE_ADDRESS='addr_test1wzr6en3y43437qps5wscegufxw0euspmy0c3976mjm95j0cwuvezm'
+D_PARAMETER_POLICY_ID=0x7f57bb675447c65ba0d68270a6b9b93aecc8dfdacaa3aa8cd081f9f3
+PERMISSIONED_CANDIDATES_POLICY_ID=0x70cd1c6fbbbd7b1e855f589abd842f433ec0d7b46c7a9e437194e931
 ```
 
-> **Don't want to run a Cardano stack?** Today this isn't cleanly supported for full nodes. The only path that works without Cardano infra is **attestor mode** (cert-daemon only, no Materios node, reads chain state from our public RPC). If you specifically need a local Materios RPC mirror for a dApp or explorer backend and can't run Cardano, open an issue — we're tracking interest in a shared/public mainchain-data endpoint.
+Only `DB_SYNC_POSTGRES_CONNECTION_STRING` varies per operator — you supply it by exporting the variable before running the installer. Everything else is chain-wide and pinned in the template.
 
 ### Environment Variables
 
