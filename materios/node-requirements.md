@@ -6,15 +6,39 @@ description: Hardware, software, and configuration for running a Materios node o
 
 This page covers what you need to participate in the Materios network. There are three roles:
 
-| Role | Purpose | Approval |
-|------|---------|----------|
-| **Full Validator** | Block production + finality + attestation | No approval needed |
-| **Attestor** | Blob verification + attestation rewards | **No approval needed** |
-| **Full Node** | Sync chain + serve RPC queries | None |
+| Role | Purpose | Cardano stack? | Approval |
+|------|---------|----------------|----------|
+| **Attestor** | Blob verification + attestation rewards | **No** — just cert-daemon against our public RPC | **No approval needed** |
+| **Full Validator (SPO)** | Block production + finality + attestation | **Yes** — your own cardano-node + cardano-db-sync + Postgres | No approval needed |
+| **Full Node / RPC mirror** | Sync chain + serve RPC queries | **Yes, currently** — see note below | None |
+
+> **Why Cardano?** Materios v3 is an IOG partner-chain. Committee selection and the D-parameter are read from Cardano preprod on-chain state. Any Materios node that verifies blocks — validator or not — needs to re-derive those inherent values, which requires a reachable `cardano-db-sync` Postgres endpoint.
+>
+> **If you don't want Cardano infra, run attestor mode.** It's the supported path for operators who just want to earn rewards without running a second blockchain stack.
+
+## Choosing your role
+
+```
+Do you want to run a cert-daemon + earn attestation rewards?
+│
+├── Yes, but I don't want to run a Cardano node ────────→ Attestor (recommended)
+│
+├── Yes, and I already run a Cardano SPO (or don't mind
+│   running cardano-node + db-sync + Postgres) ─────────→ Full Validator
+│
+└── I need to sync Materios state for a dApp, explorer,
+    analytics, or RPC mirror — not participating in
+    consensus ──────────────────────────────────────────→ Full Node
+                                                           (requires db-sync
+                                                            same as validators,
+                                                            currently)
+```
 
 ## Hardware Requirements
 
 ### Validator Node
+
+These numbers are **just for the Materios node itself**. Add the Cardano stack requirements below if you don't already operate one.
 
 | Resource | Minimum | Recommended |
 |----------|---------|-------------|
@@ -25,6 +49,66 @@ This page covers what you need to participate in the Materios network. There are
 | **OS** | Linux (x86\_64) | Ubuntu 22.04+ or Debian 12+ |
 
 Actual observed usage on the preprod network: ~800 MiB RAM, <1% CPU, ~12 GB disk after several weeks of operation. Requirements will grow as chain history accumulates.
+
+### Cardano Stack (for full validators + full nodes)
+
+Materios reads Cardano preprod state via cardano-db-sync. You need these services reachable from your Materios node:
+
+| Service | Purpose | Footprint (preprod) |
+|---------|---------|---------------------|
+| **cardano-node** (preprod) | Follow the Cardano chain | ~15 GB disk, ~1 GB RAM |
+| **cardano-db-sync** | Index chain state into Postgres | ~15 GB disk, ~1 GB RAM |
+| **Postgres 16** | Storage backend | <1 GB RAM |
+
+Initial sync takes several hours on preprod (can be accelerated with a Mithril snapshot). Reference Docker Compose:
+
+```yaml
+services:
+  cardano-node-preprod:
+    image: ghcr.io/intersectmbo/cardano-node:10.1.4
+    restart: unless-stopped
+    environment: { NETWORK: preprod }
+    volumes:
+      - node-data:/data
+      - node-ipc:/ipc
+
+  postgres-preprod:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: cexplorer
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  db-sync-preprod:
+    image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.4
+    restart: unless-stopped
+    depends_on:
+      postgres-preprod: { condition: service_healthy }
+    environment:
+      NETWORK: preprod
+      POSTGRES_HOST: postgres-preprod
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: cexplorer
+    volumes:
+      - db-sync-data:/var/lib/cdbsync
+      - node-ipc:/node-ipc:ro
+
+volumes: { node-data: , node-ipc: , postgres-data: , db-sync-data: }
+```
+
+After this is running, pass its connection string to the Materios installer:
+
+```bash
+export DB_SYNC_POSTGRES_CONNECTION_STRING='postgres://postgres:change-me@localhost:5433/cexplorer'
+curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash
+```
 
 ### Full Node / Archive
 
@@ -125,6 +209,8 @@ materios-node \
 
 ### Full Node (Non-Validator)
 
+Full nodes omit `--validator` but **still need a reachable cardano-db-sync Postgres endpoint** because the IOG session-validator-management pallet verifies inherent data on every block import. A node with no mainchain access cannot sync past the first session rotation.
+
 ```bash
 materios-node \
   --chain /path/to/chain-spec-raw.json \
@@ -137,7 +223,23 @@ materios-node \
   --pruning archive
 ```
 
-Full nodes omit `--validator` and can safely expose RPC externally with `--rpc-cors` for serving queries.
+Required environment variables (same as validator mode):
+
+```bash
+export DB_SYNC_POSTGRES_CONNECTION_STRING='postgres://user:pass@host:5432/cexplorer'
+export MC__FIRST_EPOCH_TIMESTAMP_MILLIS=1654041600000
+export MC__EPOCH_DURATION_MILLIS=432000000
+export MC__FIRST_EPOCH_NUMBER=0
+export MC__FIRST_SLOT_NUMBER=0
+export CARDANO_SECURITY_PARAMETER=2160
+export CARDANO_ACTIVE_SLOTS_COEFF=0.05
+export PARTNER_CHAIN_GENESIS_UTXO='0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0'
+export COMMITTEE_CANDIDATE_ADDRESS='addr_test1wzr6en3y43437qps5wscegufxw0euspmy0c3976mjm95j0cwuvezm'
+export D_PARAMETER_POLICY_ID=0x7f57bb675447c65ba0d68270a6b9b93aecc8dfdacaa3aa8cd081f9f3
+export PERMISSIONED_CANDIDATES_POLICY_ID=0x70cd1c6fbbbd7b1e855f589abd842f433ec0d7b46c7a9e437194e931
+```
+
+> **Don't want to run a Cardano stack?** Today this isn't cleanly supported for full nodes. The only path that works without Cardano infra is **attestor mode** (cert-daemon only, no Materios node, reads chain state from our public RPC). If you specifically need a local Materios RPC mirror for a dApp or explorer backend and can't run Cardano, open an issue — we're tracking interest in a shared/public mainchain-data endpoint.
 
 ### Environment Variables
 
@@ -297,20 +399,31 @@ During sync, the node will show `isSyncing: true` in the health check. Wait for 
 | Not producing blocks | Keys not inserted or wrong key type | Re-insert keys, restart node |
 | Finality stalled | Grandpa key mismatch or <2/3 validators online | Check key insertion, check peer connectivity |
 | High memory (>4 GB) | Possible leak or archive mode on limited RAM | Restart node, check `--pruning` setting |
+| `missing field db_sync_postgres_connection_string` | Validator mode but no Cardano stack | Set `DB_SYNC_POSTGRES_CONNECTION_STRING` or switch to `--mode attestor` |
+| `Stable block not found at <timestamp>` | db-sync not caught up to current Cardano tip | Wait for db-sync to finish syncing preprod (hours from genesis, minutes from Mithril snapshot) |
+| `NetworkKeyNotFound` | First-time run without `--unsafe-force-node-key-generation` | Installer handles this; if running the binary directly, pass the flag once |
+| `no matching manifest for linux/arm64/v8` | Apple Silicon pulling without platform flag | `docker pull --platform linux/amd64 ghcr.io/flux-point-studios/materios-node:v3` |
+| Heartbeats show stale `best_block` from old chain | cert-daemon carried over `daemon-state.json` from a prior chain reset | Re-run the installer (it wipes volumes on re-install now) |
 
 ## Platform Support
 
-The Materios node Docker image supports multiple platforms:
+The Materios node Docker image is currently **x86\_64 (amd64) only**. ARM64 hosts run it under emulation:
 
 | Platform | Architecture | How to Run |
 |----------|-------------|------------|
-| **Linux (x86_64)** | amd64 | `docker pull ghcr.io/flux-point-studios/materios-node:v3` |
-| **Linux (ARM64)** | arm64 | Same command — Docker selects the right image automatically |
-| **macOS (Apple Silicon)** | arm64 | Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), then same command |
-| **macOS (Intel)** | amd64 | Install Docker Desktop, then same command |
-| **Windows** | amd64/arm64 | Install Docker Desktop with WSL2 backend (see below) |
+| **Linux (x86\_64)** | amd64 | Native — `docker pull ghcr.io/flux-point-studios/materios-node:v3` |
+| **Linux (ARM64)** | arm64 | Requires `qemu-user-static` for cross-arch, or wait for native build |
+| **macOS (Apple Silicon)** | arm64 | Docker Desktop runs x86\_64 under Rosetta — pull with `--platform linux/amd64`. The installer adds this flag automatically. |
+| **macOS (Intel)** | amd64 | Native — Docker Desktop, then same command |
+| **Windows** | amd64 | Docker Desktop + WSL2 (see below) |
 
-Docker automatically pulls the correct architecture for your machine. No special flags needed.
+The installer detects your architecture and passes the right `--platform` flag to `docker pull`. If you're pulling manually on Apple Silicon, use:
+
+```bash
+docker pull --platform linux/amd64 ghcr.io/flux-point-studios/materios-node:v3
+```
+
+A native arm64 image is on the roadmap.
 
 ### Windows Setup (Detailed)
 

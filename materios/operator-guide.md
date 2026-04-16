@@ -114,14 +114,83 @@ Full validators run a Materios node (block production + finality) **and** a cert
 
 ### Requirements
 
-| Requirement | Details |
-|-------------|---------|
-| **Docker** | Docker Engine 20+ with Compose v2 |
-| **CPU** | 2+ vCPU |
-| **RAM** | 2 GB minimum |
-| **Disk** | 50 GB SSD |
-| **Network** | Port 30333 open inbound (P2P), outbound HTTPS + WSS |
-| **OS** | Linux, macOS, or Windows (see platform notes below) |
+Running a full Materios validator means running **two Docker stacks**: the Materios node + cert-daemon (what the installer sets up) AND a Cardano preprod stack (cardano-node + cardano-db-sync + Postgres) which the Materios node reads committee state from.
+
+| Requirement | Materios stack | Cardano stack |
+|-------------|---------------|---------------|
+| **Docker** | Engine 20+, Compose v2 | same |
+| **CPU** | 2+ vCPU | 2+ vCPU |
+| **RAM** | 2 GB | 2 GB |
+| **Disk** | 50 GB SSD | 50 GB SSD (grows with preprod chain) |
+| **Network** | Port 30333 open inbound, outbound HTTPS/WSS | Outbound only |
+| **OS** | Linux, macOS, or Windows with Docker | same |
+
+> **Already run a Cardano SPO?** You almost certainly have db-sync + Postgres already. Skip to the installer step — just export your connection string first.
+>
+> **Don't want to run a Cardano stack?** Run **attestor mode** (above) instead. You still earn attestation rewards and your SS58 shows on the committee page. The full validator path is for operators who are comfortable running Cardano infrastructure.
+
+### Prerequisite: Cardano preprod stack
+
+If you already have one, skip ahead. Otherwise, this reference Docker Compose brings up cardano-node + db-sync + Postgres on preprod:
+
+<details>
+<summary>Reference <code>docker-compose.yml</code> (click to expand)</summary>
+
+```yaml
+services:
+  cardano-node-preprod:
+    image: ghcr.io/intersectmbo/cardano-node:10.1.4
+    restart: unless-stopped
+    environment: { NETWORK: preprod }
+    volumes:
+      - node-data:/data
+      - node-ipc:/ipc
+
+  postgres-preprod:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: cexplorer
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+
+  db-sync-preprod:
+    image: ghcr.io/intersectmbo/cardano-db-sync:13.6.0.4
+    restart: unless-stopped
+    depends_on:
+      postgres-preprod: { condition: service_healthy }
+    environment:
+      NETWORK: preprod
+      POSTGRES_HOST: postgres-preprod
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: cexplorer
+    volumes:
+      - db-sync-data:/var/lib/cdbsync
+      - node-ipc:/node-ipc:ro
+
+volumes: { node-data: , node-ipc: , postgres-data: , db-sync-data: }
+```
+
+</details>
+
+Bring it up: `docker compose up -d`. Initial sync from genesis takes several hours — accelerate it with a [Mithril snapshot](https://mithril.network/doc/manual/getting-started/bootstrap-cardano-node) if you need to.
+
+Once db-sync is making progress (`docker compose logs -f db-sync-preprod`), export its connection string:
+
+```bash
+export DB_SYNC_POSTGRES_CONNECTION_STRING='postgres://postgres:change-me@localhost:5433/cexplorer'
+```
+
+Your Materios node will fail fast during install if this isn't set.
 
 ### Quick Start
 
