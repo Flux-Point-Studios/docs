@@ -34,9 +34,21 @@ Anyone can become an attestor. No invite token, no approval, no waiting. You run
 
 ### Quick Start
 
+#### Option A: One-liner (terminal)
+
 ```bash
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor
 ```
+
+#### Option B: Download & double-click (no terminal needed)
+
+| Platform | Download | Instructions |
+|----------|----------|-------------|
+| **macOS** | [install-macos.command](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-macos.command) | Download, double-click. If blocked: System Settings → Privacy & Security → Open Anyway |
+| **Windows** | [install-windows.bat](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-windows.bat) | Download, double-click. Requires WSL2 + Docker Desktop |
+| **Linux** | [install-linux.sh](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-linux.sh) | Download, run `chmod +x install-linux.sh && ./install-linux.sh` |
+
+All wrappers guide you through mode selection (validator vs attestor) and run the full installer automatically.
 
 That's it. The installer:
 
@@ -111,7 +123,17 @@ Full validators run a Materios node (block production + finality) **and** a cert
 | **Network** | Port 30333 open inbound (P2P), outbound HTTPS + WSS |
 | **OS** | Linux, macOS, or Windows (see platform notes below) |
 
-### Quick Start (Linux / macOS)
+### Quick Start
+
+> **Not comfortable with the terminal?** Download the installer for your platform:
+>
+> | Platform | Download |
+> |----------|----------|
+> | **macOS** | [install-macos.command](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-macos.command) — double-click to run |
+> | **Windows** | [install-windows.bat](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-windows.bat) — double-click to run |
+> | **Linux** | [install-linux.sh](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-linux.sh) — `chmod +x && ./install-linux.sh` |
+
+### Terminal Install (Linux / macOS)
 
 #### 1. Open port 30333
 

@@ -55,6 +55,14 @@ One-command install:
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor
 ```
 
+Or download a platform-specific installer (no terminal needed):
+
+| Platform | Download |
+|----------|----------|
+| **macOS** | [install-macos.command](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-macos.command) — double-click to run |
+| **Windows** | [install-windows.bat](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-windows.bat) — double-click to run |
+| **Linux** | [install-linux.sh](https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install-linux.sh) — `chmod +x && ./install-linux.sh` |
+
 See the [Operator Guide](operator-guide.md#attestor-permissionless) for full details.
 
 ## Software
