@@ -281,7 +281,7 @@ To verify you have the correct chain spec:
 
 ```bash
 # Expected preprod genesis hash
-0x105fed4310b56550d3646a13d7a6f4b69ab82f1c1269a6c732948a2a260b1360
+0x37a6bbe4be1a81995d9edb706cea9a7daa16f4777c85aa2fc7db107cc486dcde
 ```
 
 > **Note**: No WASM overrides are needed for the preprod chain. All runtime fixes are baked into the genesis. If you previously ran a preview/staging node with WASM overrides, you can safely remove them.
