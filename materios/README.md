@@ -78,7 +78,7 @@ Materios Chain          Cardano L1
 - **RPC**: `wss://materios.fluxpointstudios.com/preprod-rpc`
 - **Gateway**: `https://materios.fluxpointstudios.com/preprod-blobs`
 - **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) (with Preprod/Preview toggle)
-- **Genesis hash**: `0x105fed4310b56550d3646a13d7a6f4b69ab82f1c1269a6c732948a2a260b1360`
+- **Genesis hash**: `0x37a6bbe4be1a81995d9edb706cea9a7daa16f4777c85aa2fc7db107cc486dcde`
 - **WASM overrides**: None needed (clean genesis, all fixes baked in)
 - **Install**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator`
 
