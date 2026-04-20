@@ -357,13 +357,13 @@ If there's no fork, it simply pulls latest images and restarts.
 
 ## Rewards
 
-Operators earn tMATRA from two separate reward pools:
+Operators earn tMATRA from two separate reward pools plus an ongoing fee-recycling stream:
 
 ### Block Production Rewards (Full Validators Only)
 
 | Parameter | Value |
 |-----------|-------|
-| **Reserve** | 150M MATRA (15% of total supply) |
+| **Reserve** | 115M MATRA (11.5% of total supply) — Validator Emissions sub-bucket |
 | **Era length** | ~24 hours (14,400 blocks) |
 | **Distribution** | Proportional to blocks produced per era |
 | **Mechanism** | Automatic — credited at each era boundary |
@@ -374,22 +374,29 @@ Validators who produce more blocks (better uptime) earn a larger share. Offline 
 
 | Parameter | Value |
 |-----------|-------|
-| **Reserve** | 50M MATRA (5% of total supply) |
+| **Reserve** | 65M MATRA (6.5% of total supply) — Attestor Emissions sub-bucket |
 | **Reward per certification** | 10 tMATRA per signer |
 | **Distribution** | Instant — paid the moment a receipt reaches threshold |
 | **Mechanism** | Automatic — every attestor who signed receives the reward |
 
 Attestation rewards are earned by **both** full validators and standalone attestors. Every time you help certify a receipt (by signing an attestation that meets the committee threshold), you receive 10 tMATRA immediately.
 
+### Fee Recycling (ongoing income for operators)
+
+Once the network is under fee load, every transaction's fee is split four ways: **40% to a block-author pot** (distributed to validators), **30% to the Attestor Emissions pot** (distributed to attestors who signed receipts during the period), **20% to the Ecosystem Treasury**, and **10% burned**. This means operator income has two compounding sources — the genesis emission schedules above, plus ongoing fee flow once the network is active. Fee recycling is designed to make validator and attestor economics sustainable perpetually at realistic network usage, not just during the first-year emission window.
+
 ### Reward Comparison
 
 | | Full Validator | Attestor Only |
 |---|---|---|
-| **Block rewards** | ~14.7K tMATRA/day (split among validators) | - |
+| **Block rewards** | ~11.3K tMATRA/day (split among validators) | - |
 | **Attestation rewards** | 10 tMATRA per certified receipt | 10 tMATRA per certified receipt |
+| **Fee share (post fee load)** | 40% of all tx fees (block-author pot) | 30% of all tx fees (attestor pot) |
 | **Hardware cost** | 2 vCPU, 2 GB RAM, 50 GB SSD | 1 vCPU, 512 MB RAM, 1 GB |
 | **Network** | Port 30333 open | Outbound only |
 | **Approval** | None (staking on mainnet) | None |
+
+*Example: 115M MATRA distributed over ~10 years at 14,400 blocks/day → approximately 11.3K tMATRA/day across all validators during the initial emission window. Fee recycling income is additional.*
 
 ***
 

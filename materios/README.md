@@ -48,7 +48,7 @@ Materios Chain          Cardano L1
 
 | Token | Type | Purpose |
 |-------|------|---------|
-| **MATRA** | Transferable (12 decimals) | Staking, governance, transfers |
+| **MATRA** | Transferable (6 decimals) | Staking, governance, transfers |
 | **MOTRA** | Non-transferable | Capacity/fee token. Generated proportionally to MATRA balance, decays per block. Used to pay transaction fees without spending MATRA. |
 
 ### On-Chain Pallets

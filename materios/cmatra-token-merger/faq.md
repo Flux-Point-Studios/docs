@@ -56,11 +56,27 @@ Yes. The current design uses a fixed maximum supply of 1,000,000,000 MATRA/cMATR
 
 ### 8. How is the supply split at genesis?
 
-15% is carved out at genesis as a non-circulating validator reserve and 85% is assigned to the public redemption pool. The validator reserve is not a later inflation switch; it is part of the genesis supply plan.
+27.75% (277.5M) is carved out at genesis as a non-circulating **Network Incentives Reserve** split into five sub-buckets, and 72.25% (722.5M) is assigned to the **Public Redemption Pool**. The reserve is not a later inflation switch; it is part of the genesis supply plan.
 
-### 9. Why does Materios need a validator reserve?
+The five sub-buckets are:
 
-Because network security has to be funded honestly. MOTRA fees are burned and are not designed to pay validators. Validator incentives therefore come from the MATRA side of the system, using a genesis reserve rather than surprise inflation later.
+* **Validator Emissions — 115M (11.5%)** — block-production rewards; includes Cardano SPO cross-validation rewards.
+* **Attestor Emissions — 65M (6.5%)** — threshold-attestation rewards + bond/slash economics.
+* **Ecosystem Treasury — 40M (4%)** — grants, ecosystem dev funding, LP Loyalty Bonus, governance-directed programs.
+* **Strategic Allocation — 30M (3%)** — strategic/institutional partners, 12-month cliff + 36-month linear vesting.
+* **Liquidity — 27.5M (2.75%)** — 5M bridge peg reserve, 17.5M Protocol-Owned DEX Liquidity, 5M maker rebates on CLOB.
+
+### 9. Why does Materios need a Network Incentives Reserve?
+
+Because network security, launch liquidity, and ecosystem growth all have to be funded honestly. MOTRA fees are burned and are not designed to pay validators. The Network Incentives Reserve handles all five obligations in transparent sub-buckets rather than surprise inflation later:
+
+1. **Validator rewards** come from the 115M Validator Emissions sub-bucket (supplemented by 40% of transaction fees routed to the block-author pot).
+2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket (supplemented by 30% of transaction fees).
+3. **Ecosystem growth** — grants, game integrations, LP Loyalty Bonus — comes from the 40M Ecosystem Treasury.
+4. **Strategic capital** — the 30M Strategic Allocation funds POL seeding, security audits, and team runway beyond the redemption window, under strict vesting.
+5. **Launch liquidity** — the 27.5M Liquidity sub-bucket seeds the CLOB and AMM pairs, funds maker rebates, and holds the bridge peg reserve.
+
+Once the network is running under fee load, ongoing transaction fees recycle back into these reserves (40% author / 30% attestor / 20% treasury / 10% burn), so the reserves are designed as a first-year runway rather than a permanent ceiling.
 
 ***
 
@@ -68,23 +84,57 @@ Because network security has to be funded honestly. MOTRA fees are burned and ar
 
 ### 10. Am I being diluted?
 
-Not in the sense of post-launch inflation. But yes, compared with an older 100% merger assumption, the public redemption pool is smaller because 15% is now reserved for security.
+Yes, by approximately **15% relative to the v3.3 published rates** — a post-reconciliation correction, not a post-launch inflation. The v5.1 rate table is the v3.3 rates multiplied by 0.85 across the board, which moves the public pool from 850M cMATRA to 722.5M and re-targets the freed 127.5M cMATRA into the five Network Incentives Reserve sub-buckets that were missing (or under-allocated) in v3.3.
 
-Materios is addressing that directly instead of pretending the cost does not exist.
+This falls squarely within the governance-approved correction clause in the README's "Window mechanics" section: *"The rate table remains fixed for the full window unless a documented governance-approved correction is required for a launch bug or reconciliation error."* The v3.3 rates were mathematically inconsistent with the reserve architecture already committed in runtime code (attestor emissions were unbudgeted) and left zero capacity for ecosystem treasury, strategic partners, or launch liquidity. Shipping v3.3 unchanged would have meant either re-breaking the runtime or launching without POL — both worse outcomes than a proportional 15% correction before the window opens.
+
+The Team takes exactly the same 15% cut (see Q12 below). No holder class is disadvantaged relative to any other.
+
+### 10a. What changed vs v3.3?
+
+| Item                              | v3.3 (March 2026)   | v5.1 (April 2026)                    |
+| --------------------------------- | ------------------- | ------------------------------------ |
+| Public Redemption Pool            | 850M (85%)          | 722.5M (72.25%)                      |
+| Reserve                           | 150M validator only | 277.5M across 5 sub-buckets          |
+| 1 AGENT →                         | ~0.5446 cMATRA      | ~0.4629 cMATRA                       |
+| 1 SHARDS →                        | ~34.0 cMATRA        | ~28.9 cMATRA                         |
+| 1 Flux Point Team Pass →          | ~81,495 cMATRA      | ~69,271 cMATRA                       |
+| 1 SE Brawler →                    | ~41,523 cMATRA      | ~35,294 cMATRA                       |
+| 1 Brawl Pass: ED →                | ~132,117 cMATRA     | ~112,300 cMATRA                      |
+| 1 T1 ADAM Pass →                  | ~3,755,146 cMATRA   | ~3,191,874 cMATRA                    |
+| 1 T2 ADAM Pass →                  | ~221,576 cMATRA     | ~188,339 cMATRA                      |
+| Team carve total                  | ~31.3M cMATRA       | ~26.6M cMATRA                        |
+| Attestor Emissions sub-bucket     | not allocated       | 65M (resolves code↔docs inconsistency) |
+| Ecosystem Treasury sub-bucket     | not allocated       | 40M                                  |
+| Strategic Allocation sub-bucket   | not allocated       | 30M (12mo cliff + 36mo linear)       |
+| Liquidity sub-bucket              | not allocated       | 27.5M (POL + bridge + maker rebates) |
+
+The TWAP-derived **weights** between assets are unchanged — only the absolute cMATRA output is reduced proportionally.
+
+### 10b. How is the post-reconciliation dilution handled in practice?
+
+* **Rates recompute by multiplier only.** Each asset's cMATRA-per-unit rate becomes (v3.3 rate) × 0.85. No asset class is singled out.
+* **Team carve recomputes too.** 31.3M cMATRA → 26.6M cMATRA automatically — the Team takes the same haircut.
+* **Weights unchanged.** The relative share that AGENT, SHARDS, and each NFT collection receive of the pool is identical to v3.3 (TWAP weights locked before v5.1).
+* **Bucket totals verified.** The sum of all seven asset buckets is exactly 722.5M cMATRA in base units (audited in `rate_table_cmatra.json`).
+* **No retroactive change after launch.** Once v5.1 is published as the final fixed table, it is locked for the full 6-month redemption window.
 
 ### 11. How is the hit being softened for holders?
 
-Three ways:
+Four ways:
 
-1. Disclosed Team treasury balances are waived from public redemption.
-2. Early redeemers may receive time-limited MOTRA sponsorship or delegated capacity during onboarding.
-3. The validator reserve remains locked and non-circulating until released by the protocol reward schedule.
+1. **Disclosed Team treasury balances are waived** from public redemption (29.6M AGENT + 447K SHARDS). The rate denominator already excludes these, so the carve-out does not further dilute public holders.
+2. **LP Loyalty Bonus.** Holders with AGENT/SHARDS in any qualifying Cardano DEX LP at snapshot (14 days pre-launch, commit-reveal) receive a **+3% cMATRA bonus** from the Ecosystem Treasury. Eligible DEXs: Minswap v1/v2, WingRiders, CSWAP, SundaeSwap, MuesliSwap, Splash, VyFinance, SaturnSwap. See Q24a for details.
+3. **Team takes the same haircut.** The 15% dilution applies to the Team carve identically (31.3M → 26.6M cMATRA) — fairness signal, same ratio.
+4. **Early redeemers** may receive time-limited MOTRA sponsorship or delegated capacity during onboarding; the Network Incentives Reserve is non-circulating until released on a protocol schedule.
 
 ### 12. Is the Team taking the same hit?
 
-The Team is taking the first visible hit through a treasury-waiver policy. Disclosed Team treasury balances are not meant to compete with public redeemers for cMATRA from the public redemption pool.
+**Yes — the Team takes the full 15% haircut alongside public holders.** The carve amount drops from ~31.3M cMATRA at v3.3 rates to ~26.6M cMATRA at v5.1 rates, which is the v3.3 carve × 0.85 to the base unit.
 
-The current waived balances are:
+Mechanism: the Team's carve is computed as (waived balance) × (published rate). Because the published rate dropped by 15%, the carve drops by 15% too. No special Team-only adjustment was made.
+
+The current waived balances (unchanged from v3.3) are:
 
 * **AGENT:** 29,644,656 (FPS DAO: 9,902 + $TALOS: 29,634,754)
 * **SHARDS:** 446,969.70 display units (all at FPS DAO)
@@ -99,7 +149,11 @@ The AGENT and SHARDS treasury tokens are locked in on-chain Agora DAOs that requ
 
 ### 12b. Does the team carve-out change public rates?
 
-No. The waiver already excluded the team's treasury balances from the rate denominator when computing per-unit rates. The carve-out simply delivers the corresponding cMATRA at those same rates and reduces the surrender pool by that amount (~31.3M cMATRA out of 850M). Public holders redeem at exactly the same rate regardless.
+No. The waiver already excluded the team's treasury balances from the rate denominator when computing per-unit rates. The carve-out simply delivers the corresponding cMATRA at those same rates and reduces the surrender pool by that amount (~26.6M cMATRA out of 722.5M at v5.1). Public holders redeem at exactly the same rate regardless.
+
+### 12c. Why does the v3.3 doc show a ~10% implicit team softening but v5.1 is a flat 15% cut?
+
+The v3.3 model applied a treasury-waiver framing that the public could read as a partial team softening. The v5.1 rebalance makes this explicit: there is no team-specific softening in v5.1. The Team's carve recomputes at the same rate × 0.85 multiplier applied to all holders. This is cleaner to communicate and easier to audit — one multiplier, no class-specific carve-outs hidden inside the rate table. The Team is taking the haircut on the same line as every other holder.
 
 ***
 
@@ -147,7 +201,7 @@ AGENT is **not** 1:1 with cMATRA, and neither are the other legacy assets. The m
 
 ### 17a. Why do I get less than 1 cMATRA per AGENT if the supply is also 1 billion?
 
-Because this is not a simple 1:1 token rename. Seven separate assets — AGENT, SHARDS, and five NFT collections — are merging into a single token. The 850,000,000 public redemption pool is split across all of them weighted by market value.
+Because this is not a simple 1:1 token rename. Seven separate assets — AGENT, SHARDS, and five NFT collections — are merging into a single token. The 722,500,000 public redemption pool is split across all of them weighted by market value.
 
 The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the combined ecosystem, not a per-unit supply match.
 
@@ -169,7 +223,7 @@ The goal is a **fixed published rate table for the full window**, not a floating
 
 ### 20. How are rates set in principle?
 
-Each asset gets a weighted share of the 850,000,000 public redemption pool based on the published valuation methodology.
+Each asset gets a weighted share of the 722,500,000 public redemption pool based on the published valuation methodology.
 
 Then:
 
@@ -215,6 +269,32 @@ You must first **unfarm / withdraw / remove liquidity** so the underlying AGENT 
 The redeemable assets are the underlying supported legacy tokens once they are back in your wallet and surrendered during the redemption window.
 
 Materios may try to coordinate with major venues to make this easier, but holders should not wait until the last minute.
+
+### 24a. How does the LP Loyalty Bonus work?
+
+Holders who have AGENT and/or SHARDS deployed in any qualifying Cardano DEX liquidity pool at the pre-launch snapshot receive a **+3% cMATRA bonus** on top of their base redemption amount. The bonus is funded by the 40M Ecosystem Treasury sub-bucket and is expected to cost ~2–3M cMATRA depending on LP participation.
+
+**Snapshot methodology:**
+
+* **Timing:** 14 days before launch, using a commit-reveal protocol to prevent last-second wash-farming. The commit block is announced publicly; the reveal block uses a future Cardano block hash that is not known at commit time.
+* **Data source:** Blockfrost-style indexing of every LP position holding AGENT or SHARDS across the eligible DEX list at the reveal block height.
+* **Eligibility rule:** The wallet that controls the LP token at snapshot height is credited with the underlying AGENT/SHARDS held inside that LP position at the same height.
+* **Withdrawal still required:** You must unfarm / remove liquidity before the redemption deadline and surrender the underlying tokens normally. The +3% is applied at redemption time to the wallet that was credited at snapshot.
+
+**Eligible DEXs at launch:**
+
+* Minswap v1 and v2
+* WingRiders
+* CSWAP
+* SundaeSwap
+* MuesliSwap
+* Splash
+* VyFinance
+* SaturnSwap
+
+The DEX list is fixed at publication time. Positions in DEXs not on this list do not receive the bonus.
+
+This program is designed to reward holders who kept their AGENT and SHARDS productive during the pre-launch period rather than parking them in idle wallets, and to smooth the transition of liquidity from AGENT/SHARDS pairs into the new cMATRA pairs at launch.
 
 ### 25. Do LP tokens redeem?
 
@@ -293,7 +373,7 @@ The six-month window is meant to give holders enough time to recover assets from
 
 The public redemption window closes. Unredeemed legacy assets no longer have an open public trade-in path unless an explicit extension or exceptional remedy is formally announced.
 
-### 36. What happens to any unreleased cMATRA from the 850M public redemption pool after the deadline?
+### 36. What happens to any unreleased cMATRA from the 722.5M public redemption pool after the deadline?
 
 After the six-month window closes, the administrator withdraws any remaining cMATRA from the surrender pool. No further public surrenders are possible once the deadline has passed. The on-chain validator enforces this — the `ProcessSurrender` spending path is permanently disabled after the deadline, and only the `AdminWithdraw` path is available.
 
@@ -317,27 +397,29 @@ No. The intended model is one economic supply story. cMATRA is the transitional 
 
 ### 39. How are validators expected to be rewarded?
 
-From the MATRA validator reserve, not from burned MOTRA fees. The reserve is meant to release over time according to the protocol's validator reward schedule.
+From the **Validator Emissions sub-bucket (115M MATRA, 11.5% of supply)** within the Network Incentives Reserve, not from burned MOTRA fees. In addition, 40% of transaction fees route to a block-author pot during normal operation, so validator income has two sources: the initial emissions schedule plus ongoing fee recycling.
 
-This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation, making SPO delegation rewards a legitimate use of the validator reserve.
+This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation and receive cMATRA rewards from the Validator Emissions sub-bucket in proportion to their stake.
+
+Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)**, which also receives 30% of transaction fees under the fee-recycling policy. Ecosystem-side activity (grants, LP Loyalty Bonus, integrations) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**, which additionally receives 20% of transaction fees; the remaining 10% of each fee is burned.
 
 ### 39a. How do Cardano SPO delegators earn MATRA?
 
-Through cross-validation, Cardano stake pool operators participate in Materios consensus alongside dedicated Materios validators. Delegators to participating pools (starting with **TALOS**) contribute to Materios network security through their delegation, and receive cMATRA from the validator reserve in proportion to their stake.
+Through cross-validation, Cardano stake pool operators participate in Materios consensus alongside dedicated Materios validators. Delegators to participating pools (starting with **TALOS**) contribute to Materios network security through their delegation, and receive cMATRA from the Validator Emissions sub-bucket in proportion to their stake.
 
-* **Source:** The 150,000,000 MATRA validator reserve (15% of total supply).
-* **Rationale:** Cross-validation (Minotaur) means SPO delegators directly secure the Materios network. Distributing validator rewards to them is the reserve doing its job.
+* **Source:** The 115,000,000 MATRA Validator Emissions sub-bucket (11.5% of total supply), inside the 277.5M Network Incentives Reserve.
+* **Rationale:** Cross-validation (Minotaur) means SPO delegators directly secure the Materios network. Distributing validator rewards to them is the sub-bucket doing its job.
 * **Duration:** An initial distribution period with published start and end dates. Duration and rates are published before the first distribution.
 * **Rate:** A fixed cMATRA-per-ADA-per-epoch rate, published in advance.
 * **Distribution:** Periodic distribution to delegator wallets based on epoch snapshots.
-* **Impact on public pool:** None. Delegation rewards draw exclusively from the validator reserve, not the 850,000,000 public redemption pool. Public redemption rates are completely unaffected.
+* **Impact on public pool:** None. Delegation rewards draw exclusively from the Validator Emissions sub-bucket, not the 722,500,000 public redemption pool. Public redemption rates are completely unaffected.
 * **ADA rewards:** Delegators continue to receive their normal ADA staking rewards. cMATRA delegation rewards are additional.
 
-### 40. Can unused validator reserve be repurposed later?
+### 40. Can unused reserve sub-buckets be repurposed later?
 
-Not casually. The reserve is not discretionary operating capital. Any later reassignment of clearly surplus reserve should require governance and should be communicated explicitly.
+Not casually. The Network Incentives Reserve is not discretionary operating capital. Any later reassignment of clearly surplus reserve should require governance and should be communicated explicitly.
 
-Distributing delegation rewards to SPO delegators who secure Materios through cross-validation (Q39a) is not a repurposing — it is the validator reserve fulfilling its stated purpose on Cardano L1 before the full cross-chain bridge is operational.
+Distributing delegation rewards to SPO delegators who secure Materios through cross-validation (Q39a) is not a repurposing — it is the Validator Emissions sub-bucket fulfilling its stated purpose on Cardano L1 before the full cross-chain bridge is operational.
 
 ***
 
@@ -348,6 +430,19 @@ Distributing delegation rewards to SPO delegators who secure Materios through cr
 Materios does **not** set a guaranteed opening market cap. Market cap depends on what the market decides to pay once trading starts and on how much supply is actually circulating.
 
 What Materios can publish in advance is the fixed supply model and the reference valuation package used to derive redemption weights.
+
+### 41a. Why launch on SaturnSwap (CLOB) instead of Minswap (AMM)?
+
+Materios chose a **CLOB-primary launch** on SaturnSwap for four reasons:
+
+1. **Capital efficiency.** At the initial liquidity scale (~$250K per pair), a CLOB delivers tighter spreads and deeper effective depth than an AMM pool with the same capital, because capital can be concentrated around the mid-price as resting orders rather than spread along an x·y=k curve.
+2. **Native maker-rebate economics.** The Liquidity sub-bucket funds a maker-rebate program (5M MATRA over 24 months, 50% annual decay, ~15 bps rebate on a 30 bps maker fee, 20% cap per market-maker address with two-sided-quote requirements). Maker rebates map cleanly onto CLOB economics; forcing them onto AMM LP rewards creates wrong incentives (farm-and-dump, no spread obligation).
+3. **Own infrastructure.** SaturnSwap is part of the same ecosystem Materios is building into (via CIP-68 Liftoff integration), which means the launch venue and the redemption venue share operational context, incident response, and upgrade cadence.
+4. **Price discovery.** An order book makes the launch price legible in real time (visible bids and asks) rather than derived from whatever size happens to hit a bonding curve.
+
+**Secondary AMM listings on Minswap and WingRiders** provide retail access for users and aggregators that only interact with AMMs. Arbitrageurs keep prices aligned between the CLOB and the AMMs. These AMM pools are smaller than the CLOB book and are intentionally designed as arbitrage targets, not as the primary price-discovery venue.
+
+Materios considered a Liquidity Bootstrapping Pool (LBP) and decided against it: the offshore-entity and legal overhead ($30–80K legal, 2–3 month timeline) is not worth it at the $270K launch-pair scale.
 
 ***
 
@@ -377,5 +472,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 6.4 | **Date:** April 16, 2026 | **Status:** Public / governance draft\
+**Version:** 7.0 | **Date:** April 19, 2026 | **Status:** Public / governance draft\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
