@@ -54,7 +54,7 @@ The merger uses a fixed supply model with a **Network Incentives Reserve** carve
 * The **27.75% Network Incentives Reserve (277.5M cMATRA)** is non-circulating at launch and funds long-term network security, ecosystem growth, strategic partnerships, and launch liquidity. It is not a later inflation switch — it is part of the genesis supply plan.
 * The **72.25% Public Redemption Pool (722.5M cMATRA)** is the only pool used for ordinary public redemptions. Network Incentives sub-bucket distributions do not draw from this pool.
 * **Fee-recycling** supplements the reserves once the network is live: transaction fees are split 40% to a block-author pot, 30% to the attestor reserve, 20% to the Ecosystem Treasury, and 10% burned. This means validator and attestor incentives have multiple sources — genesis reserve plus ongoing fee flow.
-* **Team treasury softening** is handled through explicit waiver and disclosure. Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~26.6M cMATRA at v5.1 rates) but does not change public rates. See [FAQ](faq.md) for details.
+* **Team treasury softening** is handled through explicit waiver and disclosure. Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~26.7M cMATRA at v5.1 rates) but does not change public rates. See [FAQ](faq.md) for details.
 
 ### Network Incentives Reserve sub-buckets
 
@@ -117,7 +117,7 @@ This falls squarely within the governance-approved correction clause stated in t
 
 > *"The rate table remains fixed for the full window unless a documented governance-approved correction is required for a launch bug or reconciliation error."*
 
-The v3.3 rates assumed a pure 85% public / 15% reserve split that did not account for attestor emissions (already committed in the runtime code as a separate 50M reserve), left no room for ecosystem treasury or strategic partners, and produced rate-table totals that were mathematically inconsistent with the committed reserve architecture. The v5.1 rebalance reconciles published rates with the runtime's actual reserve structure, builds in strategic and liquidity sub-buckets that enable a real launch, and applies the haircut evenly — including to the Team carve (31.3M → 26.6M cMATRA) — so no holder class is disadvantaged relative to any other.
+The v3.3 rates assumed a pure 85% public / 15% reserve split that did not account for attestor emissions (already committed in the runtime code as a separate 50M reserve), left no room for ecosystem treasury or strategic partners, and produced rate-table totals that were mathematically inconsistent with the committed reserve architecture. The v5.1 rebalance reconciles published rates with the runtime's actual reserve structure, builds in strategic and liquidity sub-buckets that enable a real launch, and applies the haircut evenly — including to the Team carve (31.3M → 26.7M cMATRA) — so no holder class is disadvantaged relative to any other.
 
 Final fixed rates are republished below as of the v5.1 publication date.
 
@@ -263,7 +263,7 @@ The following table shows how much cMATRA you receive for each legacy asset you 
 | You surrender                  | You receive (cMATRA)         |
 | ------------------------------ | ---------------------------: |
 | 1 AGENT                        | ~0.4629                      |
-| 1 SHARDS                       | ~28.9                        |
+| 1 SHARDS                       | ~29.12                        |
 | 1 Flux Point Team Pass         | ~69,271                      |
 | 1 SE Brawler                   | ~35,294                      |
 | 1 Brawl Pass: Enter the Dragon | ~112,300                     |
@@ -279,7 +279,7 @@ The rates above are derived from a 7-day TWAP valuation of each asset's market p
 | Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Base Unit | Rate per Display Unit |
 | ----------------------------- | -------------------: | -----------------: | -----------------: | --------------------: |
 | AGENT                         | 449,168,051.406      | 970,355,344        | 462,890            | ~0.4629 per AGENT     |
-| SHARDS                        | 76,929,202.239       | 2,641,564.750001   | 29                 | ~28.9 per SHARDS      |
+| SHARDS                        | 76,929,202.239       | 2,641,564.750001   | 29                 | ~29.12 per SHARDS      |
 | Flux Point Team Pass          | 27,777,511.969       | 401 NFTs           | —                  | ~69,271 per NFT       |
 | SE Brawlers                   | 8,541,197.187        | 242 NFTs           | —                  | ~35,294 per NFT       |
 | Brawl Pass: Enter the Dragon  | 4,941,188.455        | 44 NFTs            | —                  | ~112,300 per NFT      |
@@ -295,7 +295,7 @@ The following amounts are minted directly to the team at the same published rate
 | Treasury | Asset | Waived Balance | Rate per Display Unit | cMATRA Received |
 | -------- | ----- | -------------: | --------------------: | --------------: |
 | FPS DAO  | AGENT | 29,644,656     | ~0.4629 per AGENT     | ~13,722,223     |
-| FPS DAO  | SHARDS | 446,969.70    | ~28.9 per SHARDS      | ~13,016,914     |
+| FPS DAO  | SHARDS | 446,969.70    | ~29.12 per SHARDS      | ~13,016,914     |
 | **Total** | | | | **~26,739,137 cMATRA** |
 
 **Surrender pool after carve: ~695,760,863 cMATRA** (96.3% of public pool).

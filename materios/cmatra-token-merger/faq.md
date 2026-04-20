@@ -97,13 +97,13 @@ The Team takes exactly the same 15% cut (see Q12 below). No holder class is disa
 | Public Redemption Pool            | 850M (85%)          | 722.5M (72.25%)                      |
 | Reserve                           | 150M validator only | 277.5M across 5 sub-buckets          |
 | 1 AGENT →                         | ~0.5446 cMATRA      | ~0.4629 cMATRA                       |
-| 1 SHARDS →                        | ~34.0 cMATRA        | ~28.9 cMATRA                         |
+| 1 SHARDS →                        | ~34.0 cMATRA        | ~29.12 cMATRA                         |
 | 1 Flux Point Team Pass →          | ~81,495 cMATRA      | ~69,271 cMATRA                       |
 | 1 SE Brawler →                    | ~41,523 cMATRA      | ~35,294 cMATRA                       |
 | 1 Brawl Pass: ED →                | ~132,117 cMATRA     | ~112,300 cMATRA                      |
 | 1 T1 ADAM Pass →                  | ~3,755,146 cMATRA   | ~3,191,874 cMATRA                    |
 | 1 T2 ADAM Pass →                  | ~221,576 cMATRA     | ~188,339 cMATRA                      |
-| Team carve total                  | ~31.3M cMATRA       | ~26.6M cMATRA                        |
+| Team carve total                  | ~31.3M cMATRA       | ~26.7M cMATRA                        |
 | Attestor Emissions sub-bucket     | not allocated       | 65M (resolves code↔docs inconsistency) |
 | Ecosystem Treasury sub-bucket     | not allocated       | 40M                                  |
 | Strategic Allocation sub-bucket   | not allocated       | 30M (12mo cliff + 36mo linear)       |
@@ -114,7 +114,7 @@ The TWAP-derived **weights** between assets are unchanged — only the absolute 
 ### 10b. How is the post-reconciliation dilution handled in practice?
 
 * **Rates recompute by multiplier only.** Each asset's cMATRA-per-unit rate becomes (v3.3 rate) × 0.85. No asset class is singled out.
-* **Team carve recomputes too.** 31.3M cMATRA → 26.6M cMATRA automatically — the Team takes the same haircut.
+* **Team carve recomputes too.** 31.3M cMATRA → 26.7M cMATRA automatically — the Team takes the same haircut.
 * **Weights unchanged.** The relative share that AGENT, SHARDS, and each NFT collection receive of the pool is identical to v3.3 (TWAP weights locked before v5.1).
 * **Bucket totals verified.** The sum of all seven asset buckets is exactly 722.5M cMATRA in base units (audited in `rate_table_cmatra.json`).
 * **No retroactive change after launch.** Once v5.1 is published as the final fixed table, it is locked for the full 6-month redemption window.
@@ -125,12 +125,12 @@ Four ways:
 
 1. **Disclosed Team treasury balances are waived** from public redemption (29.6M AGENT + 447K SHARDS). The rate denominator already excludes these, so the carve-out does not further dilute public holders.
 2. **LP Loyalty Bonus.** Holders with AGENT/SHARDS in any qualifying Cardano DEX LP at snapshot (14 days pre-launch, commit-reveal) receive a **+3% cMATRA bonus** from the Ecosystem Treasury. Eligible DEXs: Minswap v1/v2, WingRiders, CSWAP, SundaeSwap, MuesliSwap, Splash, VyFinance, SaturnSwap. See Q24a for details.
-3. **Team takes the same haircut.** The 15% dilution applies to the Team carve identically (31.3M → 26.6M cMATRA) — fairness signal, same ratio.
+3. **Team takes the same haircut.** The 15% dilution applies to the Team carve identically (31.3M → 26.7M cMATRA) — fairness signal, same ratio.
 4. **Early redeemers** may receive time-limited MOTRA sponsorship or delegated capacity during onboarding; the Network Incentives Reserve is non-circulating until released on a protocol schedule.
 
 ### 12. Is the Team taking the same hit?
 
-**Yes — the Team takes the full 15% haircut alongside public holders.** The carve amount drops from ~31.3M cMATRA at v3.3 rates to ~26.6M cMATRA at v5.1 rates, which is the v3.3 carve × 0.85 to the base unit.
+**Yes — the Team takes the full 15% haircut alongside public holders.** The carve amount drops from ~31.3M cMATRA at v3.3 rates to ~26.7M cMATRA at v5.1 rates, which is the v3.3 carve recomputed from v5.1 rational rates × team-held legacy balances (approximately × 0.85).
 
 Mechanism: the Team's carve is computed as (waived balance) × (published rate). Because the published rate dropped by 15%, the carve drops by 15% too. No special Team-only adjustment was made.
 
@@ -149,7 +149,7 @@ The AGENT and SHARDS treasury tokens are locked in on-chain Agora DAOs that requ
 
 ### 12b. Does the team carve-out change public rates?
 
-No. The waiver already excluded the team's treasury balances from the rate denominator when computing per-unit rates. The carve-out simply delivers the corresponding cMATRA at those same rates and reduces the surrender pool by that amount (~26.6M cMATRA out of 722.5M at v5.1). Public holders redeem at exactly the same rate regardless.
+No. The waiver already excluded the team's treasury balances from the rate denominator when computing per-unit rates. The carve-out simply delivers the corresponding cMATRA at those same rates and reduces the surrender pool by that amount (~26.7M cMATRA out of 722.5M at v5.1). Public holders redeem at exactly the same rate regardless.
 
 ### 12c. Why does the v3.3 doc show a ~10% implicit team softening but v5.1 is a flat 15% cut?
 
