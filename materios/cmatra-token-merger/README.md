@@ -13,16 +13,16 @@ Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-
 
 ## Quick Facts
 
-| Item                    | Value                                          |
-| ----------------------- | ---------------------------------------------- |
-| Output token            | cMATRA / MATRA                                 |
-| Max supply              | 1,000,000,000                                  |
-| Decimals                | 6                                              |
-| Validator reserve       | 150,000,000 (15%)                              |
-| Public redemption pool  | 850,000,000 (85%)                              |
-| Public window           | 6 months from launch                           |
-| Public model            | Surrender legacy assets, receive cMATRA        |
-| Snapshot role           | Audit baseline, not normal fungible entitlement |
+| Item                         | Value                                          |
+| ---------------------------- | ---------------------------------------------- |
+| Output token                 | cMATRA / MATRA                                 |
+| Max supply                   | 1,000,000,000                                  |
+| Decimals                     | 6                                              |
+| Network Incentives Reserve   | 277,500,000 (27.75%)                           |
+| Public Redemption Pool       | 722,500,000 (72.25%)                           |
+| Public window                | 6 months from launch                           |
+| Public model                 | Surrender legacy assets, receive cMATRA        |
+| Snapshot role                | Audit baseline, not normal fungible entitlement |
 
 ***
 
@@ -49,12 +49,77 @@ Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-
 
 ## Supply Model
 
-The merger uses a fixed supply model with a validator reserve carved out at genesis.
+The merger uses a fixed supply model with a **Network Incentives Reserve** carved out at genesis, split into five purpose-built sub-buckets.
 
-* The **15% validator reserve** is non-circulating at launch and exists to fund Materios validators over time. This includes delegation rewards for Cardano SPO delegators who secure Materios through cross-validation (see [FAQ Q39a](faq.md#39a-how-do-cardano-spo-delegators-earn-matra)).
-* The **85% public redemption pool** is the only pool used for ordinary public redemptions. SPO delegation rewards do not draw from this pool.
-* **Team treasury softening** is handled through explicit waiver and disclosure, not by pretending the reserve does not exist.
-* **Team carve-out:** Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~31.3M cMATRA) but does not change public rates. See [FAQ](faq.md) for details.
+* The **27.75% Network Incentives Reserve (277.5M cMATRA)** is non-circulating at launch and funds long-term network security, ecosystem growth, strategic partnerships, and launch liquidity. It is not a later inflation switch — it is part of the genesis supply plan.
+* The **72.25% Public Redemption Pool (722.5M cMATRA)** is the only pool used for ordinary public redemptions. Network Incentives sub-bucket distributions do not draw from this pool.
+* **Fee-recycling** supplements the reserves once the network is live: transaction fees are split 40% to a block-author pot, 30% to the attestor reserve, 20% to the Ecosystem Treasury, and 10% burned. This means validator and attestor incentives have multiple sources — genesis reserve plus ongoing fee flow.
+* **Team treasury softening** is handled through explicit waiver and disclosure. Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~26.7M cMATRA at v5.1 rates) but does not change public rates. See [FAQ](faq.md) for details.
+
+### Network Incentives Reserve sub-buckets
+
+| Sub-bucket                    | MATRA      | % of 1B  | Purpose                                                         |
+| ----------------------------- | ---------: | -------: | --------------------------------------------------------------- |
+| Validator Emissions           | 115,000,000 |  11.5%  | Block-production rewards schedule; Cardano SPO cross-validation |
+| Attestor Emissions            |  65,000,000 |   6.5%  | Threshold-attestation rewards + bond/slash economics            |
+| Ecosystem Treasury            |  40,000,000 |   4.0%  | Grants, dev funding, governance-directed programs               |
+| Strategic Allocation          |  30,000,000 |   3.0%  | Strategic/institutional partners (12mo cliff + 36mo linear)     |
+| Liquidity (total)             |  27,500,000 |  2.75%  | Bridge peg reserve, Protocol-Owned Liquidity, maker rebates     |
+| **Total reserve**             | **277,500,000** | **27.75%** |                                                        |
+
+The Liquidity bucket breaks down as 5M for bridge peg reserve, 17.5M for Protocol-Owned DEX Liquidity (POL), and 5M for maker rebates on the CLOB launch venue.
+
+***
+
+## Launch Venue
+
+Materios is launching cMATRA on **[SaturnSwap](https://saturnswap.io)**, a Central Limit Order Book (CLOB) DEX on Cardano, as the primary venue.
+
+* **Primary venue — SaturnSwap CLOB:** cMATRA/ADA and cMATRA/USDM pairs, seeded with resting orders at 25/50/100/200/400 bps from mid. Target book depth: $250K within 2% of mid at launch. CLOB gives better capital efficiency and price discovery than AMMs for a launch of this size; native maker-rebate economics are also a better fit than fixed-schedule LP mining.
+* **Secondary venues — AMMs:** [Minswap](https://minswap.org) ($75–100K depth) and [WingRiders](https://www.wingriders.com) ($25–50K depth) for users and routers that only interact with AMMs. These act as arbitrage targets against the CLOB.
+
+A CLOB-primary launch is enabled by SaturnSwap's CIP-68 Liftoff integration, which lets new tokens list with full order-book functionality on day one rather than waiting for AMM liquidity to deepen. The maker-rebate program funded by the Liquidity sub-bucket (5M MATRA over 24 months, 50% annual decay, paid in MATRA at ~15 bps of a 30 bps maker fee, 20% cap per market-maker address with two-sided-quote requirements) keeps spread tight from the first block.
+
+***
+
+## Liquidity Programs
+
+### LP Loyalty Bonus
+
+Holders who have AGENT and/or SHARDS deployed in any qualifying Cardano DEX liquidity pool at the pre-launch snapshot receive a **+3% cMATRA bonus** on top of their base redemption amount.
+
+* **Snapshot timing:** 14 days before launch, using a commit-reveal protocol to prevent last-second wash-farming.
+* **Eligible DEXs:** Minswap v1 and v2, WingRiders, CSWAP, SundaeSwap, MuesliSwap, Splash, VyFinance, and SaturnSwap.
+* **Coverage:** The bonus is funded from the Ecosystem Treasury sub-bucket; expected cost ~2–3M cMATRA depending on LP participation at snapshot.
+* **Eligibility rule:** The bonus is credited to the wallet that controls the LP position at snapshot time, applied to the underlying AGENT and SHARDS that the LP token represents when withdrawn and redeemed.
+
+This program rewards holders who kept their AGENT and SHARDS productive during the pre-launch period rather than parking them in idle wallets.
+
+***
+
+## Strategic Allocation
+
+The 30M MATRA Strategic Allocation sub-bucket (3% of supply) is reserved for institutional partners who commit capital to the network ahead of the public launch.
+
+* **Vesting:** 12-month cliff followed by 36-month linear vesting. No pre-cliff liquidity.
+* **Purpose:** The strategic round is expected to fund Protocol-Owned Liquidity seeding, security audits, and runway for team expansion beyond the redemption window.
+* **Transparency:** All strategic allocations will be disclosed on-chain at mint time and the vesting contracts will be independently verifiable via the Materios explorer.
+
+This bucket is held by Materios until strategic partners are confirmed. None of these tokens enter circulation during the 12-month cliff regardless of partner timing.
+
+***
+
+## Post-Reconciliation Dilution Rationale
+
+The v5.1 allocation represents a **15% downward adjustment** from the v3.3 (March 2026) reference rates: public holders now receive approximately 85% of what the previous rate table published, and the Team carve-out takes exactly the same 15% haircut.
+
+This falls squarely within the governance-approved correction clause stated in the "Window mechanics" section above:
+
+> *"The rate table remains fixed for the full window unless a documented governance-approved correction is required for a launch bug or reconciliation error."*
+
+The v3.3 rates assumed a pure 85% public / 15% reserve split that did not account for attestor emissions (already committed in the runtime code as a separate 50M reserve), left no room for ecosystem treasury or strategic partners, and produced rate-table totals that were mathematically inconsistent with the committed reserve architecture. The v5.1 rebalance reconciles published rates with the runtime's actual reserve structure, builds in strategic and liquidity sub-buckets that enable a real launch, and applies the haircut evenly — including to the Team carve (31.3M → 26.7M cMATRA) — so no holder class is disadvantaged relative to any other.
+
+Final fixed rates are republished below as of the v5.1 publication date.
 
 ***
 
@@ -169,7 +234,7 @@ No separate manual side-claim should be necessary for ordinary honored legacy re
 
 ### Asset weighting
 
-Each asset receives a weighted share of the **850,000,000 public redemption pool** using the published valuation methodology:
+Each asset receives a weighted share of the **722,500,000 public redemption pool** using the published valuation methodology:
 
 * **Fungible tokens:** 7-day TWAP from top-pool market data
 * **NFT collections:** 7-day TWAP of collection floor prices
@@ -180,60 +245,60 @@ Each asset receives a weighted share of the **850,000,000 public redemption pool
 For fungible assets:
 
 ```
-asset_bucket = asset_weight × 850,000,000
+asset_bucket = asset_weight × 722,500,000
 redemption_rate = asset_bucket / final_redeemable_supply
 ```
 
 For NFTs:
 
 ```
-asset_bucket = asset_weight × 850,000,000
+asset_bucket = asset_weight × 722,500,000
 per_nft_redemption = asset_bucket / final_redeemable_nft_count
 ```
 
-### What you get (reference rates — March 12, 2026)
+### What you get (reference rates — April 19, 2026)
 
-The following table shows how much cMATRA you receive for each legacy asset you surrender. **These are reference rates, not final.** The TWAP-derived weights (how the pool is split between assets) are locked. Rates may shift slightly before final publication only if legacy reward materialization changes an asset's redeemable supply count.
+The following table shows how much cMATRA you receive for each legacy asset you surrender at the v5.1 rate table. These rates are derived by applying the post-reconciliation 0.85 multiplier to the locked TWAP weights, so the ordering and relative value between assets is unchanged — only the absolute cMATRA output is reduced. Final fixed rates are published after legacy reward materialization is reconciled.
 
-| You surrender            | You receive (cMATRA)         |
-| ------------------------ | ---------------------------: |
-| 1 AGENT                  | ~0.5446                      |
-| 1 SHARDS                 | ~34.0                        |
-| 1 Flux Point Team Pass   | ~81,495                      |
-| 1 SE Brawler             | ~41,523                      |
-| 1 Brawl Pass: Enter the Dragon | ~132,117                |
-| 1 T1 ADAM Launch Pass    | ~3,755,146                   |
-| 1 T2 ADAM Launch Pass    | ~221,576                     |
+| You surrender                  | You receive (cMATRA)         |
+| ------------------------------ | ---------------------------: |
+| 1 AGENT                        | ~0.4629                      |
+| 1 SHARDS                       | ~29.12                        |
+| 1 Flux Point Team Pass         | ~69,271                      |
+| 1 SE Brawler                   | ~35,294                      |
+| 1 Brawl Pass: Enter the Dragon | ~112,300                     |
+| 1 T1 ADAM Launch Pass          | ~3,191,874                   |
+| 1 T2 ADAM Launch Pass          | ~188,339                     |
 
-*Rates are fixed for the full 6-month redemption window once published. You can redeem in multiple transactions.*
+The SHARDS rate is computed from an exact rational ratio (`76,929,202,239,379 / 2,641,564,750,001` in base units) and rendered here to four significant figures. The on-chain mint uses the exact rational to guarantee the bucket sum is 722.5M to the base unit. All rates are fixed for the full 6-month redemption window once published and you can redeem in multiple transactions.
 
 ### Detailed rate breakdown
 
-The rates above are derived from a 7-day TWAP valuation of each asset's market price, weighted against the 850,000,000 cMATRA public redemption pool.
+The rates above are derived from a 7-day TWAP valuation of each asset's market price, weighted against the 722,500,000 cMATRA public redemption pool.
 
 | Asset                         | Bucket (cMATRA)      | Redeemable Supply  | Rate per Base Unit | Rate per Display Unit |
 | ----------------------------- | -------------------: | -----------------: | -----------------: | --------------------: |
-| AGENT                         | 528,433,002          | 970,355,344        | ~0.5446            | ~0.5446 per AGENT     |
-| SHARDS                        | 90,504,944           | 2,641,564.75       | ~0.000034          | ~34.0 per SHARDS      |
-| Flux Point Team Pass          | 32,679,426           | 401 NFTs           | —                  | ~81,495 per NFT       |
-| SE Brawlers                   | 10,048,467           | 242 NFTs           | —                  | ~41,523 per NFT       |
-| Brawl Pass: Enter the Dragon  | 5,813,163            | 44 NFTs            | —                  | ~132,117 per NFT      |
-| T1 ADAM Launch Pass           | 161,471,298          | 43 NFTs            | —                  | ~3,755,146 per NFT    |
-| T2 ADAM Launch Pass           | 21,049,701           | 95 NFTs            | —                  | ~221,576 per NFT      |
+| AGENT                         | 449,168,051.406      | 970,355,344        | 462,890            | ~0.4629 per AGENT     |
+| SHARDS                        | 76,929,202.239       | 2,641,564.750001   | 29                 | ~29.12 per SHARDS      |
+| Flux Point Team Pass          | 27,777,511.969       | 401 NFTs           | —                  | ~69,271 per NFT       |
+| SE Brawlers                   | 8,541,197.187        | 242 NFTs           | —                  | ~35,294 per NFT       |
+| Brawl Pass: Enter the Dragon  | 4,941,188.455        | 44 NFTs            | —                  | ~112,300 per NFT      |
+| T1 ADAM Launch Pass           | 137,250,603.008      | 43 NFTs            | —                  | ~3,191,874 per NFT    |
+| T2 ADAM Launch Pass           | 17,892,245.735       | 95 NFTs            | —                  | ~188,339 per NFT      |
 
-*All values in display units (6 decimal places). AGENT has 0 decimals so base = display. SHARDS has 6 decimals (1 SHARDS = 1,000,000 base units). Buckets sum to exactly 850,000,000 cMATRA.*
+*All values in display units (6 decimal places). AGENT has 0 decimals so base = display. SHARDS has 6 decimals (1 SHARDS = 1,000,000 base units). Buckets sum to exactly 722,500,000 cMATRA (verified against the canonical `rate_table_cmatra.json` in flux-merger `audit_pack/2026-04-19/`).*
 
 ### Team carve-out (from public pool)
 
-The following amounts are minted directly to the team at the same published rates. The surrender pool is funded with the remainder.
+The following amounts are minted directly to the team at the same published rates. The surrender pool is funded with the remainder. The Team takes exactly the same 15% haircut as public holders — the carve recomputes automatically at the new rates.
 
 | Treasury | Asset | Waived Balance | Rate per Display Unit | cMATRA Received |
 | -------- | ----- | -------------: | --------------------: | --------------: |
-| FPS DAO  | AGENT | 29,644,656     | ~0.5446 per AGENT     | ~16,143,768     |
-| FPS DAO  | SHARDS | 446,969.70    | ~34.0 per SHARDS      | ~15,196,970     |
-| **Total** | | | | **~31,340,738 cMATRA** |
+| FPS DAO  | AGENT | 29,644,656     | ~0.4629 per AGENT     | ~13,722,223     |
+| FPS DAO  | SHARDS | 446,969.70    | ~29.12 per SHARDS      | ~13,016,914     |
+| **Total** | | | | **~26,739,137 cMATRA** |
 
-**Surrender pool after carve: ~818,659,262 cMATRA** (96.3% of public pool).
+**Surrender pool after carve: ~695,760,863 cMATRA** (96.3% of public pool).
 
 ### Rate publication conditions
 
@@ -274,4 +339,4 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 3.3 | **Date:** April 16, 2026 | **Status:** Public / governance draft
+**Version:** 4.0 | **Date:** April 19, 2026 | **Status:** Public / governance draft
