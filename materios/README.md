@@ -48,7 +48,7 @@ Materios Chain          Cardano L1
 
 | Token | Type | Purpose |
 |-------|------|---------|
-| **MATRA** | Transferable (12 decimals) | Staking, governance, transfers |
+| **MATRA** | Transferable (6 decimals) | Staking, governance, transfers |
 | **MOTRA** | Non-transferable | Capacity/fee token. Generated proportionally to MATRA balance, decays per block. Used to pay transaction fees without spending MATRA. |
 
 ### On-Chain Pallets
@@ -68,19 +68,20 @@ Materios Chain          Cardano L1
 
 ### Preprod (active)
 
-- **Chain**: `materios_preprod`
-- **Runtime version**: 117
-- **Validators**: 3 authorities (Gemtek + 2 GMKtec Ultra 6 mini PCs)
+- **Chain**: `materios_preprod_v5`
+- **Runtime version**: spec 201 (IOG partner-chains pallets for Minotaur cross-validation; v5 decimal split — MATRA 6-dec, MOTRA 15-dec)
+- **Validators**: 4 permissioned (Gemtek + 2 GMKtec + MacBook) + open SPO-registered seats (D = (3,2))
 - **Block time**: 6 seconds
-- **Finality**: GRANDPA (working, 3 validators)
+- **Finality**: GRANDPA (working)
 - **Governance**: 2-of-3 multisig sudo (transferred from //Alice)
 - **Cardano anchoring**: Mainnet, label `8746`
 - **RPC**: `wss://materios.fluxpointstudios.com/preprod-rpc`
 - **Gateway**: `https://materios.fluxpointstudios.com/preprod-blobs`
-- **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) (with Preprod/Preview toggle)
-- **Genesis hash**: `0x3d23152c6e9717b2bea57f4c6794f943598146d978f0cb9680107d9cd9ea634d`
-- **WASM overrides**: None needed (clean genesis, all fixes baked in)
-- **Install**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --label my-validator`
+- **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer)
+- **Genesis hash**: `0xbc0531cb311281565036fb397a376f0e0fa37005589655f97a7924b2729a164c`
+- **WASM overrides**: Required. Ships IOG IDP-None fallback + Ariadne output dedup. Download from [`/releases/`](https://materios.fluxpointstudios.com/releases/).
+- **Attestor install (permissionless)**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor`
+- **SPO Validator install**: see [SPO Onboarding](spo-onboarding.md).
 
 ### Preview (deprecated)
 
