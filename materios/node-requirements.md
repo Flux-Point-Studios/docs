@@ -50,7 +50,9 @@ Everything an operator needs to download lives under `materios.fluxpointstudios.
 
 > **arm64 / macOS:** the native binary is x86_64 Linux only. ARM operators either build from source (see `Dockerfile` in the [materios](https://github.com/Flux-Point-Studios/materios) repo) or run the x86_64 binary under emulation (Rosetta / qemu).
 
-> **glibc:** the binary is dynamically linked against glibc ≥ 2.35 (Ubuntu 22.04+ / Debian 12+ / RHEL 9+). On older distros the loader will refuse to start — upgrade or build from source.
+> **glibc:** the binary is dynamically linked against glibc ≥ 2.38 (Ubuntu 24.04+ / Debian 13+ / RHEL 10+). On older distros the loader will refuse to start — upgrade, use the Docker image below, or build from source.
+>
+> **Docker** (alternative to the native binary — bundles an Ubuntu 24.04 userland): `docker pull ghcr.io/flux-point-studios/materios-node:v5`. Image is multi-tag (`:v5`, `:spec-201`, `:latest`) and publicly pullable from GHCR.
 
 ## Hardware
 
@@ -64,7 +66,7 @@ Materios is lightweight. Most SPOs already run boxes that exceed these specs man
 | RAM | 2 GB | 4 GB |
 | Disk (Materios data) | 50 GB SSD | 100 GB SSD |
 | Network | 10 Mbps, static IPv4 | 100 Mbps |
-| OS | Linux x86_64 (Ubuntu 22.04+, Debian 12+, RHEL 9+) |
+| OS | Linux x86_64 (glibc ≥ 2.38 for native binary; Docker works on any) |
 
 Observed preprod usage: ~800 MiB RAM, ~12 GB disk after several weeks, <1% average CPU. **Budget for growth** — chain history is cumulative.
 

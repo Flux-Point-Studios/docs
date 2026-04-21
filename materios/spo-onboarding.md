@@ -571,7 +571,7 @@ curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator
 The installer detects the existing `.secret-mnemonic` and re-uses it (this
 was hardened on 2026-04-16; earlier versions would overwrite). It wires up:
 
-- `materios-node` — currently distributed as a native x86_64 Linux binary at [`/releases/materios-node-v5-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v5-x86_64-linux) (see [Operator Guide → step 7](operator-guide.md#7-set-up-the-node) for systemd wiring). A Docker image (`ghcr.io/flux-point-studios/materios-node:v5`) may be published later — pre-built arm64 / macOS binaries are not available yet.
+- `materios-node` — distributed as either a native x86_64 Linux binary at [`/releases/materios-node-v5-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v5-x86_64-linux) (see [Operator Guide → step 7](operator-guide.md#7-set-up-the-node) for systemd wiring), or a Docker image `ghcr.io/flux-point-studios/materios-node:v5` (`:spec-201`, `:latest` also valid). The native binary needs glibc ≥ 2.38; the Docker image bundles Ubuntu 24.04 userland so works on any host. Pre-built arm64 / macOS binaries are not available yet — build from source.
 - runtime override WASM from [`/releases/materios_runtime.compact.compressed.wasm`](https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm) (passed via `--wasm-runtime-overrides`). Verify sha256 against [`/releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS).
 - chain spec from `https://materios.fluxpointstudios.com/chain-spec-v5-raw.json`
 - bootnode `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM`

@@ -184,6 +184,10 @@ Your pool ID appears in `registered_candidates` once you're eligible.
 
 ### 7. Set up the node
 
+Two paths: native binary + systemd (recommended for SPO operators already running systemd-managed cardano-node), or Docker container (simpler if you prefer containers). Pick one and follow it through step 8.
+
+#### Path A — native binary
+
 Download the binary, WASM override, and chain spec:
 
 ```bash
@@ -255,7 +259,57 @@ sudo useradd --system --no-create-home --shell /usr/sbin/nologin materios
 sudo chown -R materios:materios /opt/materios
 ```
 
-### 8. systemd unit
+#### Path B — Docker
+
+Image: `ghcr.io/flux-point-studios/materios-node:v5` (`:spec-201` and `:latest` also point here). Publicly pullable from GHCR.
+
+`/opt/materios/docker-compose.yml`:
+
+```yaml
+services:
+  materios-node:
+    image: ghcr.io/flux-point-studios/materios-node:v5
+    container_name: materios-validator
+    restart: unless-stopped
+    user: "1000:1000"
+    env_file: /opt/materios/cardano-env
+    ports:
+      - "30333:30333"
+      - "127.0.0.1:9944:9944"
+    volumes:
+      - ./data:/data
+      - ./chain-spec-v5-raw.json:/chain-spec/chain-spec-v5-raw.json:ro
+      - ./runtime-overrides:/runtime-overrides:ro
+      - ./keystore:/keystore
+    command:
+      - --chain=/chain-spec/chain-spec-v5-raw.json
+      - --base-path=/data
+      - --keystore-path=/keystore
+      - --validator
+      - --name=<your-pool-ticker>
+      - --port=30333
+      - --rpc-port=9944
+      - --public-addr=/ip4/<YOUR.PUBLIC.IP>/tcp/30333
+      - --wasm-runtime-overrides=/runtime-overrides
+      - --bootnodes=/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
+```
+
+Prep + start:
+
+```bash
+cd /opt/materios
+mkdir -p data runtime-overrides keystore
+sudo chown -R 1000:1000 data runtime-overrides keystore
+curl -fsSLo chain-spec-v5-raw.json https://materios.fluxpointstudios.com/chain-spec-v5-raw.json
+curl -fsSLo runtime-overrides/materios_runtime.compact.compressed.wasm \
+  https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm
+docker compose up -d
+docker compose logs -f materios-node
+```
+
+Skip to step 9 for key insertion. The Docker path doesn't need the systemd unit below.
+
+### 8. systemd unit (Path A only)
 
 `/etc/systemd/system/materios-validator.service`:
 
