@@ -30,7 +30,7 @@ Registration happens on Cardano preprod, not on Materios. Once you're registered
 
 Already running a Cardano preprod stake pool? Skip to step 1.
 
-If not, follow the [Cardano SPO handbook](https://developers.cardano.org/docs/stake-pool-course/handbook) to produce:
+If not, follow the official Cardano SPO docs — [relay node configuration](https://developers.cardano.org/docs/operate-a-stake-pool/relay-configuration/relay-node-configuration/) and [block producer wallet/key generation](https://developers.cardano.org/docs/operate-a-stake-pool/block-producer/generating-wallet-keys/) — to produce:
 - Pool cold (`cold.skey`, `cold.vkey`, `cold.counter`), VRF (`vrf.skey`, `vrf.vkey`), KES (`kes.skey`, `kes.vkey`), op-cert (`op.cert`).
 - Registered stake pool with pledge met.
 - At least one payment address funded with a few hundred tADA you control (for the registration tx + a reserved UTXO).
