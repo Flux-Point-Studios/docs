@@ -4,15 +4,17 @@ description: Hardware, software, keys, and infrastructure needed to run a Materi
 
 # Node Requirements
 
+> **🧪 Preprod is a public testnet, not mainnet.** Rewards on this network are paid in **tMATRA** — testnet tokens with no economic value. Running a preprod node is for testing the operator workflow and demonstrating uptime; it is not a revenue stream. Mainnet (with real MATRA + economic rewards) has not launched yet — see [Mainnet Roadmap](mainnet-roadmap.md).
+
 Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current D-parameter is `(3, 2)` — three permissioned seats and two registered-SPO seats per committee. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
 
 There are four roles:
 
 | Role | What it does | Requires Cardano SPO? |
 |------|---------|---|
-| **SPO Validator** | Produces blocks, votes on finality, signs attestations, earns tMATRA. Selected by Ariadne weighted by preprod-ADA stake. | **Yes** — register on Cardano preprod via `partner-chains-node smart-contracts register`. |
-| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list. | **No** — submit your sidechain/Aura/Grandpa pubkeys to Flux Point Studios; we add you to the permissioned-candidates list via governance tx. No Cardano stake pool, no tADA, no 10-day stake-snapshot wait. |
-| **Attestor** | Verifies blobs and signs attestations. Earns 10 tMATRA per certified receipt. | No. Permissionless, one-liner install. |
+| **SPO Validator** | Produces blocks, votes on finality, signs attestations. Earns **tMATRA** (testnet, no economic value) on preprod; real MATRA after mainnet launch. Selected by Ariadne weighted by preprod-ADA stake. | **Yes** — register on Cardano preprod via `partner-chains-node smart-contracts register`. |
+| **Permissioned Validator** | Same chain duties as SPO Validator. Same **tMATRA** preprod reward; same future mainnet earning curve. Selected from the operator-managed permissioned-candidate list. | **No** — submit your sidechain/Aura/Grandpa pubkeys to Flux Point Studios; we add you to the permissioned-candidates list via governance tx. No Cardano stake pool, no tADA, no 10-day stake-snapshot wait. |
+| **Attestor** | Verifies blobs and signs attestations. Earns **10 tMATRA** (testnet, no economic value) per certified receipt on preprod. | No. Permissionless, one-liner install. |
 | **Full Node** | RPC + archive / read-only peer. | No. |
 
 See the [Operator Guide](operator-guide.md) for end-to-end setup flows.

@@ -4,6 +4,8 @@ description: End-to-end guide for Cardano stake pool operators registering as re
 
 # SPO Onboarding (Preprod)
 
+> **🧪 Preprod is a public testnet, not mainnet.** Rewards described here are paid in **tMATRA** — testnet tokens with no economic value. Running a preprod node is for testing the operator workflow and demonstrating uptime ahead of mainnet, not a revenue stream. See [Mainnet Roadmap](mainnet-roadmap.md) for the path to real-MATRA rewards.
+
 This guide walks a Cardano stake pool operator (SPO) from zero to being a
 **registered candidate** on Materios preprod — the role where your committee
 selection probability is weighted by the stake delegated to your pool on
@@ -576,7 +578,7 @@ was hardened on 2026-04-16; earlier versions would overwrite). It wires up:
 - chain spec from `https://materios.fluxpointstudios.com/chain-spec-v5-raw.json`
 - bootnode `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM`
 - port 30333 for P2P
-- `cert-daemon` for attestation (you earn those rewards too)
+- `cert-daemon` for attestation (also earns tMATRA on preprod — same testnet-no-economic-value caveat as block rewards)
 
 ### 8a. Recommended flags
 

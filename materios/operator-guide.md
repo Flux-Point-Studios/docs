@@ -4,17 +4,19 @@ description: End-to-end guide to running a Materios preprod validator (SPO or pe
 
 # Operator Guide
 
+> **🧪 Preprod is a public testnet, not mainnet.** Everything below describes participation on Materios **preprod**, which is currently the only network running. Rewards are paid in **tMATRA** — the prefix `t` denotes test tokens. tMATRA has **no economic value**, is not exchangeable, and is not a revenue stream. Running a preprod node is for testing, learning the operator workflow, and demonstrating uptime ahead of the mainnet launch. Mainnet (with real MATRA + economic rewards) has not launched yet — see [Mainnet Roadmap](mainnet-roadmap.md) for the gating dependencies. Operators who participate now are early contributors to the network's reliability story; "rewards" you accumulate on preprod are a leaderboard / proof-of-uptime, not money.
+
 Three ways to participate in Materios preprod and earn tMATRA:
 
-| Role | What you do | Rewards | Requires |
+| Role | What you do | Preprod rewards (test tokens, no economic value) | Requires |
 |------|-------------|---------|----------|
-| **SPO Validator** | Produce blocks + vote on finality + attest. Selected via Ariadne weighted by Cardano preprod-ada stake (2 of 5 committee seats). | Block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. ~10 days for stake-snapshot to settle. |
-| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list (3 of 5 committee seats). | Block rewards + attestation rewards. | Send your Materios pubkeys to Flux Point Studios. **No Cardano stake pool, no tADA, no 10-day wait.** Hardware spec is identical to SPO Validator. |
-| **Attestor** | Verify blobs and sign attestations. | Attestation rewards only. | Nothing. One-line install. |
+| **SPO Validator** | Produce blocks + vote on finality + attest. Selected via Ariadne weighted by Cardano preprod-ada stake (2 of 5 committee seats). | tMATRA: block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. ~10 days for stake-snapshot to settle. |
+| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list (3 of 5 committee seats). | tMATRA: block rewards + attestation rewards. | Send your Materios pubkeys to Flux Point Studios. **No Cardano stake pool, no tADA, no 10-day wait.** Hardware spec is identical to SPO Validator. |
+| **Attestor** | Verify blobs and sign attestations. | tMATRA: attestation rewards only. | Nothing. One-line install. |
 
 All three contribute to network security. Validators secure consensus; attestors secure data integrity (confirming that each receipt corresponds to real blob content).
 
-> **Choosing between SPO and Permissioned Validator:** If you already run a Cardano stake pool and want a second revenue stream that uses your existing infrastructure, go SPO. If you don't have a Cardano pool but you do operate cloud / home infrastructure and want to validate on Materios directly, go Permissioned. The hardware spec, chain duties, and reward rate are identical — only the path onto the candidate list differs.
+> **Choosing between SPO and Permissioned Validator (preprod):** If you already run a Cardano stake pool and want to test a future second revenue stream on the same infrastructure (rewards become real on mainnet), go SPO. If you don't have a Cardano pool but you do operate cloud / home infrastructure and want to validate on Materios directly, go Permissioned. The hardware spec, chain duties, and tMATRA reward rate on preprod are identical — only the path onto the candidate list differs. Reminder: tMATRA on preprod has no economic value; mainnet rewards (real MATRA) launch later — see [Mainnet Roadmap](mainnet-roadmap.md).
 
 Read [Node Requirements](node-requirements.md) first — it enumerates the downloads, ports, and hardware referenced below.
 
@@ -635,12 +637,25 @@ Historically operator-kit shipped a `--mode validator` that provisioned a Substr
 
 ## Rewards
 
-| Pool | Reserve | Reward | Who earns |
+> **🧪 Preprod is not mainnet. Rewards on this network are tMATRA — testnet tokens with no economic value.** The pool sizes below describe the *mainnet* tokenomics design (where rewards become real MATRA). On preprod, those same pools mint tMATRA at the same rates so operators can preview behavior, but tMATRA is not exchangeable, not a revenue stream, and not redeemable for anything. See [Mainnet Roadmap](mainnet-roadmap.md) for what gates the real-rewards transition.
+
+| Pool | Reserve (mainnet design) | Reward | Who earns (on preprod, paid in tMATRA) |
 |---|---|---|---|
 | Block production | 150M MATRA (15% of total supply) | Per-block minter credit, distributed at era end | All Validators (SPO + Permissioned) |
-| Attestation | 50M MATRA (5%) | 10 tMATRA per certification per signer, paid instantly | All signers (Validators + Attestors) |
+| Attestation | 50M MATRA (5%) | 10 per certification per signer, paid instantly | All signers (Validators + Attestors) |
 
 Era length is ~24 hours (14,400 blocks). Block reward is proportional to blocks minted per era — better uptime = bigger share. No slashing for downtime on preprod. Both validator paths (SPO and Permissioned) earn at the same rate per block produced.
+
+**What preprod participation IS for:**
+- Proving uptime + reliability before mainnet (operators with strong preprod track records will be prioritized for mainnet onboarding)
+- Testing your operational stack (key management, monitoring, watchdogs, upgrades)
+- Earning leaderboard / proof-of-uptime credit
+- Helping us harden the network before real value moves through it
+
+**What preprod participation IS NOT:**
+- A revenue stream
+- A way to "farm" tokens with future value
+- Convertible to ADA or any other asset
 
 ---
 

@@ -68,6 +68,8 @@ Materios Chain          Cardano L1
 
 ### Preprod (active)
 
+> **🧪 Preprod is a public testnet, not mainnet.** Native token on this network is **tMATRA** — testnet tokens with no economic value. Operating a node here is for testing, demonstrating uptime, and previewing mainnet workflows; it is not a revenue stream. Mainnet (with real MATRA + economic rewards) launches per the [Mainnet Roadmap](mainnet-roadmap.md).
+
 - **Chain**: `materios_preprod_v5`
 - **Runtime version**: spec 201 (IOG partner-chains pallets for Minotaur cross-validation; v5 decimal split — MATRA 6-dec, MOTRA 15-dec)
 - **Validators**: 4 permissioned (Gemtek + 2 GMKtec + MacBook) + open SPO-registered seats (D = (3,2))

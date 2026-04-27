@@ -360,4 +360,4 @@ The current threshold is **2 of 10** committee members. This means at least 2 in
 
 ### Can I run my own attestor?
 
-Yes. Anyone can run a cert daemon and earn tMATRA for every receipt they help certify. See the [Attestor Guide](operator-guide.md#attestor-only) for the one-command setup.
+Yes. Anyone can run a cert daemon and earn **tMATRA** (testnet tokens, no economic value) for every receipt they help certify on preprod. Real-MATRA economics start at mainnet — see [Mainnet Roadmap](mainnet-roadmap.md). See the [Attestor Guide](operator-guide.md#attestor-only) for the one-command setup.
