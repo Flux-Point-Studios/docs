@@ -134,7 +134,7 @@ An SPO validator holds three sets of keys. **All are generated locally — none 
 | **Aura** | Block authoring slot key. | sr25519 | SS58 + hex |
 | **Grandpa** | Finality voting. | ed25519 | SS58 + hex |
 
-The IOG CLI (`partner-chains-node key generate`) produces all three in one step. See the [Operator Guide → Generate Materios keys](operator-guide.md#2-generate-materios-keys).
+The Partner Chains CLI (`partner-chains-node key generate`, v1.8.0 binary) produces all three in one step. See the [Operator Guide → Generate Materios keys](operator-guide.md#2-generate-materios-keys). Note: the original IOG `input-output-hk/partner-chains` repo was [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived); upstream development moved into [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node) under the new name `midnight-node-toolkit`. **The v1.8.0 binary remains the correct CLI for current Materios preprod** — it's the version Materios's runtime is built against. Don't substitute newer toolkit versions without coordination.
 
 Keys go into the node's keystore via the `author_insertKey` RPC **after** the node starts. You **do not** need to send the keys to us — only the *public* portions are referenced in your on-chain SPO registration.
 
@@ -146,7 +146,7 @@ Materios preprod v5 requires a WASM runtime override. The override is loaded fro
 
 Current override ships the following local patches on top of the genesis runtime:
 
-1. **IOG IDP-None fallback** — when the mainchain follower cannot compute a committee for the current session (happens at some main-chain epoch boundaries), the pallet reuses the previous committee instead of panicking. Upstream issue tracked at [IOG partner-chains](https://github.com/input-output-hk/partner-chains).
+1. **IDP-None fallback** — when the mainchain follower cannot compute a committee for the current session (happens at some main-chain epoch boundaries), the pallet reuses the previous committee instead of panicking. The bug originated in the IOG partner-chains pallet (now [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived); continued development at [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node)). Materios ships a local patch via `--wasm-runtime-overrides`.
 2. **Ariadne output deduplication** — the with-replacement weighted-random sampler can emit duplicate seats for the same SPO; we collapse duplicates before the set is passed to GRANDPA. Prevents finality stalls when the duplicated validator is offline.
 
 Runtime overrides will be removed as these fixes land upstream. We re-publish the override each time the override content changes; **pin by sha256** in your systemd unit so you know when to update.

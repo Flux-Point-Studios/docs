@@ -56,7 +56,7 @@ export COLD_SKEY=/path/to/your/pool/cold.skey
 
 `GENESIS_UTXO` is a Materios preprod constant; the others are yours.
 
-### 1. Download the IOG Partner Chains CLI
+### 1. Download the Partner Chains CLI (`partner-chains-node` v1.8.0)
 
 ```bash
 curl -sSLo partner-chains-node \
@@ -67,6 +67,8 @@ partner-chains-node --version   # → 1.8.0-...
 ```
 
 This is a standalone tool for registering with any partner chain. It doesn't run a node; it just signs transactions and queries Cardano / Materios state.
+
+> **Upstream note (2026-04):** The original `input-output-hk/partner-chains` repo was [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived) and continued development moved into [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node) under the new name `midnight-node-toolkit`. **The v1.8.0 binary linked above remains the correct version for current Materios preprod** — Materios's runtime is built against partner-chains v1.8.0 and the archived release page still serves the binary. Don't substitute newer toolkit versions without coordination; CLI/runtime version compatibility matters. We'll update this section when Materios advances to a newer toolkit.
 
 ### 2. Generate Materios keys
 
@@ -456,9 +458,9 @@ This is the right path for operators who:
 
 The chain duties, reward rate, hardware spec, and operational expectations are **identical** to the SPO Validator path. The only difference is how you get on the candidate list.
 
-### 1. Download the IOG Partner Chains CLI
+### 1. Download the Partner Chains CLI (`partner-chains-node` v1.8.0)
 
-Same as for SPOs — you only use it for key generation, no Cardano-side commands needed.
+Same as for SPOs — you only use it for key generation, no Cardano-side commands needed. See the SPO section's [upstream note](#1-download-the-partner-chains-cli-partner-chains-node-v180) on why we still pin v1.8.0 from the archived IOG repo.
 
 ```bash
 curl -sSLo partner-chains-node \
