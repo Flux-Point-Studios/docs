@@ -1,17 +1,20 @@
 ---
-description: End-to-end guide to registering a Cardano SPO as a Materios preprod validator, or running a permissionless attestor.
+description: End-to-end guide to running a Materios preprod validator (SPO or permissioned, you do not need to be a Cardano SPO) or a permissionless attestor.
 ---
 
 # Operator Guide
 
-Two ways to participate in Materios preprod and earn tMATRA:
+Three ways to participate in Materios preprod and earn tMATRA:
 
 | Role | What you do | Rewards | Requires |
 |------|-------------|---------|----------|
-| **SPO Validator** | Produce blocks + vote on finality + attest. | Block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. |
+| **SPO Validator** | Produce blocks + vote on finality + attest. Selected via Ariadne weighted by Cardano preprod-ada stake (2 of 5 committee seats). | Block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. ~10 days for stake-snapshot to settle. |
+| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list (3 of 5 committee seats). | Block rewards + attestation rewards. | Send your Materios pubkeys to Flux Point Studios. **No Cardano stake pool, no tADA, no 10-day wait.** Hardware spec is identical to SPO Validator. |
 | **Attestor** | Verify blobs and sign attestations. | Attestation rewards only. | Nothing. One-line install. |
 
-Both contribute to network security. Full validators secure consensus; attestors secure data integrity (confirming that each receipt corresponds to real blob content).
+All three contribute to network security. Validators secure consensus; attestors secure data integrity (confirming that each receipt corresponds to real blob content).
+
+> **Choosing between SPO and Permissioned Validator:** If you already run a Cardano stake pool and want a second revenue stream that uses your existing infrastructure, go SPO. If you don't have a Cardano pool but you do operate cloud / home infrastructure and want to validate on Materios directly, go Permissioned. The hardware spec, chain duties, and reward rate are identical — only the path onto the candidate list differs.
 
 Read [Node Requirements](node-requirements.md) first — it enumerates the downloads, ports, and hardware referenced below.
 
@@ -440,6 +443,114 @@ If you ever need to rotate your Materios keys (compromised host, etc.), submit a
 
 ---
 
+## Permissioned Validator (non-SPO)
+
+You don't need a Cardano stake pool to validate Materios. The chain has 3 permissioned-candidate seats per committee (D-parameter `(3, 2)`); these are filled from a governance-managed allowlist. **Apply to be added** and you'll be eligible at the next session boundary (~6 minutes), not 2 Cardano epochs.
+
+This is the right path for operators who:
+- Already run cloud / home-lab infrastructure but don't run a Cardano stake pool.
+- Want to validate Materios as a primary activity (not as a sidecar to existing SPO ops).
+- Prefer to avoid the Cardano-side complexity (pool pledge, KES rotation, db-sync hosting if you don't already need it).
+
+The chain duties, reward rate, hardware spec, and operational expectations are **identical** to the SPO Validator path. The only difference is how you get on the candidate list.
+
+### 1. Download the IOG Partner Chains CLI
+
+Same as for SPOs — you only use it for key generation, no Cardano-side commands needed.
+
+```bash
+curl -sSLo partner-chains-node \
+  https://github.com/input-output-hk/partner-chains/releases/download/v1.8.0/partner-chains-node-v1.8.0-x86_64-linux
+chmod +x partner-chains-node
+sudo mv partner-chains-node /usr/local/bin/
+partner-chains-node --version   # → 1.8.0-...
+```
+
+### 2. Generate Materios keys
+
+Same three keys as the SPO path:
+
+```bash
+mkdir -p ~/materios-validator/keys
+cd ~/materios-validator/keys
+
+# Sidechain (ECDSA — partner-chain identity)
+partner-chains-node key generate --scheme ecdsa > sidechain.json
+# Aura (sr25519 — block authoring)
+partner-chains-node key generate --scheme sr25519 > aura.json
+# Grandpa (ed25519 — finality)
+partner-chains-node key generate --scheme ed25519 > grandpa.json
+
+chmod 600 *.json
+```
+
+Each `.json` contains mnemonic, public key (hex + SS58), and secret seed. **Back them up offline** — losing the sidechain key means re-applying for a permissioned slot.
+
+Extract the public hexes — you'll send these (only the public parts) to Flux Point Studios:
+
+```bash
+SIDECHAIN_PUB=$(jq -r '.publicKey' sidechain.json)   # 66-char hex (33-byte compressed ECDSA)
+AURA_PUB=$(jq -r '.publicKey' aura.json)             # 64-char hex
+GRANDPA_PUB=$(jq -r '.publicKey' grandpa.json)       # 64-char hex
+```
+
+### 3. Apply for a permissioned slot
+
+Send the three pubkeys + a label / contact to Flux Point Studios. Easiest path: open an issue in [materios](https://github.com/Flux-Point-Studios/materios/issues) titled `Permissioned validator application: <your-label>` with this body:
+
+```
+sidechain_pub: 0x<66-char-hex>
+aura_pub:      0x<64-char-hex>
+grandpa_pub:   0x<64-char-hex>
+label:         <your-display-name>
+contact:       <discord-handle or email>
+```
+
+Or DM Flux Point Studios in the operator Discord with the same fields.
+
+We will:
+1. Confirm the keys decode cleanly.
+2. Submit a partner-chains governance tx adding your sidechain pubkey to the permissioned-candidates list on Cardano preprod.
+3. Reply with the Cardano tx hash and the Materios session in which you'll first be eligible.
+
+Stake pool ownership is **not checked**. The candidates list is governed by the partner-chains pallet, separate from Cardano stake pool registration.
+
+### 4. Set up the node
+
+Same steps as the SPO path — see [SPO Validator → Set up the node](#7-set-up-the-node). **Skip the Ogmios setup unless you're also planning to register as an SPO later.** The mainchain follower still needs `cardano-db-sync` Postgres for L1 reads — see [Node Requirements → cardano-db-sync](node-requirements.md#separate-requirement-cardano-db-sync) for hosted-provider options.
+
+### 5. Insert keys
+
+Same as SPO step 9 — `author_insertKey` for `aura`, `gran`, `crch`. After insertion, restart the node once to pick up the Grandpa key.
+
+### 6. Confirm eligibility
+
+Once Flux Point Studios confirms your candidates-list addition has landed on Cardano preprod, your sidechain pubkey will appear in the **permissioned** track of `ariadne-parameters`:
+
+```bash
+partner-chains-node ariadne-parameters \
+  --chain /opt/materios/chain-spec-v5-raw.json \
+  --mainchain-epoch <current-preprod-epoch>
+```
+
+Look for your `sidechain_pub_key` in `permissioned_candidates` (not `registered_candidates` — that's the SPO track).
+
+After the next Materios session boundary (~6 minutes from your tx landing), check the [explorer](https://fluxpointstudios.com/materios/explorer) committee tab — your SS58 should appear when selected.
+
+### Operating
+
+Identical to the SPO Validator path. See [SPO Validator → Operating](#operating).
+
+### What if you also want to register as an SPO later?
+
+You can. Run the steps in [SPO Validator](#spo-validator) using the **same** sidechain/aura/grandpa keys. Your registration becomes eligible after the 2-epoch stake snapshot, and you'll be selectable from **either** the permissioned track or the SPO track. (Selection is mutually exclusive per session — you'll fill at most one seat per session.)
+
+### Removing yourself from the permissioned list
+
+Open an issue or DM us. We submit a partner-chains governance tx to remove your sidechain pubkey. Takes effect at the next Cardano stake snapshot (~5 days). You can also just stop running the node — your seat falls back to other candidates without any tx.
+
+---
+
 ## Attestor (Permissionless)
 
 Anyone can run an attestor. One install command; no invite, no keys to ship, no approval step. You earn 10 tMATRA every time a receipt you signed reaches the certification threshold.
@@ -516,9 +627,9 @@ docker compose down                       # stop
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/update.sh | bash
 ```
 
-### Full Validator (Permissioned — Deprecated Path)
+### Full Validator from operator-kit
 
-Historically operator-kit supported a "full validator" mode that provisioned an amd64 Substrate node and requested the team to add you to the permissioned candidate list. That path is **deprecated** — new validators go through SPO registration above, since D-parameter is `(3, 2)` and the 3 permissioned seats are already held by Flux Point Studios.
+Historically operator-kit shipped a `--mode validator` that provisioned a Substrate node and requested addition to the permissioned-candidate list. That mode is being retired in favour of the manual flow documented above in [Permissioned Validator (non-SPO)](#permissioned-validator-non-spo) — same outcome, more operator control over node placement and key custody. If you're an existing operator-kit `--mode validator` user, your setup keeps working; for new validators, follow the explicit Permissioned Validator path.
 
 ---
 
@@ -526,10 +637,10 @@ Historically operator-kit supported a "full validator" mode that provisioned an 
 
 | Pool | Reserve | Reward | Who earns |
 |---|---|---|---|
-| Block production | 150M MATRA (15% of total supply) | Per-block minter credit, distributed at era end | SPO Validators only |
-| Attestation | 50M MATRA (5%) | 10 tMATRA per certification per signer, paid instantly | All signers (SPO validators + attestors) |
+| Block production | 150M MATRA (15% of total supply) | Per-block minter credit, distributed at era end | All Validators (SPO + Permissioned) |
+| Attestation | 50M MATRA (5%) | 10 tMATRA per certification per signer, paid instantly | All signers (Validators + Attestors) |
 
-Era length is ~24 hours (14,400 blocks). Block reward is proportional to blocks minted per era — better uptime = bigger share. No slashing for downtime on preprod.
+Era length is ~24 hours (14,400 blocks). Block reward is proportional to blocks minted per era — better uptime = bigger share. No slashing for downtime on preprod. Both validator paths (SPO and Permissioned) earn at the same rate per block produced.
 
 ---
 
@@ -592,6 +703,25 @@ Node RPC (9944, localhost): standard Substrate RPC surface. `system_health`, `ch
 │    └─ attests + earns 10 tMATRA per cert          │
 └────────────────────────────────────────────────────┘
 ```
+
+### Permissioned Validator
+
+```
+┌─────────────── Your validator host ──────────────┐
+│  cardano-db-sync (Postgres) — yours OR managed   │
+│    (TxPipe / Demeter / Blockfrost — no Cardano   │
+│     stake pool needed)                            │
+│                                                    │
+│  materios-node  ─── P2P :30333 ───→  Materios net │
+│    ├─ reads db-sync Postgres                      │
+│    └─ RPC :9944 (localhost)                       │
+│                                                    │
+│  cert-daemon  ─── WSS → Materios RPC               │
+│    └─ attests + earns 10 tMATRA per cert          │
+└────────────────────────────────────────────────────┘
+```
+
+Same chain duties as SPO — the only structural difference is no cardano-node and no Ogmios.
 
 ### Attestor only
 

@@ -1,16 +1,17 @@
 ---
-description: Hardware, software, keys, and infrastructure needed to run a Materios SPO validator, attestor, or full node on the preprod network.
+description: Hardware, software, keys, and infrastructure needed to run a Materios validator (SPO or permissioned), attestor, or full node on the preprod network.
 ---
 
 # Node Requirements
 
-Materios is a Cardano Partner Chain. Committee selection uses Ariadne: seats are allocated to Cardano stake pool operators weighted by preprod ada delegation. There is **no permissioned allowlist** — join by registering as an SPO on Cardano preprod and your stake makes you eligible.
+Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current D-parameter is `(3, 2)` — three permissioned seats and two registered-SPO seats per committee. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
 
-There are three roles:
+There are four roles:
 
 | Role | What it does | Requires Cardano SPO? |
 |------|---------|---|
-| **SPO Validator** | Produces blocks, votes on finality, signs attestations, earns tMATRA. | **Yes** — register on Cardano preprod via `partner-chains-node smart-contracts register`. |
+| **SPO Validator** | Produces blocks, votes on finality, signs attestations, earns tMATRA. Selected by Ariadne weighted by preprod-ADA stake. | **Yes** — register on Cardano preprod via `partner-chains-node smart-contracts register`. |
+| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list. | **No** — submit your sidechain/Aura/Grandpa pubkeys to Flux Point Studios; we add you to the permissioned-candidates list via governance tx. No Cardano stake pool, no tADA, no 10-day stake-snapshot wait. |
 | **Attestor** | Verifies blobs and signs attestations. Earns 10 tMATRA per certified receipt. | No. Permissionless, one-liner install. |
 | **Full Node** | RPC + archive / read-only peer. | No. |
 
@@ -32,7 +33,7 @@ See the [Operator Guide](operator-guide.md) for end-to-end setup flows.
 | Public RPC (WSS) | `wss://materios.fluxpointstudios.com/preprod-rpc` |
 | Explorer | [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) |
 
-The permissioned seats are held by Flux Point Studios. The **2 registered seats rotate** among all SPOs who have registered via the smart contracts. Selection probability is weighted by each pool's active preprod-ada stake.
+The **3 permissioned seats** are filled from the partner-chains permissioned-candidate list, currently containing Flux Point Studios' four internal nodes plus invited operators. **External operators can apply for a permissioned seat** without becoming a Cardano SPO — see [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo). The **2 registered seats rotate** among all SPOs who have registered via the smart contracts; selection probability is weighted by each pool's active preprod-ada stake.
 
 ## Static Asset Distribution
 
@@ -58,7 +59,9 @@ Everything an operator needs to download lives under `materios.fluxpointstudios.
 
 Materios is lightweight. Most SPOs already run boxes that exceed these specs many times over for their Cardano node.
 
-### SPO Validator
+### SPO Validator and Permissioned Validator
+
+The hardware spec is identical for both validator paths — same `materios-node` binary, same chain duties.
 
 | Resource | Minimum | Recommended |
 |---|---|---|
@@ -69,6 +72,10 @@ Materios is lightweight. Most SPOs already run boxes that exceed these specs man
 | OS | Linux x86_64 (glibc ≥ 2.38 for native binary; Docker works on any) |
 
 Observed preprod usage: ~800 MiB RAM, ~12 GB disk after several weeks, <1% average CPU. **Budget for growth** — chain history is cumulative.
+
+The infrastructure differences between the two paths are:
+- **SPO Validator:** also runs cardano-node + cardano-db-sync + Ogmios (you may already have these for your Cardano stake pool).
+- **Permissioned Validator:** also needs cardano-db-sync access (managed provider is fine — you're not running a Cardano pool, just reading L1 state for the mainchain follower). No Ogmios needed unless you also intend to register as an SPO later.
 
 ### Separate requirement: cardano-db-sync
 
@@ -85,9 +92,11 @@ Disk for db-sync is ~25 GB on preprod and grows with L1 history.
 
 ### Ogmios
 
-Required for SPO registration (`smart-contracts register`) and for the Materios node's Cardano RPC queries. Either:
+Required for **SPO registration** (`smart-contracts register`) and for the Materios node's Cardano RPC queries when running as an SPO. Either:
 - run your own Ogmios pointed at your own cardano-node preprod, or
 - use your db-sync provider's Ogmios endpoint if they expose one.
+
+**Permissioned validators don't need Ogmios** unless they also plan to register as an SPO later. You can add it any time without restarting the node.
 
 ### Attestor
 
@@ -142,6 +151,8 @@ Runtime overrides will be removed as these fixes land upstream. We re-publish th
 
 ## Registration Requirements
 
+### SPO Validator path
+
 Before you can submit `smart-contracts register`, your Cardano preprod SPO needs:
 
 - A registered stake pool (`stake-pool-registration-certificate` on-chain).
@@ -152,6 +163,20 @@ Before you can submit `smart-contracts register`, your Cardano preprod SPO needs
   - `smart-contracts register` consumes one UTXO from your pool payment address as the `--registration-utxo`; leave a small unused UTXO there.
 
 Detailed flow: [Operator Guide → SPO Validator](operator-guide.md#spo-validator).
+
+### Permissioned Validator path
+
+**No Cardano stake pool, no tADA, no 10-day stake-snapshot wait.** You generate Materios keys locally and send the *public* portions to Flux Point Studios. We add your sidechain pubkey to the partner-chains permissioned-candidates list via a governance tx; you become eligible at the next session boundary (~6 minutes), not 2 Cardano epochs.
+
+What you submit to FPS:
+- Sidechain (ECDSA) public key — 66-char hex.
+- Aura (sr25519) public key — 64-char hex.
+- Grandpa (ed25519) public key — 64-char hex.
+- A label / contact (Discord handle is fine).
+
+Private keys never leave your host. The pubkeys are public on-chain anyway once you're selected.
+
+Detailed flow: [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo).
 
 ## Faucet Access
 
