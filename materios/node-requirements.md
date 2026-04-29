@@ -72,21 +72,47 @@ Materios is lightweight. Most SPOs already run boxes that exceed these specs man
 
 The hardware spec is identical for both validator paths — same `materios-node` binary, same chain duties.
 
+**Materios validator process alone** (the substrate node):
+
 | Resource | Minimum | Recommended |
 |---|---|---|
 | CPU | 2 vCPU | 4 vCPU |
 | RAM | 4 GB | 8 GB |
 | Disk (Materios data) | 40 GB SSD | 100 GB SSD |
+
+But you also need to run the **Cardano follower stack** on the same host — `cardano-node` (preprod) + `cardano-db-sync` + Postgres + Ogmios — because the Materios mainchain-follower reads committee state from your local db-sync via direct Postgres connection, not HTTP. That stack is **memory-heavy**. Realistic full-host requirements:
+
+| Resource | Minimum (full stack) | Recommended (full stack) |
+|---|---|---|
+| CPU | 4 vCPU | 8 vCPU |
+| RAM | **24 GB** | 32 GB |
+| Disk | 100 GB SSD | 200 GB SSD |
 | Network | 10 Mbps, inbound TCP 30333 reachable | 100 Mbps |
 | OS | Native Linux x86_64 + glibc ≥ 2.38 + systemd. Cloud VPS, bare-metal, or Hyper-V/VMware/VirtualBox VM. |
 
+Per-component memory budget (approximate, preprod):
+
+| Component | Typical RAM |
+|---|---|
+| `cardano-node` (preprod block producer / follower) | 8–12 GB |
+| `cardano-db-sync` | 4–6 GB |
+| Postgres (db-sync DB) | 4–8 GB (depends on `shared_buffers` / `work_mem`) |
+| `ogmios` | 0.5 GB |
+| `materios-node-spo` (the Materios validator) | 1–2 GB |
+| OS + headroom | 2 GB |
+| **Total realistic** | **~20–28 GB** |
+
+**A 12 GB host will not work** — Postgres + db-sync + cardano-node alone routinely exceed that under preprod load and the OOM killer will reap one of them, taking the validator with it. **Hetzner CX52 (~€21/mo) or DigitalOcean's general-purpose 4 vCPU / 16 GB tier as the absolute floor; CPX51 (€42/mo, 16 vCPU / 32 GB) is the comfortable spec.**
+
+> **Cheaper option:** if you don't want to run the full Cardano stack yourself, use a hosted db-sync provider (TxPipe Dolos / Demeter.run / Blockfrost — check endpoint compatibility before committing). That lets you run materios-node-spo on a small host (4 vCPU / 8 GB / 40 GB SSD is plenty), with the Cardano-side state coming from the hosted provider over the network. Trade-off: dependency on a third party for L1 state.
+
 > **Not supported:** WSL2, Docker Desktop running an amd64 Linux container on macOS or Windows, Alpine / musl-libc. The bootstrap script refuses to run on these. See [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the full list and recommended alternatives (UTM, Hyper-V, cloud VPS).
 
-Observed preprod usage: ~800 MiB RAM, ~12 GB disk after several weeks, <1% average CPU. **Budget for growth** — chain history is cumulative.
+Observed preprod usage of the Materios validator process alone: ~800 MiB RAM, ~12 GB disk after several weeks, <1% average CPU. **Budget for growth** — chain history is cumulative.
 
-The infrastructure differences between the two paths are:
-- **SPO Validator:** also runs cardano-node + cardano-db-sync + Ogmios (you may already have these for your Cardano stake pool).
-- **Permissioned Validator:** also needs cardano-db-sync access (managed provider is fine — you're not running a Cardano pool, just reading L1 state for the mainchain follower). No Ogmios needed unless you also intend to register as an SPO later.
+The infrastructure differences between the two validator paths are:
+- **SPO Validator:** runs cardano-node in *block-producer* mode (signing Cardano blocks), cardano-db-sync, Postgres, Ogmios, plus the Materios validator. Largest footprint; Cardano BP node is more memory-hungry than a passive follower.
+- **Permissioned Validator:** runs cardano-node in *follower* mode (just consuming Cardano blocks), cardano-db-sync, Postgres, Ogmios, plus the Materios validator. Slightly lighter than SPO. **Or use a hosted db-sync provider** to avoid the Cardano stack entirely (recommended for low-budget operators).
 
 ### Separate requirement: cardano-db-sync
 
