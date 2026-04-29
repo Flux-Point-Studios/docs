@@ -42,7 +42,9 @@ The shipped binary is x86_64-Linux-only and won't run on macOS even via Docker D
 - **Docker Desktop running an amd64 Linux container on macOS / Windows** (same Rosetta libp2p issue as above).
 - **Alpine Linux / musl-libc** — the binary is glibc-linked.
 
-**Minimum spec:** 4 vCPU, 8 GB RAM, 40 GB SSD. Budget cloud VPS tiers (~€4.50–$10/month) are sufficient for preprod validation.
+**Minimum spec — full self-hosted stack** (Cardano node + db-sync + Postgres + Ogmios + Materios validator on the same host): **4 vCPU, 24 GB RAM, 100 GB SSD**. Hetzner CX52 (~€21/mo) is the floor; CPX51 (16 vCPU / 32 GB, ~€42/mo) is comfortable. Do NOT try this on a 12-GB host — Postgres + db-sync + cardano-node alone will OOM-kill each other under preprod load.
+
+**Minimum spec — using a hosted db-sync provider** (TxPipe Dolos, Demeter.run, Blockfrost — Materios validator only on your host): **4 vCPU, 8 GB RAM, 40 GB SSD**. Budget cloud VPS tiers (~€4.50–$10/month) work fine. Trade-off: you depend on a third party for Cardano L1 state. See [Node Requirements → Hardware](node-requirements.md#hardware) for the per-component RAM breakdown.
 
 ---
 
