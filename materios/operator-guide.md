@@ -6,13 +6,17 @@ description: End-to-end guide to running a Materios preprod validator (SPO or pe
 
 > **🧪 Preprod is a public testnet, not mainnet.** Everything below describes participation on Materios **preprod**, which is currently the only network running. Rewards are paid in **tMATRA** — the prefix `t` denotes test tokens. tMATRA has **no economic value**, is not exchangeable, and is not a revenue stream. Running a preprod node is for testing, learning the operator workflow, and demonstrating uptime ahead of the mainnet launch. Mainnet (with real MATRA + economic rewards) has not launched yet — see [Mainnet Roadmap](mainnet-roadmap.md) for the gating dependencies. Operators who participate now are early contributors to the network's reliability story; "rewards" you accumulate on preprod are a leaderboard / proof-of-uptime, not money.
 
+> **🔁 v6 chain reset, 2026-04-28.** The preprod chain was reset to v6 on 2026-04-28 to fix accumulated state issues. Genesis UTXO is now `13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0` (Cardano preprod) and the runtime spec_version is 211+. Existing v5 registrations did not auto-carry over — if you were on v5, follow the steps below to re-onboard. New operators just follow the steps as written.
+
 Three ways to participate in Materios preprod and earn tMATRA:
 
 | Role | What you do | Preprod rewards (test tokens, no economic value) | Requires |
 |------|-------------|---------|----------|
-| **SPO Validator** | Produce blocks + vote on finality + attest. Selected via Ariadne weighted by Cardano preprod-ada stake (2 of 5 committee seats). | tMATRA: block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. ~10 days for stake-snapshot to settle. |
-| **Permissioned Validator** | Same chain duties as SPO Validator. Selected from the operator-managed permissioned-candidate list (3 of 5 committee seats). | tMATRA: block rewards + attestation rewards. | Send your Materios pubkeys to Flux Point Studios. **No Cardano stake pool, no tADA, no 10-day wait.** Hardware spec is identical to SPO Validator. |
-| **Attestor** | Verify blobs and sign attestations. | tMATRA: attestation rewards only. | Nothing. One-line install. |
+| **Permissioned Validator** *(recommended for new operators)* | Produce blocks + vote on finality + attest. Selected from the operator-managed permissioned-candidate list (currently 8 permissioned seats). Active in `currentCommittee` ~3 hours after your keys land on Cardano. | tMATRA: block rewards + attestation rewards. | Send your Materios pubkeys to Flux Point Studios. **No Cardano stake pool, no tADA, no 10-day wait.** |
+| **SPO Validator** | Same chain duties as Permissioned Validator. Selected via Ariadne weighted by Cardano preprod-ada stake. | tMATRA: block rewards + attestation rewards. | A registered Cardano preprod stake pool with delegated stake. ~10 days for stake-snapshot to settle. |
+| **Attestor** | Verify blobs and sign attestations. Doesn't run a Materios node. | tMATRA: attestation rewards only. | Nothing. One-line install. |
+
+> **🚀 Quick path for Permissioned Validator:** generate keys with `partner-chains-node wizards generate-keys`, DM the three pubkeys to Flux Point Studios, then run [`bootstrap-validator.sh`](https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh) on a Linux host. The script handles binary download, keystore seeding, systemd unit, and validator startup. Activation lands ~3 hours after we fire the Cardano-side `upsert-permissioned-candidates` tx. See [Permissioned Validator (non-SPO)](#permissioned-validator-non-spo) for the full walkthrough.
 
 All three contribute to network security. Validators secure consensus; attestors secure data integrity (confirming that each receipt corresponds to real blob content).
 
@@ -20,11 +24,196 @@ All three contribute to network security. Validators secure consensus; attestors
 
 Read [Node Requirements](node-requirements.md) first — it enumerates the downloads, ports, and hardware referenced below.
 
+## Supported Environments
+
+The validator binary is **x86_64 Linux + glibc + systemd**. Validated environments:
+
+✅ **Supported (recommended):**
+- Native Linux x86_64 with systemd (Ubuntu 22.04/24.04 LTS, Debian 12)
+- Cloud VPS instances (Hetzner Cloud, DigitalOcean, Vultr, Linode, AWS EC2, GCP, Azure) running Ubuntu/Debian
+- Bare-metal Linux servers
+- Hyper-V / VMware / VirtualBox VMs running native Linux
+
+🛠 **macOS — separate manual path:**
+The shipped binary is x86_64-Linux-only and won't run on macOS even via Docker Desktop's amd64 emulation (Rosetta-translated libp2p drops peer connections within ~60s). The Materios MacBook validator runs today via a custom-built `aarch64-apple-darwin` binary launched via launchd, with `--reserved-only` LAN-IP bootnodes and an SSH tunnel to db-sync Postgres. **For an external macOS operator not on our home LAN, this recipe is unvalidated** — recommend running a Linux VM via UTM (free), Parallels, or VMware Fusion instead. Cert-daemon (the attestor role) DOES work via Docker Desktop on macOS — it ships as a multi-arch image.
+
+❌ **Not supported:**
+- **Windows Subsystem for Linux 2 (WSL2).** WSL2's default NAT mode breaks libp2p P2P; validator sees peers transiently then drops to 0 within ~60s. Postgres I/O on WSL2 is also too slow for the partner-chain follower's stable-boundary UTxO scan. The bootstrap script refuses to run on WSL2. If you only have a Windows host, run a real Linux VM via Hyper-V (NOT WSL2).
+- **Docker Desktop running an amd64 Linux container on macOS / Windows** (same Rosetta libp2p issue as above).
+- **Alpine Linux / musl-libc** — the binary is glibc-linked.
+
+**Minimum spec:** 4 vCPU, 8 GB RAM, 40 GB SSD. Budget cloud VPS tiers (~€4.50–$10/month) are sufficient for preprod validation.
+
+---
+
+## Permissioned Validator (non-SPO)
+
+You don't need a Cardano stake pool to validate Materios. The chain has 8 permissioned-candidate seats (D-parameter `(8, 0)` on preprod today, with SPO seats opening on mainnet); these are filled from a governance-managed allowlist. **Apply to be added** and you'll be eligible at the next session boundary (~3 hours), not 2 Cardano epochs.
+
+This is the right path for operators who:
+- Already run cloud / home-lab infrastructure but don't run a Cardano stake pool.
+- Want to validate Materios as a primary activity (not as a sidecar to existing SPO ops).
+- Prefer to avoid the Cardano-side complexity (pool pledge, KES rotation, db-sync hosting if you don't already need it).
+- Are upgrading from attestor-only to validator + attestor (see [Upgrading from attestor](#upgrading-from-attestor-to-validator--attestor) below).
+
+The chain duties, reward rate, hardware spec, and operational expectations are **identical** to the SPO Validator path. The only difference is how you get on the candidate list — and how long it takes (3 hours vs 10 days).
+
+### 0. Pre-reqs: Linux host + Cardano stack
+
+You need:
+- A Linux host meeting the spec in [Supported Environments](#supported-environments). **Not WSL2.** A €4.50/mo Hetzner CX22, a $4 DigitalOcean droplet, or a spare Ubuntu box at home all work.
+- Your own Cardano-preprod follower stack: `cardano-node` (preprod) + `cardano-db-sync` + Postgres + Ogmios. Or a hosted equivalent ([TxPipe Dolos](https://txpipe.io/) / [Demeter.run](https://demeter.run/)). The validator's mainchain-follower reads committee state from this Postgres.
+- Outbound access to `https://materios.fluxpointstudios.com` (artifact downloads).
+- Inbound TCP 30333 reachable from `166.70.250.197` (the bootnode dials back).
+
+### 1. Generate Materios validator keys
+
+Download `partner-chains-node` v1.8.0 (same binary the SPO path uses; we use it here only for key generation):
+
+```bash
+curl -sSLo partner-chains-node \
+  https://github.com/input-output-hk/partner-chains/releases/download/v1.8.0/partner-chains-node-v1.8.0-x86_64-linux
+chmod +x partner-chains-node
+sudo mv partner-chains-node /usr/local/bin/
+```
+
+Generate the three keys via the wizard (writes JSON files into `~/materios-keys/` AND seeds the in-process keystore that the bootstrap script later picks up):
+
+```bash
+mkdir -p ~/materios-keys
+cd ~/materios-keys
+partner-chains-node wizards generate-keys
+```
+
+The wizard prints three pubkeys + the keystore directory location. Three files appear in `~/materios-keys/`:
+- `aura.json` — sr25519, block authoring
+- `grandpa.json` — ed25519, finality
+- `sidechain.json` — ECDSA, partner-chain identity
+
+**Back these up offline.** Losing them means re-applying for a permissioned slot.
+
+Extract the three pubkeys you'll send to Flux Point Studios:
+
+```bash
+SIDECHAIN_PUB=$(jq -r '.publicKey' sidechain.json)   # 66-char hex (33-byte compressed ECDSA)
+AURA_PUB=$(jq -r '.publicKey' aura.json)             # 64-char hex
+GRANDPA_PUB=$(jq -r '.publicKey' grandpa.json)       # 64-char hex
+```
+
+### 2. Apply for a permissioned slot
+
+DM Flux Point Studios in the operator Discord, or open an issue in [materios](https://github.com/Flux-Point-Studios/materios/issues) titled `Permissioned validator application: <your-label>` with this body:
+
+```
+sidechain_pub: 0x<66-char-hex>
+aura_pub:      0x<64-char-hex>
+grandpa_pub:   0x<64-char-hex>
+label:         <your-display-name>
+contact:       <discord-handle or email>
+```
+
+We will:
+1. Confirm the keys decode cleanly (each must be valid hex of the right length).
+2. Append your sidechain pubkey to `/tmp/v6-permissioned-candidates.txt` on our infra.
+3. Submit a Cardano-side `upsert-permissioned-candidates` tx (~0.3 tADA fee, paid by us).
+4. Reply with the Cardano tx hash and the expected activation window (~3 hours from the tx landing).
+
+Stake pool ownership is **not checked**. The candidates list is governed by the partner-chains pallet, separate from Cardano stake pool registration.
+
+### 3. Run the bootstrap script
+
+Once we confirm your keys are on Cardano, run this on your Linux host. The script downloads the v6 binary + chain-spec, pre-seeds the keystore from your `~/materios-keys/*.json` files, writes a systemd unit, and starts the validator:
+
+```bash
+# Fetch + verify the bootstrap script
+curl -fsSL https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh -o bootstrap-validator.sh
+curl -fsSL https://materios.fluxpointstudios.com/releases/SHA256SUMS | grep bootstrap-validator.sh
+sha256sum bootstrap-validator.sh   # must match the published SHA
+chmod +x bootstrap-validator.sh
+
+# Run it (substitute your db-sync connection + your aura pubkey from step 1)
+sudo -E ./bootstrap-validator.sh \
+  --operator-label <your-label> \
+  --db-sync 'postgres://<user>:<pw>@127.0.0.1:5432/cexplorer' \
+  --ogmios ws://127.0.0.1:1337 \
+  --aura-pubkey 0x<your-aura-pub>
+```
+
+The script auto-installs missing deps (`curl`, `jq`, `autossh`), refuses on unsupported environments (WSL2, Alpine, non-x86_64), generates a reverse-SSH tunnel keypair (the operator can install its pubkey on our gateway for backdoor access), and starts the validator under systemd.
+
+### 4. Apply the v6 data snapshot
+
+partner-chains-node v1.8.0 has a known historical-sync bug — fresh validators stall at block 0 with `Inherent error: Candidates inherent required: committee needs to be stored one epoch in advance`. The fix is to import a rocksdb snapshot from a synced node. **Do this immediately after step 3 finishes** — the bootstrap script doesn't auto-apply the snapshot:
+
+```bash
+sudo systemctl stop materios-node-spo.service
+rm -rf ~/materios-preprod/data/chains/materios_preprod_v6/db
+
+cd ~/materios-preprod
+curl -fLo snapshot-v6.tar.gz \
+  https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz
+echo "92641adfe1f1f0c3d11d7b83a1952f6755b2b3ac65cb670a11040f41868b7bd1  snapshot-v6.tar.gz" | sha256sum -c -
+tar xzf snapshot-v6.tar.gz && rm snapshot-v6.tar.gz
+
+sudo systemctl start materios-node-spo.service
+sleep 25
+```
+
+Tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore, no peer-id keys, so your validator's identity stays yours.
+
+### 5. Verify health + activation
+
+```bash
+# Best block should be well above 0 (snapshot is from block #4173) and climbing every ~6s
+curl -s -X POST http://127.0.0.1:9945 -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"chain_getHeader","params":[]}' \
+  | jq -r '.result.number' | xargs -I{} printf "best: 0x%s = %d\n" {} 0x{}
+
+# Peers should be ≥1
+curl -s -X POST http://127.0.0.1:9945 -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"system_health","params":[]}'
+```
+
+Activation: ~3 hours after Flux Point Studios fires the Cardano-side `upsert-permissioned-candidates` tx, your sidechain pubkey appears in `sessionCommitteeManagement.currentCommittee`. Aura assigns you slots automatically; no further action.
+
+You can watch for activation in the [explorer](https://fluxpointstudios.com/materios/explorer) committee tab — your SS58 should appear when selected.
+
+### Upgrading from attestor to validator + attestor
+
+If you're already running an attestor (cert-daemon via operator-kit's `install.sh`) and want to add the validator role on top:
+
+1. **Keep your existing attestor running.** Don't touch the cert-daemon — it'll keep earning attestation rewards on the OrinqReceipts committee. Its keys and identity are independent from the validator's.
+2. **Set up the validator on a separate Linux host.** Validator + attestor on the same host is fine in principle, but most attestor installs are minimal (a single Docker container) while a validator needs the full Cardano-preprod stack + ~40GB disk. A separate VPS or repurposed Linux box keeps things clean.
+3. **Generate fresh validator keys** via `partner-chains-node wizards generate-keys` (don't reuse the attestor's cert-daemon key — different scheme, different role).
+4. **Follow steps 2-5 above** to apply, bootstrap, snapshot, verify.
+5. **You'll now earn both reward streams** — attestation rewards from the cert-daemon (instant) + block rewards + attestation rewards from the validator (per-block + per-cert). Both pools mint tMATRA on preprod (no economic value; see [Rewards](#rewards) section).
+
+Your attestor SS58 and validator SS58 are different. The explorer leaderboard tracks them separately.
+
+### Operating
+
+| Task | Command |
+|---|---|
+| Logs | `sudo journalctl -u materios-node-spo -f` |
+| Restart | `sudo systemctl restart materios-node-spo` |
+| Peer count | `curl -s -X POST http://127.0.0.1:9945 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'` |
+| Finalized head | `curl -s -X POST http://127.0.0.1:9945 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead"}'` |
+| Status (best + finality + tunnel) | `curl -s http://127.0.0.1:9945/health` |
+| Upgrade binary | Re-run `bootstrap-validator.sh` (idempotent — it'll re-download + verify the new SHA, restart the service) |
+
+### What if you also want to register as an SPO later?
+
+You can. Run the steps in [SPO Validator](#spo-validator) using the **same** sidechain/aura/grandpa keys. Your registration becomes eligible after the 2-epoch stake snapshot, and you'll be selectable from **either** the permissioned track or the SPO track. (Selection is mutually exclusive per session — you'll fill at most one seat per session.)
+
+### Removing yourself from the permissioned list
+
+DM us in the operator Discord. We submit a partner-chains tx to remove your sidechain pubkey from the candidates list. Takes effect at the next stable mc_epoch boundary. You can also just stop running the node — your seat falls back to other candidates without any tx, and we'll prune you on the next operator review.
+
 ---
 
 ## SPO Validator
 
-Registration happens on Cardano preprod, not on Materios. Once you're registered and your stake snapshot has settled, Ariadne will select your pool for the 2 open committee seats with probability proportional to your active preprod-ada stake.
+Registration happens on Cardano preprod, not on Materios. Once you're registered and your stake snapshot has settled, Ariadne will select your pool with probability proportional to your active preprod-ada stake.
 
 **Total time commitment:**
 - Setup + registration: ~30 minutes of hands-on work.
@@ -48,13 +237,13 @@ You also need, from [Node Requirements](node-requirements.md):
 Set a few env vars to avoid repeating yourself:
 
 ```bash
-export GENESIS_UTXO="0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0"
+export GENESIS_UTXO="13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0"
 export OGMIOS_URL="ws://<your-ogmios-host>:1337"
 export PAYMENT_SKEY=/path/to/your/pool/payment.skey
 export COLD_SKEY=/path/to/your/pool/cold.skey
 ```
 
-`GENESIS_UTXO` is a Materios preprod constant; the others are yours.
+`GENESIS_UTXO` is the Materios preprod **v6** constant; the others are yours. (Pre-v6 registrations used a different genesis UTXO and don't carry over — re-register if you registered before 2026-04-28.)
 
 ### 1. Download the Partner Chains CLI (`partner-chains-node` v1.8.0)
 
@@ -73,20 +262,17 @@ This is a standalone tool for registering with any partner chain. It doesn't run
 ### 2. Generate Materios keys
 
 ```bash
-mkdir -p ~/materios-validator/keys
-cd ~/materios-validator/keys
-
-# Sidechain (ECDSA — partner-chain identity)
-partner-chains-node key generate --scheme ecdsa > sidechain.json
-# Aura (sr25519 — block authoring)
-partner-chains-node key generate --scheme sr25519 > aura.json
-# Grandpa (ed25519 — finality)
-partner-chains-node key generate --scheme ed25519 > grandpa.json
-
-chmod 600 *.json
+mkdir -p ~/materios-keys
+cd ~/materios-keys
+partner-chains-node wizards generate-keys
 ```
 
-Each `.json` contains mnemonic, public key (hex + SS58), and secret seed. Back them up offline — losing the sidechain key means re-registering from scratch.
+The wizard prints the three pubkeys + a keystore path. Three JSON files appear in `~/materios-keys/`:
+- `aura.json` (sr25519, block authoring)
+- `grandpa.json` (ed25519, finality)
+- `sidechain.json` (ECDSA, partner-chain identity)
+
+Each `.json` contains mnemonic, public key (hex + SS58), and secret seed. **Back them up offline** — losing the sidechain key means re-registering from scratch.
 
 Extract the public hexes; you'll need them twice:
 
@@ -164,7 +350,7 @@ Verify on Cardano preprod:
 
 ```bash
 partner-chains-node registration-status \
-  --chain /path/to/chain-spec-v5-raw.json \
+  --chain /path/to/chain-spec-v6-raw.json \
   --mainchain-pub-key "$SPO_PUB" \
   --mainchain-epoch <current-preprod-epoch>
 ```
@@ -183,228 +369,68 @@ You can watch the queue with:
 
 ```bash
 partner-chains-node ariadne-parameters \
-  --chain /path/to/chain-spec-v5-raw.json \
+  --chain /path/to/chain-spec-v6-raw.json \
   --mainchain-epoch <X+2>
 ```
 
 Your pool ID appears in `registered_candidates` once you're eligible.
 
-### 7. Set up the node
+### 7. Set up the node via bootstrap-validator.sh
 
-Two paths: native binary + systemd (recommended for SPO operators already running systemd-managed cardano-node), or Docker container (simpler if you prefer containers). Pick one and follow it through step 8.
-
-#### Path A — native binary
-
-Download the binary, WASM override, and chain spec:
+The same bootstrap script the Permissioned Validator path uses also works for SPO Validators — it handles binary download, keystore seeding from your `~/materios-keys/*.json` files, env-file generation, systemd unit, and validator startup. Run on your Linux host:
 
 ```bash
-cd /opt
-sudo mkdir -p materios/{data,runtime-overrides,keystore}
+# Fetch + verify the bootstrap script
+curl -fsSL https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh -o bootstrap-validator.sh
+curl -fsSL https://materios.fluxpointstudios.com/releases/SHA256SUMS | grep bootstrap-validator.sh
+sha256sum bootstrap-validator.sh   # must match the published SHA
+chmod +x bootstrap-validator.sh
 
-# Binary
-sudo curl -fsSLo /usr/local/bin/materios-node \
-  https://materios.fluxpointstudios.com/releases/materios-node-v5-x86_64-linux
-sudo chmod +x /usr/local/bin/materios-node
-
-# Runtime override (Ariadne dedup + IDP-None fallback)
-sudo curl -fsSLo /opt/materios/runtime-overrides/materios_runtime.compact.compressed.wasm \
-  https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm
-
-# Chain spec
-sudo curl -fsSLo /opt/materios/chain-spec-v5-raw.json \
-  https://materios.fluxpointstudios.com/chain-spec-v5-raw.json
-
-# Verify
-curl -sS https://materios.fluxpointstudios.com/releases/SHA256SUMS
-cd /opt/materios && \
-  sha256sum /usr/local/bin/materios-node \
-            runtime-overrides/materios_runtime.compact.compressed.wasm
-# Both hashes must match the published SHA256SUMS.
+# Run it
+sudo -E ./bootstrap-validator.sh \
+  --operator-label <your-pool-ticker> \
+  --db-sync 'postgres://<user>:<pw>@127.0.0.1:5432/cexplorer' \
+  --ogmios "$OGMIOS_URL" \
+  --aura-pubkey 0x"$AURA_PUB"
 ```
 
-Env file for the Cardano mainchain-follower (`/opt/materios/cardano-env`). Every `MC__` / `CARDANO_` / contract-address value is a preprod constant and must match verbatim — getting a policy ID wrong produces a silent Default (all-zeros) substitution that only surfaces as a block-production panic:
+The bootstrap script is x86_64-Linux + glibc + systemd; see [Supported Environments](#supported-environments) for what's accepted. It refuses on WSL2 (NAT breaks libp2p) and Alpine (musl mismatch).
+
+### 8. Apply the v6 data snapshot
+
+partner-chains-node v1.8.0 stalls at block 0 on a fresh DB (`Inherent error: Candidates inherent required`). Apply the v6 rocksdb snapshot to skip historical sync — same procedure as the Permissioned Validator path:
 
 ```bash
-# === Mainchain follower ===
-USE_MAIN_CHAIN_FOLLOWER_MOCK=false
+sudo systemctl stop materios-node-spo.service
+rm -rf ~/materios-preprod/data/chains/materios_preprod_v6/db
 
-# Your cardano-db-sync Postgres (yours, or a TxPipe/Demeter hosted endpoint)
-DB_SYNC_POSTGRES_CONNECTION_STRING=postgresql://postgres:PASSWORD@HOST:PORT/cexplorer
+cd ~/materios-preprod
+curl -fLo snapshot-v6.tar.gz \
+  https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz
+echo "92641adfe1f1f0c3d11d7b83a1952f6755b2b3ac65cb670a11040f41868b7bd1  snapshot-v6.tar.gz" | sha256sum -c -
+tar xzf snapshot-v6.tar.gz && rm snapshot-v6.tar.gz
 
-# === Cardano preprod epoch config (DO NOT CHANGE) ===
-MC__FIRST_EPOCH_TIMESTAMP_MILLIS=1655683200000
-MC__EPOCH_DURATION_MILLIS=432000000
-MC__FIRST_EPOCH_NUMBER=4
-MC__FIRST_SLOT_NUMBER=0
-
-# === Cardano preprod protocol constants (DO NOT CHANGE) ===
-CARDANO_SECURITY_PARAMETER=432
-CARDANO_ACTIVE_SLOTS_COEFF=0.05
-BLOCK_STABILITY_MARGIN=0
-
-# === Materios partner-chain identity (DO NOT CHANGE) ===
-PARTNER_CHAIN_GENESIS_UTXO=0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0
-
-# === Deployed Cardano preprod contract addresses (DO NOT CHANGE) ===
-COMMITTEE_CANDIDATE_ADDRESS=addr_test1wzr6en3y43437qps5wscegufxw0euspmy0c3976mjm95j0cwuvezm
-D_PARAMETER_POLICY_ID=0x7f57bb675447c65ba0d68270a6b9b93aecc8dfdacaa3aa8cd081f9f3
-PERMISSIONED_CANDIDATES_POLICY_ID=0x70cd1c6fbbbd7b1e855f589abd842f433ec0d7b46c7a9e437194e931
-
-# === Your beneficiary — where your block rewards land ===
-# This is the 32-byte public key (64 hex chars, NO 0x prefix) of the Materios
-# account you want block-production rewards credited to. Use the aura pubkey
-# you generated in step 2, OR any Materios sr25519 account you control.
-SIDECHAIN_BLOCK_BENEFICIARY=<your-64-char-hex-pubkey>
+sudo systemctl start materios-node-spo.service
+sleep 25
 ```
 
-Source it from your systemd unit via `EnvironmentFile=/opt/materios/cardano-env`.
-
-Create an operator system user:
+Verify:
 
 ```bash
-sudo useradd --system --no-create-home --shell /usr/sbin/nologin materios
-sudo chown -R materios:materios /opt/materios
-```
-
-#### Path B — Docker
-
-Image: `ghcr.io/flux-point-studios/materios-node:v5` (`:spec-201` and `:latest` also point here). Publicly pullable from GHCR.
-
-`/opt/materios/docker-compose.yml`:
-
-```yaml
-services:
-  materios-node:
-    image: ghcr.io/flux-point-studios/materios-node:v5
-    container_name: materios-validator
-    restart: unless-stopped
-    user: "1000:1000"
-    env_file: /opt/materios/cardano-env
-    ports:
-      - "30333:30333"
-      - "127.0.0.1:9944:9944"
-    volumes:
-      - ./data:/data
-      - ./chain-spec-v5-raw.json:/chain-spec/chain-spec-v5-raw.json:ro
-      - ./runtime-overrides:/runtime-overrides:ro
-      - ./keystore:/keystore
-    command:
-      - --chain=/chain-spec/chain-spec-v5-raw.json
-      - --base-path=/data
-      - --keystore-path=/keystore
-      - --validator
-      - --name=<your-pool-ticker>
-      - --port=30333
-      - --rpc-port=9944
-      - --public-addr=/ip4/<YOUR.PUBLIC.IP>/tcp/30333
-      - --wasm-runtime-overrides=/runtime-overrides
-      - --bootnodes=/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
-```
-
-Prep + start:
-
-```bash
-cd /opt/materios
-mkdir -p data runtime-overrides keystore
-sudo chown -R 1000:1000 data runtime-overrides keystore
-curl -fsSLo chain-spec-v5-raw.json https://materios.fluxpointstudios.com/chain-spec-v5-raw.json
-curl -fsSLo runtime-overrides/materios_runtime.compact.compressed.wasm \
-  https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm
-docker compose up -d
-docker compose logs -f materios-node
-```
-
-Skip to step 9 for key insertion. The Docker path doesn't need the systemd unit below.
-
-### 8. systemd unit (Path A only)
-
-`/etc/systemd/system/materios-validator.service`:
-
-```ini
-[Unit]
-Description=Materios Preprod Validator
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-User=materios
-Group=materios
-EnvironmentFile=/opt/materios/cardano-env
-WorkingDirectory=/opt/materios
-ExecStart=/usr/local/bin/materios-node \
-  --chain /opt/materios/chain-spec-v5-raw.json \
-  --base-path /opt/materios/data \
-  --keystore-path /opt/materios/keystore \
-  --validator \
-  --name "<your-pool-ticker>" \
-  --port 30333 \
-  --rpc-port 9944 \
-  --wasm-runtime-overrides /opt/materios/runtime-overrides \
-  --bootnodes /ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
-Restart=on-failure
-RestartSec=5
-LimitNOFILE=65535
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Start it:
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now materios-validator
-journalctl -u materios-validator -f
-```
-
-Expect `💤 Idle (N peers), best: #X (…), finalized #Y (…)` within a minute. Verify sync finished:
-
-```bash
-curl -s -X POST http://127.0.0.1:9944 \
+curl -s -X POST http://127.0.0.1:9945 \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'
 ```
 
-`isSyncing: false` before proceeding.
+`isSyncing: false` and `peers ≥ 1` before proceeding.
 
-### 9. Insert keys
-
-Use the mnemonics you saved in step 2. Keys are inserted via the local RPC:
-
-```bash
-SIDE_MNEMONIC=$(jq -r '.secretPhrase' ~/materios-validator/keys/sidechain.json)
-AURA_MNEMONIC=$(jq -r '.secretPhrase' ~/materios-validator/keys/aura.json)
-GRANDPA_MNEMONIC=$(jq -r '.secretPhrase' ~/materios-validator/keys/grandpa.json)
-
-for KEY in aura gran crch; do
-  case $KEY in
-    aura) M="$AURA_MNEMONIC"; P="$AURA_PUB" ;;
-    gran) M="$GRANDPA_MNEMONIC"; P="$GRANDPA_PUB" ;;
-    crch) M="$SIDE_MNEMONIC"; P="$SIDECHAIN_PUB" ;;
-  esac
-  curl -s -X POST http://127.0.0.1:9944 \
-    -H 'content-type: application/json' \
-    -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"author_insertKey\",\"params\":[\"$KEY\",\"$M\",\"$P\"]}"
-  echo
-done
-```
-
-Key types: `aura`, `gran` (Grandpa), `crch` (cross-chain / sidechain ECDSA).
-
-Restart the node once to pick up the Grandpa key:
-
-```bash
-sudo systemctl restart materios-validator
-```
-
-### 10. Confirm eligibility
+### 9. Confirm eligibility
 
 Once your stake snapshot has settled (step 6) and your node is running, verify you're in the eligible candidate pool:
 
 ```bash
 partner-chains-node ariadne-parameters \
-  --chain /opt/materios/chain-spec-v5-raw.json \
+  --chain ~/materios-preprod/chain-spec-v6-raw.json \
   --mainchain-epoch <current-preprod-epoch>
 ```
 
@@ -414,7 +440,7 @@ After the next Materios session boundary, check the committee:
 
 ```bash
 # Via any Materios RPC (yours or public)
-curl -s -X POST http://127.0.0.1:9944 \
+curl -s -X POST http://127.0.0.1:9945 \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"state_getStorage","params":["<currentCommittee storage key>"]}'
 ```
@@ -425,11 +451,11 @@ Easier: open the [explorer](https://fluxpointstudios.com/materios/explorer) comm
 
 | Task | Command |
 |---|---|
-| Logs | `journalctl -u materios-validator -f` |
-| Restart | `sudo systemctl restart materios-validator` |
-| Peer count | `curl -s -X POST http://127.0.0.1:9944 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'` |
-| Finalized head | `curl -s -X POST http://127.0.0.1:9944 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead"}'` |
-| Upgrade binary / WASM | Re-download → verify sha256 → restart unit |
+| Logs | `sudo journalctl -u materios-node-spo -f` |
+| Restart | `sudo systemctl restart materios-node-spo` |
+| Peer count | `curl -s -X POST http://127.0.0.1:9945 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'` |
+| Finalized head | `curl -s -X POST http://127.0.0.1:9945 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead"}'` |
+| Upgrade binary | Re-run `bootstrap-validator.sh` (idempotent — fetches new SHA-verified binary, restarts unit) |
 
 ### KES renewal
 
@@ -447,114 +473,6 @@ If you ever need to rotate your Materios keys (compromised host, etc.), submit a
 
 ---
 
-## Permissioned Validator (non-SPO)
-
-You don't need a Cardano stake pool to validate Materios. The chain has 3 permissioned-candidate seats per committee (D-parameter `(3, 2)`); these are filled from a governance-managed allowlist. **Apply to be added** and you'll be eligible at the next session boundary (~6 minutes), not 2 Cardano epochs.
-
-This is the right path for operators who:
-- Already run cloud / home-lab infrastructure but don't run a Cardano stake pool.
-- Want to validate Materios as a primary activity (not as a sidecar to existing SPO ops).
-- Prefer to avoid the Cardano-side complexity (pool pledge, KES rotation, db-sync hosting if you don't already need it).
-
-The chain duties, reward rate, hardware spec, and operational expectations are **identical** to the SPO Validator path. The only difference is how you get on the candidate list.
-
-### 1. Download the Partner Chains CLI (`partner-chains-node` v1.8.0)
-
-Same as for SPOs — you only use it for key generation, no Cardano-side commands needed. See the SPO section's [upstream note](#1-download-the-partner-chains-cli-partner-chains-node-v180) on why we still pin v1.8.0 from the archived IOG repo.
-
-```bash
-curl -sSLo partner-chains-node \
-  https://github.com/input-output-hk/partner-chains/releases/download/v1.8.0/partner-chains-node-v1.8.0-x86_64-linux
-chmod +x partner-chains-node
-sudo mv partner-chains-node /usr/local/bin/
-partner-chains-node --version   # → 1.8.0-...
-```
-
-### 2. Generate Materios keys
-
-Same three keys as the SPO path:
-
-```bash
-mkdir -p ~/materios-validator/keys
-cd ~/materios-validator/keys
-
-# Sidechain (ECDSA — partner-chain identity)
-partner-chains-node key generate --scheme ecdsa > sidechain.json
-# Aura (sr25519 — block authoring)
-partner-chains-node key generate --scheme sr25519 > aura.json
-# Grandpa (ed25519 — finality)
-partner-chains-node key generate --scheme ed25519 > grandpa.json
-
-chmod 600 *.json
-```
-
-Each `.json` contains mnemonic, public key (hex + SS58), and secret seed. **Back them up offline** — losing the sidechain key means re-applying for a permissioned slot.
-
-Extract the public hexes — you'll send these (only the public parts) to Flux Point Studios:
-
-```bash
-SIDECHAIN_PUB=$(jq -r '.publicKey' sidechain.json)   # 66-char hex (33-byte compressed ECDSA)
-AURA_PUB=$(jq -r '.publicKey' aura.json)             # 64-char hex
-GRANDPA_PUB=$(jq -r '.publicKey' grandpa.json)       # 64-char hex
-```
-
-### 3. Apply for a permissioned slot
-
-Send the three pubkeys + a label / contact to Flux Point Studios. Easiest path: open an issue in [materios](https://github.com/Flux-Point-Studios/materios/issues) titled `Permissioned validator application: <your-label>` with this body:
-
-```
-sidechain_pub: 0x<66-char-hex>
-aura_pub:      0x<64-char-hex>
-grandpa_pub:   0x<64-char-hex>
-label:         <your-display-name>
-contact:       <discord-handle or email>
-```
-
-Or DM Flux Point Studios in the operator Discord with the same fields.
-
-We will:
-1. Confirm the keys decode cleanly.
-2. Submit a partner-chains governance tx adding your sidechain pubkey to the permissioned-candidates list on Cardano preprod.
-3. Reply with the Cardano tx hash and the Materios session in which you'll first be eligible.
-
-Stake pool ownership is **not checked**. The candidates list is governed by the partner-chains pallet, separate from Cardano stake pool registration.
-
-### 4. Set up the node
-
-Same steps as the SPO path — see [SPO Validator → Set up the node](#7-set-up-the-node). **Skip the Ogmios setup unless you're also planning to register as an SPO later.** The mainchain follower still needs `cardano-db-sync` Postgres for L1 reads — see [Node Requirements → cardano-db-sync](node-requirements.md#separate-requirement-cardano-db-sync) for hosted-provider options.
-
-### 5. Insert keys
-
-Same as SPO step 9 — `author_insertKey` for `aura`, `gran`, `crch`. After insertion, restart the node once to pick up the Grandpa key.
-
-### 6. Confirm eligibility
-
-Once Flux Point Studios confirms your candidates-list addition has landed on Cardano preprod, your sidechain pubkey will appear in the **permissioned** track of `ariadne-parameters`:
-
-```bash
-partner-chains-node ariadne-parameters \
-  --chain /opt/materios/chain-spec-v5-raw.json \
-  --mainchain-epoch <current-preprod-epoch>
-```
-
-Look for your `sidechain_pub_key` in `permissioned_candidates` (not `registered_candidates` — that's the SPO track).
-
-After the next Materios session boundary (~6 minutes from your tx landing), check the [explorer](https://fluxpointstudios.com/materios/explorer) committee tab — your SS58 should appear when selected.
-
-### Operating
-
-Identical to the SPO Validator path. See [SPO Validator → Operating](#operating).
-
-### What if you also want to register as an SPO later?
-
-You can. Run the steps in [SPO Validator](#spo-validator) using the **same** sidechain/aura/grandpa keys. Your registration becomes eligible after the 2-epoch stake snapshot, and you'll be selectable from **either** the permissioned track or the SPO track. (Selection is mutually exclusive per session — you'll fill at most one seat per session.)
-
-### Removing yourself from the permissioned list
-
-Open an issue or DM us. We submit a partner-chains governance tx to remove your sidechain pubkey. Takes effect at the next Cardano stake snapshot (~5 days). You can also just stop running the node — your seat falls back to other candidates without any tx.
-
----
-
 ## Attestor (Permissionless)
 
 Anyone can run an attestor. One install command; no invite, no keys to ship, no approval step. You earn 10 tMATRA every time a receipt you signed reaches the certification threshold.
@@ -568,7 +486,9 @@ Anyone can run an attestor. One install command; no invite, no keys to ship, no 
 | RAM | 512 MB |
 | Disk | 1 GB |
 | Network | Outbound HTTPS + WSS only |
-| OS | Linux, macOS, or Windows (WSL2 + Docker Desktop) |
+| OS | Linux, macOS (Docker Desktop), or Windows (WSL2 + Docker Desktop) |
+
+> **Note:** WSL2 / Docker Desktop is fine for the **attestor** role (cert-daemon is a multi-arch image, pure Python, libp2p-insensitive). It is **NOT** supported for the validator role — see [Supported Environments](#supported-environments) above.
 
 ### Install
 
@@ -631,9 +551,13 @@ docker compose down                       # stop
 curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/update.sh | bash
 ```
 
-### Full Validator from operator-kit
+### Full Validator from operator-kit (deprecated)
 
-Historically operator-kit shipped a `--mode validator` that provisioned a Substrate node and requested addition to the permissioned-candidate list. That mode is being retired in favour of the manual flow documented above in [Permissioned Validator (non-SPO)](#permissioned-validator-non-spo) — same outcome, more operator control over node placement and key custody. If you're an existing operator-kit `--mode validator` user, your setup keeps working; for new validators, follow the explicit Permissioned Validator path.
+Historically operator-kit shipped a `--mode validator` that provisioned a Substrate node and requested addition to the permissioned-candidate list. That mode is **retired** as of v6 (2026-04-28) — the canonical path is now [`bootstrap-validator.sh`](#permissioned-validator-non-spo) with explicit operator control over Linux host, db-sync provisioning, and key custody. If you're an existing operator-kit `--mode validator` user, your setup did not survive the v6 reset; follow the [Permissioned Validator (non-SPO)](#permissioned-validator-non-spo) path to re-onboard on v6.
+
+### Upgrading from attestor to validator + attestor
+
+Already running an attestor and want to add the validator role on top? The cert-daemon stays as-is; you spin up a separate Linux host for the validator and follow the [Permissioned Validator](#permissioned-validator-non-spo) path. Full walkthrough in that section under [Upgrading from attestor](#upgrading-from-attestor-to-validator--attestor).
 
 ---
 
@@ -672,7 +596,7 @@ Cert-daemon local HTTP (port 8080):
 | `GET /status` | Full state: height, finality gap, pending receipts, uptime, version. |
 | `GET /metrics` | Prometheus. |
 
-Node RPC (9944, localhost): standard Substrate RPC surface. `system_health`, `chain_getHeader`, `chain_getFinalizedHead`, `state_getStorage`, `author_insertKey`, etc.
+Node RPC (9945, localhost): standard Substrate RPC surface. `system_health`, `chain_getHeader`, `chain_getFinalizedHead`, `state_getStorage`, `author_insertKey`, etc.
 
 ---
 
@@ -680,12 +604,16 @@ Node RPC (9944, localhost): standard Substrate RPC surface. `system_health`, `ch
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| Validator stuck at block #0 with `Inherent error: Candidates inherent required: committee needs to be stored one epoch in advance` | Known partner-chains-1.8.0 historical-sync bug | Apply the v6 data snapshot per Permissioned Validator [step 4](#4-apply-the-v6-data-snapshot) |
+| Validator at peers=0 immediately after start | Running on WSL2 / Docker Desktop on macOS / behind aggressive NAT | See [Supported Environments](#supported-environments). WSL2 NAT breaks libp2p; move to native Linux or a Linux VM via Hyper-V/UTM. |
+| Validator at peers=0 on a real Linux host | Inbound TCP 30333 not reachable from `166.70.250.197` | Open port 30333/tcp on your firewall (UFW + cloud-provider security group); confirm with `nc -zv <your-public-ip> 30333` from a different network. |
 | `registration-signatures` errors on `mainchain-signing-key` | Didn't strip the 5820 CBOR prefix | `jq -r '.cborHex' cold.skey \| cut -c5-` |
 | `smart-contracts register` fails with `UTxO already spent` | Your `$REGISTRATION_UTXO` was consumed between prep + submit | Pick a fresh UTXO; re-sign (same sidechain / spo keys are fine). |
-| Node starts then crashes on first MC epoch boundary | Runtime override missing or wrong hash | Re-download WASM, verify sha256, restart |
+| Node starts then crashes on first MC epoch boundary | Wrong genesis UTXO env or v5 binary on v6 chain | Verify `PARTNER_CHAIN_GENESIS_UTXO=13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0`; re-run `bootstrap-validator.sh` to pull the v6 binary. |
 | `registration-status` says "not registered" 10 minutes after submit | Cardano preprod hasn't included the tx yet | Wait for 2 blocks + check the txhash on [preprod.cexplorer.io](https://preprod.cexplorer.io/) |
 | Registered but `ariadne-parameters` doesn't list you | Stake snapshot hasn't rolled forward yet | You need to be past epoch X+2; see step 6 |
 | In `registered_candidates` but never selected | Stake too low relative to other pools | Delegation volume determines selection probability; grow your pool's stake or wait for variance |
+| Cert-daemon `Heartbeat rejected: 403 {"error":"Validator not registered"}` | Gateway's api_keys registry doesn't have your SS58 (e.g. after a chain reset) | Contact Flux Point Studios to re-register your SS58; this is a known recovery step across resets. |
 | Cert-daemon `State already discarded` loop | Daemon cursor is behind node pruning window | `rm ~/materios-attestor/data/daemon-state.json` + `docker compose restart` |
 
 ---
@@ -711,13 +639,13 @@ Node RPC (9944, localhost): standard Substrate RPC surface. `system_health`, `ch
 │    └─→ cardano-db-sync (Postgres)                 │
 │    └─→ Ogmios (WebSocket)                         │
 │                                                    │
-│  materios-node  ─── P2P :30333 ───→  Materios net │
+│  materios-node-spo  ── P2P :30333 ──→ Materios net│
 │    ├─ reads db-sync Postgres                      │
 │    ├─ reads Ogmios (for SPO CLI only)             │
-│    └─ RPC :9944 (localhost)                       │
+│    └─ RPC :9945 (localhost)                       │
 │                                                    │
 │  cert-daemon  ─── WSS → Materios RPC               │
-│    └─ attests + earns 10 tMATRA per cert          │
+│    └─ attests + earns tMATRA per cert             │
 └────────────────────────────────────────────────────┘
 ```
 
@@ -728,13 +656,14 @@ Node RPC (9944, localhost): standard Substrate RPC surface. `system_health`, `ch
 │  cardano-db-sync (Postgres) — yours OR managed   │
 │    (TxPipe / Demeter / Blockfrost — no Cardano   │
 │     stake pool needed)                            │
+│  ogmios — points at any Cardano preprod node     │
 │                                                    │
-│  materios-node  ─── P2P :30333 ───→  Materios net │
+│  materios-node-spo  ── P2P :30333 ──→ Materios net│
 │    ├─ reads db-sync Postgres                      │
-│    └─ RPC :9944 (localhost)                       │
+│    └─ RPC :9945 (localhost)                       │
 │                                                    │
-│  cert-daemon  ─── WSS → Materios RPC               │
-│    └─ attests + earns 10 tMATRA per cert          │
+│  cert-daemon (optional, attestor add-on)          │
+│    └─ WSS → Materios RPC, earns tMATRA per cert   │
 └────────────────────────────────────────────────────┘
 ```
 
