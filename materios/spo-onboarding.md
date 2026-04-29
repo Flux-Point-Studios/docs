@@ -63,7 +63,7 @@ Two consequences:
 | Cardano preprod node | Submitting txs | Option A: run your own. Option B: use public Ogmios + submit.saturnswap.io |
 | IOG partner-chains-node | Registration signatures + on-chain registration | Pre-built binary: [v1.8.0 linux-x86_64](https://github.com/input-output-hk/partner-chains/releases/tag/v1.8.0) |
 | ~1000 tADA | Pledge (100) + stake key deposit (2) + pool deposit (500) + fees (~3) + buffer | [Preprod faucet](https://docs.cardano.org/cardano-testnets/tools/faucet) |
-| Materios chain spec | Connecting your node | `https://materios.fluxpointstudios.com/chain-spec-v5-raw.json` |
+| Materios chain spec | Connecting your node | `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json` |
 
 ### Option A — run your own preprod `cardano-node`
 
@@ -437,7 +437,7 @@ echo "$COLD_SKEY_RAW"
 ### 5c. Phase A — generate signatures
 
 ```bash
-GENESIS_UTXO=0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0
+GENESIS_UTXO=13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0
 
 /path/to/partner-chains-node-v1.8.0-x86_64-linux registration-signatures \
     --genesis-utxo "$GENESIS_UTXO" \
@@ -482,7 +482,7 @@ A couple of epochs later (but well before stake is effective):
 
 ```bash
 /path/to/partner-chains-node-v1.8.0-x86_64-linux registration-status \
-    --chain /path/to/materios-chain-spec-v5-raw.json \
+    --chain /path/to/materios-chain-spec-v6-raw.json \
     --stake-pool-pub-key "<SPO_PUB_KEY>" \
     --mc-epoch-number <current_cardano_epoch + 2>
 ```
@@ -573,33 +573,34 @@ curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator
 The installer detects the existing `.secret-mnemonic` and re-uses it (this
 was hardened on 2026-04-16; earlier versions would overwrite). It wires up:
 
-- `materios-node` — distributed as either a native x86_64 Linux binary at [`/releases/materios-node-v5-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v5-x86_64-linux) (see [Operator Guide → step 7](operator-guide.md#7-set-up-the-node) for systemd wiring), or a Docker image `ghcr.io/flux-point-studios/materios-node:v5` (`:spec-201`, `:latest` also valid). The native binary needs glibc ≥ 2.38; the Docker image bundles Ubuntu 24.04 userland so works on any host. Pre-built arm64 / macOS binaries are not available yet — build from source.
-- runtime override WASM from [`/releases/materios_runtime.compact.compressed.wasm`](https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm) (passed via `--wasm-runtime-overrides`). Verify sha256 against [`/releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS).
-- chain spec from `https://materios.fluxpointstudios.com/chain-spec-v5-raw.json`
+- **bootstrap-validator.sh** ([canonical install path](https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh)) — fetches the v6 binary at [`/releases/materios-node-v6-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v6-x86_64-linux) (sha `dda4f3a7…58ebc`), the v6 chain-spec, and writes a systemd unit. The script verifies all SHAs against [`/releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS) and refuses to run on unsupported environments (WSL2, Alpine, non-x86_64). The native binary needs glibc ≥ 2.38; pre-built arm64 / macOS binaries are not available — see [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the macOS manual path.
+- **v6 data snapshot** at [`/releases/materios_preprod_v6-data-20260428-2245.tar.gz`](https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz) (sha `92641adf…7bd1`) — required to skip a known partner-chains-1.8.0 historical-sync bug. Apply after the bootstrap script finishes.
+- chain spec from `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json`
 - bootnode `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM`
 - port 30333 for P2P
 - `cert-daemon` for attestation (also earns tMATRA on preprod — same testnet-no-economic-value caveat as block rewards)
 
+> Runtime overrides are no longer needed on v6 — the operational patches (IDP-None fallback, Ariadne deduplication, GRANDPA queue-depth guard) are baked into the on-chain runtime (spec_version 211+).
+
 ### 8a. Recommended flags
 
-The installer defaults are good, but if you edit `docker-compose.yml` by hand,
-make sure the node is launched with:
+The bootstrap script writes the systemd unit for you. If you build your own unit, the validator should be launched with:
 
-```yaml
-command:
-  - --chain=/chain-spec-v5-raw.json
-  - --validator
-  - --base-path=/data
-  - --port=30333
-  - --rpc-port=9944
-  - --public-addr=/ip4/YOUR.PUBLIC.IP/tcp/30333
-  - --bootnodes=/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
+```
+materios-node-spo \
+  --chain ~/materios-preprod/chain-spec-v6-raw.json \
+  --base-path ~/materios-preprod/data \
+  --validator \
+  --name <your-pool-ticker> \
+  --port 30333 \
+  --rpc-port 9945 \
+  --public-addr /ip4/YOUR.PUBLIC.IP/tcp/30333 \
+  --bootnodes /ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
 ```
 
 Setting `--public-addr` is **strongly recommended** for SPOs. Without it your
-node advertises its Docker-internal IP to peers and other validators can't
-reach you to gossip blocks you author — you'll produce blocks that nobody
-imports.
+node advertises an internal IP to peers and other validators can't reach you
+to gossip blocks you author — you'll produce blocks that nobody imports.
 
 ### 8b. Keystore format
 
@@ -702,16 +703,18 @@ your scripts is fine for preprod:
 | ReserveValidator | `addr_test1wpsr0vlpqjzfn3j5ggwdvyv49gwyuxp8mnjpnz096s28g0gdhgykd` |
 | GovernedMapValidator | `addr_test1wrlzzlrd997kuz6pkqcly4al2l3y7e0ews445cthwhqap3qp4kq4a` |
 
-**Genesis UTXO:** `0bacdb7e50ba61a1f9e28007a4f9543fa0e8e31ce10027b2f1dda8ab3438d388#0`
+**Genesis UTXO (v6):** `13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0`
 
-**Partner-chain genesis hash:** `0xbc0531cb311281565036fb397a376f0e0fa37005589655f97a7924b2729a164c`
+**Partner-chain genesis hash (v6):** `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf`
+
+**Committee candidate address (v6):** `addr_test1wrld9uhaepas48twjy3qevncsyrhjdqnkz2wzu4yzjc2qhq24f4v4`
 
 Policy IDs (for reference — you shouldn't need these directly):
 
 | Role | Policy ID |
 |---|---|
-| DParameter | `0x7f57bb675447c65ba0d68270a6b9b93aecc8dfdacaa3aa8cd081f9f3` |
-| PermissionedCandidates | `0x70cd1c6fbbbd7b1e855f589abd842f433ec0d7b46c7a9e437194e931` |
+| DParameter | `0x38dddaf5198b927b19dac9b28226ab29eddad176d5d81c7748bc2c31` |
+| PermissionedCandidates | `0xef2890d1e98247819abcf2df6e891824ed950a4216d36c71ee6f9974` |
 | VersionOracle | `0xc65dee78bf5208350433f62cf2d69e87c59cff5df86bf42d69ff7cbe` |
 | ReserveAuth | `0xb4672fef1376b30ef2c010c97cbdb856701c9d776d1d989378a980f7` |
 | GovernedMap | `0x6ee3f9e0812fe39ec82f299470636cfec42ff4887d359df6f83f2cf0` |

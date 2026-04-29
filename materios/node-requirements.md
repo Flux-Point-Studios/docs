@@ -6,7 +6,7 @@ description: Hardware, software, keys, and infrastructure needed to run a Materi
 
 > **🧪 Preprod is a public testnet, not mainnet.** Rewards on this network are paid in **tMATRA** — testnet tokens with no economic value. Running a preprod node is for testing the operator workflow and demonstrating uptime; it is not a revenue stream. Mainnet (with real MATRA + economic rewards) has not launched yet — see [Mainnet Roadmap](mainnet-roadmap.md).
 
-Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current D-parameter is `(3, 2)` — three permissioned seats and two registered-SPO seats per committee. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
+Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current preprod D-parameter is `(8, 0)` — 8 permissioned seats, 0 SPO seats — until enough external SPOs register and the parameter is bumped. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
 
 There are four roles:
 
@@ -23,19 +23,22 @@ See the [Operator Guide](operator-guide.md) for end-to-end setup flows.
 
 | Field | Value |
 |---|---|
-| Chain | `Materios Preprod v5` |
-| Chain ID | `materios_preprod_v5` |
-| Genesis hash | `0xbc0531cb311281565036fb397a376f0e0fa37005589655f97a7924b2729a164c` |
-| spec_version | 201 |
+| Chain | `Materios Preprod v6` |
+| Chain ID | `materios_preprod_v6` |
+| Genesis hash | `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf` |
+| Cardano genesis UTXO | `13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0` |
+| spec_version | 211+ (live runtime upgrades; check `state_getRuntimeVersion`) |
 | Block time | 6 seconds |
 | Session length | 60 blocks (~6 minutes) |
 | Cardano L1 | Preprod testnet |
 | Main-chain epoch length | 5 days |
-| D-parameter | `(3, 2)` — 3 permissioned + 2 registered SPO seats per committee |
+| D-parameter | `(8, 0)` — 8 permissioned seats, 0 SPO seats (preprod). Will move to a mixed (P, R) split once external SPOs are registered. |
 | Public RPC (WSS) | `wss://materios.fluxpointstudios.com/preprod-rpc` |
 | Explorer | [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) |
 
-The **3 permissioned seats** are filled from the partner-chains permissioned-candidate list, currently containing Flux Point Studios' four internal nodes plus invited operators. **External operators can apply for a permissioned seat** without becoming a Cardano SPO — see [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo). The **2 registered seats rotate** among all SPOs who have registered via the smart contracts; selection probability is weighted by each pool's active preprod-ada stake.
+> **🔁 v6 chain reset, 2026-04-28.** Preprod was reset from v5 to v6 to fix accumulated state issues. v5 registrations did NOT carry over — operators previously on v5 must re-onboard. The v5 → v6 incident notes are documented in our internal runbook.
+
+The **8 permissioned seats** are filled from the partner-chains permissioned-candidate list. **External operators can apply for a permissioned seat** without becoming a Cardano SPO — see [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo). SPO-registered seats are not enabled on preprod yet; they'll be opened once a quorum of external SPOs are registered.
 
 ## Static Asset Distribution
 
@@ -43,19 +46,23 @@ Everything an operator needs to download lives under `materios.fluxpointstudios.
 
 | Asset | URL | sha256 |
 |---|---|---|
-| Chain spec (raw JSON) | [`chain-spec-v5-raw.json`](https://materios.fluxpointstudios.com/chain-spec-v5-raw.json) | — |
-| Node binary (x86_64 Linux) | [`releases/materios-node-v5-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v5-x86_64-linux) | `b55bfc51…e8119c` |
-| Runtime override WASM | [`releases/materios_runtime.compact.compressed.wasm`](https://materios.fluxpointstudios.com/releases/materios_runtime.compact.compressed.wasm) | `df135633…5bed7` |
+| Bootstrap installer (canonical) | [`releases/bootstrap-validator.sh`](https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh) | see SHA256SUMS |
+| Node binary v6 (x86_64 Linux) | [`releases/materios-node-v6-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v6-x86_64-linux) | `dda4f3a7…58ebc` |
+| Chain spec v6 (raw JSON) | [`releases/chain-spec-v6-raw.json`](https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json) | `77877aa6…65aaa` |
+| Data snapshot v6 (rocksdb tarball, ~64MB) | [`releases/materios_preprod_v6-data-20260428-2245.tar.gz`](https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz) | `92641adf…7bd1` |
 | SHA256SUMS manifest | [`releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS) | — |
+| LICENSE files | [`/releases/`](https://materios.fluxpointstudios.com/releases/) | — |
 | Releases index | [`releases/`](https://materios.fluxpointstudios.com/releases/) (directory listing) | — |
 
-**Always verify the sha256 of downloaded binaries and WASM against `SHA256SUMS`.**
+**Always verify the sha256 of downloaded binaries against `SHA256SUMS`.**
 
-> **arm64 / macOS:** the native binary is x86_64 Linux only. ARM operators either build from source (see `Dockerfile` in the [materios](https://github.com/Flux-Point-Studios/materios) repo) or run the x86_64 binary under emulation (Rosetta / qemu).
+> **The recommended path is `bootstrap-validator.sh`** — it handles binary download + verification + keystore seeding + systemd unit generation + validator startup in one command. See [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo) for the full walkthrough.
 
-> **glibc:** the binary is dynamically linked against glibc ≥ 2.38 (Ubuntu 24.04+ / Debian 13+ / RHEL 10+). On older distros the loader will refuse to start — upgrade, use the Docker image below, or build from source.
->
-> **Docker** (alternative to the native binary — bundles an Ubuntu 24.04 userland): `docker pull ghcr.io/flux-point-studios/materios-node:v5`. Image is multi-tag (`:v5`, `:spec-201`, `:latest`) and publicly pullable from GHCR.
+> **Data snapshot is required.** partner-chains-node v1.8.0 has a known historical-sync bug — fresh validators stall at block #0 (`Inherent error: Candidates inherent required`). Apply the v6 snapshot tarball to the rocksdb directory immediately after the bootstrap script finishes. The tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore, no peer-id keys.
+
+> **arm64 / macOS:** the native binary is x86_64 Linux only. macOS operators either build from source (see [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the home-lab MacBook recipe) or run a Linux VM via UTM / Parallels / Hyper-V. Cert-daemon (attestor role) works natively on macOS via Docker Desktop.
+
+> **glibc:** the binary is dynamically linked against glibc ≥ 2.38 (Ubuntu 22.04+ / Debian 12+ / RHEL 9+). Alpine / musl-libc systems are not supported.
 
 ## Hardware
 
@@ -68,10 +75,12 @@ The hardware spec is identical for both validator paths — same `materios-node`
 | Resource | Minimum | Recommended |
 |---|---|---|
 | CPU | 2 vCPU | 4 vCPU |
-| RAM | 2 GB | 4 GB |
-| Disk (Materios data) | 50 GB SSD | 100 GB SSD |
-| Network | 10 Mbps, static IPv4 | 100 Mbps |
-| OS | Linux x86_64 (glibc ≥ 2.38 for native binary; Docker works on any) |
+| RAM | 4 GB | 8 GB |
+| Disk (Materios data) | 40 GB SSD | 100 GB SSD |
+| Network | 10 Mbps, inbound TCP 30333 reachable | 100 Mbps |
+| OS | Native Linux x86_64 + glibc ≥ 2.38 + systemd. Cloud VPS, bare-metal, or Hyper-V/VMware/VirtualBox VM. |
+
+> **Not supported:** WSL2, Docker Desktop running an amd64 Linux container on macOS or Windows, Alpine / musl-libc. The bootstrap script refuses to run on these. See [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the full list and recommended alternatives (UTM, Hyper-V, cloud VPS).
 
 Observed preprod usage: ~800 MiB RAM, ~12 GB disk after several weeks, <1% average CPU. **Budget for growth** — chain history is cumulative.
 
@@ -118,8 +127,8 @@ See [Operator Guide → Attestor](operator-guide.md#attestor-permissionless).
 
 | Port | Direction | Purpose | Who opens it |
 |---|---|---|---|
-| **30333/tcp** | Inbound | libp2p P2P | SPO validators + full nodes |
-| **9944/tcp** | Localhost | JSON-RPC (HTTP + WS) for key insertion and local queries | Everyone running a node; **never expose publicly** |
+| **30333/tcp** | Inbound | libp2p P2P | SPO validators + full nodes. Must be reachable from `166.70.250.197` (the public bootnode dials back). |
+| **9945/tcp** | Localhost | JSON-RPC (HTTP + WS) for status queries | Everyone running a node; **never expose publicly** |
 | **9615/tcp** | Localhost / LAN | Prometheus metrics | Optional |
 
 A validator with RPC exposed to the public internet (`--rpc-external`, `--unsafe-rpc-external`, or `--rpc-methods unsafe` on a reachable address) is a misconfiguration and will be treated as such.
@@ -134,22 +143,17 @@ An SPO validator holds three sets of keys. **All are generated locally — none 
 | **Aura** | Block authoring slot key. | sr25519 | SS58 + hex |
 | **Grandpa** | Finality voting. | ed25519 | SS58 + hex |
 
-The Partner Chains CLI (`partner-chains-node key generate`, v1.8.0 binary) produces all three in one step. See the [Operator Guide → Generate Materios keys](operator-guide.md#2-generate-materios-keys). Note: the original IOG `input-output-hk/partner-chains` repo was [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived); upstream development moved into [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node) under the new name `midnight-node-toolkit`. **The v1.8.0 binary remains the correct CLI for current Materios preprod** — it's the version Materios's runtime is built against. Don't substitute newer toolkit versions without coordination.
+The Partner Chains CLI (`partner-chains-node wizards generate-keys`, v1.8.0 binary) produces all three in one step plus a keystore directory the bootstrap script will pre-seed. See the [Operator Guide → Generate Materios validator keys](operator-guide.md#1-generate-materios-validator-keys). Note: the original IOG `input-output-hk/partner-chains` repo was [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived); upstream development moved into [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node) under the new name `midnight-node-toolkit`. **The v1.8.0 binary remains the correct CLI for current Materios preprod** — it's the version Materios's runtime is built against. Don't substitute newer toolkit versions without coordination.
 
-Keys go into the node's keystore via the `author_insertKey` RPC **after** the node starts. You **do not** need to send the keys to us — only the *public* portions are referenced in your on-chain SPO registration.
+The bootstrap script (`bootstrap-validator.sh`) reads the JSON files in `~/materios-keys/` and pre-seeds the substrate keystore automatically. Manual `author_insertKey` is no longer required. You **do not** need to send the private keys to us — only the *public* portions, which we register on the Cardano-side permissioned-candidates list (or which you submit yourself in your SPO registration).
 
 **Your sidechain private key authorizes your committee seat.** Losing it means your registration is effectively abandoned until you re-register with a new key. Back the mnemonic up offline.
 
-## Runtime Overrides
+## Runtime overrides — not needed on v6
 
-Materios preprod v5 requires a WASM runtime override. The override is loaded from disk at node start via `--wasm-runtime-overrides`. This is a normal Substrate flag — it does **not** modify the on-chain runtime, and every validator running the override must have an identical copy.
+v6 ships with the IDP-None fallback, Ariadne output deduplication, GRANDPA queue-depth guard (W-5 prevention), and other operational patches **baked into the on-chain runtime** (spec_version 211+). The `--wasm-runtime-overrides` flag is no longer required. Operators on v5 used to need a separate override WASM file; that path is retired.
 
-Current override ships the following local patches on top of the genesis runtime:
-
-1. **IDP-None fallback** — when the mainchain follower cannot compute a committee for the current session (happens at some main-chain epoch boundaries), the pallet reuses the previous committee instead of panicking. The bug originated in the IOG partner-chains pallet (now [archived 2026-04-23](https://github.com/input-output-hk/partner-chains#warning-archived); continued development at [`midnightntwrk/midnight-node`](https://github.com/midnightntwrk/midnight-node)). Materios ships a local patch via `--wasm-runtime-overrides`.
-2. **Ariadne output deduplication** — the with-replacement weighted-random sampler can emit duplicate seats for the same SPO; we collapse duplicates before the set is passed to GRANDPA. Prevents finality stalls when the duplicated validator is offline.
-
-Runtime overrides will be removed as these fixes land upstream. We re-publish the override each time the override content changes; **pin by sha256** in your systemd unit so you know when to update.
+Future runtime upgrades (spec_version bumps) are deployed via the standard Substrate `authorize_upgrade` + `apply_authorized_upgrade` flow, coordinated by the multisig sudo. As an operator you don't need to do anything for these — your node picks up the new runtime from the chain itself.
 
 ## Registration Requirements
 
@@ -168,7 +172,7 @@ Detailed flow: [Operator Guide → SPO Validator](operator-guide.md#spo-validato
 
 ### Permissioned Validator path
 
-**No Cardano stake pool, no tADA, no 10-day stake-snapshot wait.** You generate Materios keys locally and send the *public* portions to Flux Point Studios. We add your sidechain pubkey to the partner-chains permissioned-candidates list via a governance tx; you become eligible at the next session boundary (~6 minutes), not 2 Cardano epochs.
+**No Cardano stake pool, no tADA, no 10-day stake-snapshot wait.** You generate Materios keys locally and send the *public* portions to Flux Point Studios. We submit a Cardano-side `upsert-permissioned-candidates` tx adding your sidechain pubkey to the partner-chains permissioned-candidates policy; you become eligible at the next stable mc_epoch boundary (typically ~3 hours, not 2 Cardano epochs).
 
 What you submit to FPS:
 - Sidechain (ECDSA) public key — 66-char hex.
@@ -191,13 +195,15 @@ No approval or whitelist — the gateway dedups on SS58, so each validator accou
 Chain spec is served with CORS enabled so operators can curl it directly:
 
 ```
-curl -o chain-spec.json https://materios.fluxpointstudios.com/chain-spec-v5-raw.json
+curl -o chain-spec.json https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json
 ```
+
+(The bootstrap script fetches this for you — only do this manually if you're not using `bootstrap-validator.sh`.)
 
 Pin by verifying the genesis hash on first start:
 
 ```
-expected_genesis=0xbc0531cb311281565036fb397a376f0e0fa37005589655f97a7924b2729a164c
+expected_genesis=0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf
 ```
 
 `chain_getBlockHash(0)` on your synced node must match.
@@ -215,7 +221,7 @@ One bootnode is enough to discover the rest. More bootnodes may be added as SPO 
 ### Health
 
 ```bash
-curl -s -X POST http://localhost:9944 \
+curl -s -X POST http://localhost:9945 \
   -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'
 ```
@@ -240,24 +246,29 @@ Preprod genesis → tip is fast (minutes on an SSD). During sync your node repor
 
 ## Platform Support
 
-| Platform | Supported | Path |
-|---|---|---|
-| Linux x86_64 | ✅ | Native binary (`releases/materios-node-v5-x86_64-linux`) |
-| Linux arm64 | ⚠️ | Build from source — see [materios](https://github.com/Flux-Point-Studios/materios) `Dockerfile` |
-| macOS arm64 | ⚠️ | Build from source; cert-daemon for attestation works natively |
-| macOS x86_64 | ⚠️ | Run x86_64 binary under Rosetta; unsupported in production |
-| Windows | ⚠️ | WSL2 only; treat as Linux |
+| Platform | Validator | Attestor | Path |
+|---|---|---|---|
+| Linux x86_64 (native, cloud VPS, bare metal) | ✅ | ✅ | `bootstrap-validator.sh` |
+| Linux arm64 | ⚠️ | ✅ | Build validator from source — see [materios](https://github.com/Flux-Point-Studios/materios) `Dockerfile`. Attestor multi-arch image works as-is. |
+| Hyper-V / VMware / VirtualBox VM running native Linux | ✅ | ✅ | Same as native Linux |
+| macOS arm64 | 🛠 (manual) | ✅ | Validator: build from source + launchd; recipe is validated only on home LAN. Attestor: Docker Desktop. |
+| macOS x86_64 (Rosetta) | ❌ | ✅ | Rosetta-translated libp2p drops peers; Attestor (multi-arch image) still works. |
+| Windows + WSL2 | ❌ | ✅ | WSL2 NAT breaks libp2p P2P; bootstrap script refuses. Use Hyper-V Linux VM instead. Attestor (Docker Desktop on WSL2) still works. |
+| Windows + Hyper-V Linux VM | ✅ | ✅ | Treat as native Linux |
+| Alpine / musl-libc | ❌ | ⚠️ | Validator binary is glibc-linked; bootstrap refuses. |
 
-Pre-built arm64 + macOS binaries will be published when there's an SPO who needs them. Open an issue on [materios](https://github.com/Flux-Point-Studios/materios) if that's you.
+See [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the rationale on each row. Pre-built arm64 binaries will be published when there's an SPO who needs them. Open an issue on [materios](https://github.com/Flux-Point-Studios/materios) if that's you.
 
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| 0 peers | Firewall blocking 30333 | `sudo ufw allow 30333/tcp` + check NAT |
-| `isSyncing` stuck | Wrong chain spec or all bootnodes unreachable | Verify genesis hash; re-check bootnode list |
-| Not producing blocks (but in committee) | Keys not inserted, or inserted after sync | Re-insert keys via `author_insertKey`, restart |
-| Panic at main-chain epoch boundary | Missing or stale runtime override | Re-download the WASM, verify sha256, restart |
+| Validator stuck at block #0 with `Inherent error: Candidates inherent required: committee needs to be stored one epoch in advance` | Known partner-chains-1.8.0 historical-sync bug | Apply the v6 data snapshot — see [Operator Guide → Permissioned Validator step 4](operator-guide.md#4-apply-the-v6-data-snapshot) |
+| 0 peers immediately after start (peers connect briefly then drop) | Running on WSL2 / Docker Desktop on macOS / aggressive NAT | WSL2 NAT breaks libp2p — move to native Linux or a Hyper-V/UTM Linux VM. See [Operator Guide → Supported Environments](operator-guide.md#supported-environments). |
+| 0 peers on a real Linux host | Firewall blocking inbound TCP 30333 | `sudo ufw allow 30333/tcp` + check NAT + cloud-provider security group; confirm with `nc -zv <your-public-ip> 30333` from a different network |
+| `isSyncing` stuck | Wrong chain spec or all bootnodes unreachable | Verify genesis hash matches `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf`; re-check bootnode |
+| Not producing blocks (but in committee) | Keystore not seeded, or pre-seeded against the wrong chain ID | Confirm `~/materios-preprod/data/chains/materios_preprod_v6/keystore/` has 3 files (one per scheme). Re-run `bootstrap-validator.sh` if not. |
+| Cert-daemon `Heartbeat rejected: 403 {"error":"Validator not registered"}` | Gateway's api_keys registry doesn't have your SS58 (e.g. after a chain reset) | Contact Flux Point Studios to re-register your SS58 |
 | Finality gap growing | Your validator's GRANDPA vote isn't reaching peers | Check outbound network, clock skew (`timedatectl`), db-sync freshness |
 | `Inability to pay some fees` | Account out of MOTRA | Wait for a few blocks (MATRA auto-mints MOTRA); or request a faucet drip |
 | `State already discarded` in cert-daemon logs | Cert-daemon cursor is older than the node's pruning window | Wipe `daemon-state.json`, restart daemon |
