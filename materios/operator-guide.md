@@ -512,7 +512,7 @@ The installer:
 1. Checks Docker / system requirements.
 2. Generates a fresh sr25519 attestor keypair.
 3. Pulls the cert-daemon image.
-4. Writes `~/materios-attestor/docker-compose.yml` pointing at the public Materios RPC (`wss://materios.fluxpointstudios.com/preprod-rpc`).
+4. Writes `~/materios-attestor/docker-compose.yml` pointing at the public Materios RPC (`wss://materios.fluxpointstudios.com/preprod-rpc`) and the preprod heartbeat endpoint (`HEARTBEAT_URL=https://materios.fluxpointstudios.com/preprod-blobs`, `HEARTBEAT_INTERVAL=30`). **Without `HEARTBEAT_URL` the daemon attests but never reports liveness — explorer will show "No heartbeat" forever.** If you hand-edit the generated compose, keep both heartbeat env vars; the preprod path is `/preprod-blobs`, not `/blobs`.
 5. Registers your SS58 with the gateway; the gateway auto-drips MATRA.
 6. Starts the daemon; it auto-joins the attestation committee.
 
