@@ -114,13 +114,16 @@ Production on Materios preprod as of **2026-05-15**.
 | spec-220 (settle_claim L1 verification) | LIVE since 2026-05-15 |
 | spec-221 (expire_policy_mirror B+D) | LIVE since 2026-05-15 |
 | Cert-daemon M-of-N envelope coordination | LIVE since 2026-05-15 |
-| First fully-autonomous ClaimSettled | Block **#200660**, claim `0xe08c94624cdc3991…`, Cardano tx `bb59881af429ad09…` |
+| First fully-autonomous **ClaimSettled** (spec-220) | Block **#200660**, claim `0xe08c94624cdc3991…`, Cardano tx `bb59881af429ad09…` |
+| First fully-autonomous **IntentExpired** (spec-221) | Block **#201354**, intent `0x8f4af94bb6aefaec…`, reason `PolicyExpiredOnCardano` |
 | Active committee members (preprod) | 2 (Gemtek + Node-3); MinSignerThreshold = 2 |
 | Committee MaxSize | 64 |
 
 ### What "autonomous" actually means
 
-In one Materios block before tip moved, this happened with no human or script in the loop after `request_settle`:
+Both M-of-N paths are now proven end-to-end with no human or script in the loop after the first request.
+
+**Settle path** (spec-220), 4 seconds end-to-end:
 
 ```
 16:40:00.472  Node-3 daemon : assembled 2/2 sigs for e08c94624cdc3991... — submitting envelope
@@ -130,7 +133,17 @@ In one Materios block before tip moved, this happened with no human or script in
 16:40:06.017  Gemtek daemon : SettlementRequestMissing (already consumed — correct)
 ```
 
-Two committee members independently observed the same Cardano L1 facts, computed byte-identical STCA digests, peer-shared sigs through the gateway bulletin board, and both submitted M-sig envelopes within 4 seconds of each other. The first to land won, the second got the expected idempotent refusal.
+**Expire path** (spec-221), under 2 seconds:
+
+```
+18:06:46.242  expire_attestor: 1 pending expiry request(s) — processing under sem cap 8
+18:06:46.973  expire_attestor: assembled 2/2 sigs for 8f4af94bb6aefaec... — submitting envelope
+18:06:48.017  expire_attestor: attest_expire_policy OK — depth=299 ext_hash=0x91680c7e…
+              Materios block #201354 emits IntentSettlement::IntentExpired
+              { reason: PolicyExpiredOnCardano }
+```
+
+Two committee members independently observed the same Cardano L1 facts, computed byte-identical canonical digests (STCA for settle, EXPP for expire), peer-shared sigs through the gateway bulletin board, and submitted M-sig envelopes. The first to land won the race in both cases; concurrent submissions bounced with the expected idempotent refusal.
 
 ***
 
@@ -243,8 +256,9 @@ No bond, no whitelist, no committee admission tx today. The single gate is the p
 
 Verifiable today on preprod:
 
-- **First autonomous ClaimSettled**: claim `0xe08c94624cdc3991b7715a7f7f5030e1946afb5187c8f67f29ef6898f00c2992` at Materios block **#200660**, Cardano tx `0xbb59881af429ad09ca0edead5a8d93acb37decabf83d6008f600fefbea2a8664`
-- **Earlier same-day demos** (manual aggregator): claims `0xf9ef6b1f…`, `0xbab7a053…`, `0xfeb61d09…`, `0x2a675332…`
+- **First autonomous ClaimSettled (spec-220)**: claim `0xe08c94624cdc3991b7715a7f7f5030e1946afb5187c8f67f29ef6898f00c2992` at Materios block **#200660**, Cardano tx `0xbb59881af429ad09ca0edead5a8d93acb37decabf83d6008f600fefbea2a8664`
+- **First autonomous IntentExpired (spec-221)**: intent `0x8f4af94bb6aefaec5ca485d55d1a8068046130f29ba3e2d1d35640d17a09d03d` at Materios block **#201354**, event `IntentSettlement.IntentExpired { reason: PolicyExpiredOnCardano }`, evidence Cardano tx `0xbb59881af429ad09ca0edead5a8d93acb37decabf83d6008f600fefbea2a8664`
+- **Earlier same-day settle demos** (manual aggregator pre-fix): claims `0xf9ef6b1f…`, `0xbab7a053…`, `0xfeb61d09…`, `0x2a675332…`
 - **Spec-220 + spec-221 ceremonies** executed via multisig sudo 2-of-3 the same day
 
 Anyone with a Materios RPC connection can independently verify every settlement: the pallet's rebuilt STCA digest, the M-of-N sigs, the Cardano tx existence at the pinned depth + slot, and the byte-exact `cardano_tx_hash` match. Nothing is taken on trust.
