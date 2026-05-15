@@ -20,6 +20,7 @@
 * [Overview](materios/README.md)
 * [Mainnet Roadmap](materios/mainnet-roadmap.md)
 * [Cardano L1 Anchoring](materios/cardano-anchoring.md)
+* [Intent Settlement](materios/intent-settlement.md)
 * [Node Requirements](materios/node-requirements.md)
 * [Operator Guide](materios/operator-guide.md)
 * [SPO Onboarding](materios/spo-onboarding.md)
