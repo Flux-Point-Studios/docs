@@ -24,6 +24,7 @@
 * [Operator Guide](materios/operator-guide.md)
 * [SPO Onboarding](materios/spo-onboarding.md)
 * [Game Integration](materios/game-integration.md)
+* [Witness Network](materios/witness-network.md)
 * [cMATRA Token Merger](materios/cmatra-token-merger/README.md)
 * [cMATRA FAQ](materios/cmatra-token-merger/faq.md)
 
