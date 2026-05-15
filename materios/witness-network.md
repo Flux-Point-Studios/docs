@@ -73,7 +73,7 @@ The Witness Network is live on Materios preprod as of **2026-05-13**. Current st
 | KeyMint signing algorithms supported | sr25519 (envelope), ed25519, **secp256r1 (KeyMint native, P-256, live 2026-05-14)** |
 | APK pairing | Self-registration via Android attestation cert chain; zero-touch onboarding |
 | Probe targets (today) | `materios.fluxpointstudios.com`, `github.com`, `cardano.org` — configurable via gateway `/witness/targets` endpoint |
-| Witness landing + dashboard | https://fluxpointstudios.com/witness |
+| Witness landing + dashboard | https://fluxpointstudios.com/materios/witness |
 | Pallet on chain | `pallet-tee-attestation`, kill-switch OFF, multi-arch verifier (ARM TrustZone + AMD/Intel SGX stubs) |
 
 ### What "live on chain" actually means
@@ -127,16 +127,16 @@ If any link is broken — counterfeit device, tampered KeyMint, replaying old at
 Witness onboarding is intentionally frictionless. You need:
 
 - A modern Android phone with hardware-backed KeyMint (any device shipped after 2018 with API level ≥ 28)
-- The Witness APK (download link on https://fluxpointstudios.com/witness)
+- The Witness APK (download link on https://fluxpointstudios.com/materios/witness)
 - An internet connection
 
 ### Install + self-register
 
-1. **Scan the QR code at fluxpointstudios.com/witness.** This deep-links the APK and pre-fills the gateway URL.
+1. **Scan the QR code at fluxpointstudios.com/materios/witness.** This deep-links the APK and pre-fills the gateway URL.
 2. **Open the app, tap "Become a Witness".** The phone:
    - Generates a fresh KeyMint key for the device's witness identity
    - Builds an Android Key Attestation cert chain over it
-   - POSTs the chain + a self-generated sr25519 envelope key to `gateway.materios.fluxpointstudios.com/v2/attestor_registration`
+   - POSTs the chain + a self-generated sr25519 envelope key to `https://materios.fluxpointstudios.com/preprod-blobs/v2/attestor_registration`
 3. **Gateway verifies the cert chain** (Google root → device → KeyMint → leaf), creates the on-chain `pallet-tee-attestation::register_attestor` call, and the device is live.
 
 End-to-end install-to-first-probe takes under 60 seconds in practice on a clean phone with no prior witness state.
@@ -222,7 +222,7 @@ Periodic Materios checkpoints anchor to Cardano L1 via metadata-label-2222. A Wi
 
 | You are a… | Next step |
 |---|---|
-| Android user with a spare phone | https://fluxpointstudios.com/witness — scan + install the APK |
+| Android user with a spare phone | https://fluxpointstudios.com/materios/witness — scan + install the APK |
 | Cardano project worried about an infra dependency | Open an issue at https://github.com/Flux-Point-Studios/materios proposing a probe class; we'll wire your URL into `/witness/targets` |
 | Developer who wants to consume witness data | The gateway's `/witness/observations` API is open + permissionless; pay-per-query lands in v4 |
 | Investor / partner | hello@fluxpointstudios.com — the witness fleet is dual-use: same APK ships TEE-attested billing AND TEE-attested distributed QA |
