@@ -153,7 +153,7 @@ End-to-end install-to-first-probe takes under 60 seconds in practice on a clean 
 
 v1 ships in observe-only mode. v2 (Q3 2026) introduces:
 
-- **MATRA reward emission** per attested probe (Aegis-pool-funded)
+- **MATRA reward emission** per attested probe
 - **Slashable bond** for divergent attestations
 - **Heat-map dashboard** ranking attestors by uptime + agreement
 
@@ -180,7 +180,7 @@ Every new Witness multiplies the network's value to the others:
 
 - **More witnesses → more URLs covered → better-grained uptime maps.** Adding a phone in Manila doesn't dilute the network — it adds an observation point the others can't replicate.
 - **More witnesses → harder to corrupt a result.** An adversary controlling 10% of witnesses can't move the threshold M-of-N reading. The cost of attack scales with N.
-- **More witnesses → more MATRA demand.** v2 rewards are funded from the Aegis insurance pool, which is sized by total network capacity.
+- **More witnesses → more MATRA demand.** v2 rewards scale with total network capacity, sized to keep marginal-witness incentives positive.
 
 The network is permissionless. We don't gatekeep on country, carrier, device model, or operator identity. The TEE attestation is the gate.
 
