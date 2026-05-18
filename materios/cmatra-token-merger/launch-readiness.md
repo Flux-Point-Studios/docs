@@ -65,7 +65,7 @@ Until **all** of the above land, the launch date stays **TBD** on this page.
   ```
 
 * This file is the byte-exact source the on-chain mint reads from. The display rates rendered in [README → What you get](README.md#what-you-get-reference-rates--april-19-2026) and [FAQ → 10a](faq.md#10a-what-changed-vs-v33) are derived from this file with rounding for human readability.
-* All seven asset buckets sum to exactly **722,500,000 cMATRA** in base units (verified at publish time in `audit_pack/2026-04-19/`).
+* All seven asset buckets sum to exactly **722,500,000 cMATRA** in display units (6-decimal) (verified at publish time in `audit_pack/2026-04-19/`).
 * The rate table is locked for the full 6-month redemption window once published, except under the documented governance-approved correction clause in [README → Window mechanics](README.md#window-mechanics).
 
 ***
