@@ -28,6 +28,8 @@
 * [Witness Network](materios/witness-network.md)
 * [cMATRA Token Merger](materios/cmatra-token-merger/README.md)
 * [cMATRA FAQ](materios/cmatra-token-merger/faq.md)
+* [cMATRA Launch Readiness](materios/cmatra-token-merger/launch-readiness.md)
+* [cMATRA Legal & Disclaimers](materios/cmatra-token-merger/legal-and-disclaimers.md)
 
 ## Governance
 

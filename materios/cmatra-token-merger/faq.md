@@ -462,6 +462,10 @@ The authoritative launch package is intended to be:
 
 Earlier snapshot-era drafts, stale reserve analyses, or Discord shorthand should not override the final launch package.
 
+For urgent merger support, please open a ticket in the FPS Discord under **#cmatra-merger-support** — the channel link is published in [Launch Readiness → Support Channel](launch-readiness.md#support-channel). The Materios team does not promise a service-level response time, but support is best-effort during the redemption window and incidents that materially affect users are triaged immediately.
+
+Read [Legal & Disclaimers](legal-and-disclaimers.md) before raising a ticket — most "is this allowed in my jurisdiction" / "what about taxes" / "what if there's a bug" questions are answered there.
+
 ### 43. Is this document final?
 
 It is a public / governance draft aligned to the current policy direction. The core model is now much clearer than before, but the final launch package still needs to lock:
