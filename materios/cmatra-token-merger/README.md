@@ -9,6 +9,8 @@ description: >-
 
 Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-side transitional token for [Materios](https://materios.fluxpointstudios.com). cMATRA is intended to converge into **MATRA** as the native capital token of the Materios network.
 
+> **Before you redeem:** read the [Legal & Disclaimers](legal-and-disclaimers.md) and check the [Launch Readiness](launch-readiness.md) status board for the live launch date, audit posture, and support channel.
+
 ***
 
 ## Quick Facts
