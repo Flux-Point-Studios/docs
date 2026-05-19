@@ -446,6 +446,38 @@ Materios considered a Liquidity Bootstrapping Pool (LBP) and decided against it:
 
 ***
 
+## Legal and Disclosures
+
+### 41b. Who operates the Portal, and what governs my use of it?
+
+The cMATRA Merger Portal is operated by **Flux Point Studios, Inc.**, a Delaware corporation. Use of the Portal is governed by the FPS [Terms of Service](https://fluxpointstudios.com/tos) and [Privacy Policy](https://fluxpointstudios.com/privacy-policy), and by the cMATRA Merger Disclosures published on the Portal itself and in the [Legal and Disclosures](README.md#legal-and-disclosures) section of this docs page. By connecting a wallet and submitting a surrender transaction, you agree to those terms.
+
+### 41c. Is cMATRA a security or an investment?
+
+No. cMATRA is a **utility token** intended for use within the Materios ecosystem. Nothing in these docs or on the Portal is an offer or solicitation to buy or sell a security, an investment recommendation, financial advice, or a promise of profit. cMATRA does not represent equity, debt, dividend rights, revenue share, or any other claim on Flux Point Studios or any affiliate. No future price, listing, liquidity, or utility is guaranteed.
+
+### 41d. Is the surrender taxable?
+
+A surrender transaction may be a taxable event under the laws of your jurisdiction. Flux Point Studios **does not provide tax advice** — you are solely responsible for determining and discharging any tax obligations arising from your use of the Portal. Consult a qualified tax professional in your jurisdiction.
+
+### 41e. Can I reverse a surrender if I change my mind?
+
+No. A successful surrender is **final and irreversible**. Legacy assets you submit are sent to a Plutus-locked quarantine address from which they cannot be reclaimed, and the corresponding cMATRA is released by the on-chain validator. The Portal does not offer cancellations, reversals, or refunds, and FPS cannot recover surrendered assets on your behalf.
+
+### 41f. Is the code audited?
+
+The Aiken validators and off-chain services are open source and published at [Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger) for independent inspection. The code has been extensively unit-tested and red-team rehearsed on preprod, but **has not been subjected to a formal third-party security audit**. You bear all risk of bugs, exploits, network outages, wallet errors, or loss of access to your wallet keys, as set forth in the Terms of Service. The Portal is provided "AS IS" and "AS AVAILABLE."
+
+### 41g. Where are disputes resolved?
+
+The FPS [Terms of Service](https://fluxpointstudios.com/tos) govern dispute resolution: Utah law applies, disputes are resolved through binding **individual arbitration** administered by the American Arbitration Association under its Commercial Arbitration Rules and Supplementary Procedures for Consumer Related Disputes, with a **class-action and jury-trial waiver** and a **30-day opt-out** window. Internal corporate-law matters relating to FPS are governed by Delaware law and the exclusive jurisdiction of the Delaware Court of Chancery, as set forth in the FPS Certificate of Incorporation.
+
+### 41h. Who is restricted from using the Portal?
+
+The Portal is not offered to, and may not be used by, any person located in, organized under the laws of, or ordinarily resident in any jurisdiction subject to **comprehensive U.S. OFAC sanctions** (currently including Cuba, Iran, North Korea, Syria, and the Crimea, Donetsk, and Luhansk regions of Ukraine), nor by any person identified on any U.S., U.K., E.U., or U.N. sanctions or denied-persons list. Users must be 18 or older (or 13 or older with verifiable parental or legal-guardian consent, where permitted).
+
+***
+
 ## Authority
 
 ### 42. Which policy document is authoritative if old docs or messages conflict?
