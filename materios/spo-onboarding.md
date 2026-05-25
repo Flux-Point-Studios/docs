@@ -1,590 +1,259 @@
 ---
-description: End-to-end guide for Cardano stake pool operators registering as registered (SPO-weighted) candidates on the Materios preprod partner-chain
+description: Trustless registration recipe — bind a Cardano preprod stake pool to a Materios sidechain identity, get selected by Ariadne, and run a validator.
 ---
 
 # SPO Onboarding (Preprod)
 
-> **🧪 Preprod is a public testnet, not mainnet.** Rewards described here are paid in **tMATRA** — testnet tokens with no economic value. Running a preprod node is for testing the operator workflow and demonstrating uptime ahead of mainnet, not a revenue stream. See [Mainnet Roadmap](mainnet-roadmap.md) for the path to real-MATRA rewards.
+> **Preprod is a public testnet.** Rewards are paid in **tMATRA** (no economic value). See [Mainnet Roadmap](mainnet-roadmap.md) for the path to real-MATRA rewards.
 
-This guide walks a Cardano stake pool operator (SPO) from zero to being a
-**registered candidate** on Materios preprod — the role where your committee
-selection probability is weighted by the stake delegated to your pool on
-Cardano, rather than being in the permissioned set controlled by the Materios
-governance multisig.
-
-If you just want to run an attestor or permissionless full-validator, use
-the [Operator Guide](operator-guide.md) instead. That path does not require a
-Cardano stake pool.
-
-> **Network:** Cardano preprod (magic `1`) ↔ Materios preprod.
-> All ADA/tADA on preprod is worthless; keys generated below are testnet-only.
-> Do **not** reuse a mainnet SPO cold key here.
-
-***
-
-## How Ariadne Selection Works (1-minute overview)
-
-Materios' committee is chosen every Cardano epoch by **Ariadne**, IOG's
-cross-chain committee selection algorithm. Each epoch the D-parameter decides
-the split between two buckets:
-
-- **Permissioned seats** — filled by the governance-controlled list (the 3
-  Flux Point nodes today).
-- **Registered seats** — filled by a random draw from candidates who
-  submitted a valid registration on Cardano, weighted by the stake their pool
-  had at the 2-epoch-prior snapshot.
-
-Current preprod D-parameter (once you're eligible): **(3 permissioned, 2
-registered)** after the upsert that accompanies your registration. Your
-probability of being picked for a registered seat in epoch N is:
-
-```
-P(selected) = your_active_stake(snapshot @ epoch N-2) / total_registered_stake(snapshot @ epoch N-2)
-```
-
-Two consequences:
-
-1. You must be registered on Cardano **at least one full Cardano epoch before**
-   you can be selected. Registration in epoch E first counts for epoch E+2.
-   On preprod (5-day epochs) that's a ~10-day wait.
-2. Pledge is not the weight. Ariadne uses **active delegated stake**, which
-   means you can self-delegate the pledged wallet's leftover tADA to inflate
-   your weight on preprod.
-
-***
+This recipe takes a Cardano preprod SPO from zero to a producing Materios validator. No FPS approval is required; selection is driven by Ariadne over your Cardano-side stake.
 
 ## Prerequisites
 
-| Item | Why | Where to get it |
-|---|---|---|
-| Linux host | Pool + Materios node | Any x86_64 Linux, 2 vCPU / 4 GB / 50 GB |
-| Docker + Compose v2 | Running `cardano-node` and `materios-node` | docker.com |
-| `cardano-cli` | Pool registration | Comes with `ghcr.io/intersectmbo/cardano-node:10.1.4` container (see below) |
-| Cardano preprod node | Submitting txs | Option A: run your own. Option B: use public Ogmios + submit.saturnswap.io |
-| IOG partner-chains-node | Registration signatures + on-chain registration | Pre-built binary: [v1.8.0 linux-x86_64](https://github.com/input-output-hk/partner-chains/releases/tag/v1.8.0) |
-| ~1000 tADA | Pledge (100) + stake key deposit (2) + pool deposit (500) + fees (~3) + buffer | [Preprod faucet](https://docs.cardano.org/cardano-testnets/tools/faucet) |
-| Materios chain spec | Connecting your node | `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json` |
+- A **registered Cardano preprod stake pool**. If you don't have one yet, follow the [official Cardano SPO course](https://cardano-course.gitbook.io/cardano-course/handbook) on preprod (testnet-magic 1) before continuing. You'll come back here with `cold.skey`, `vrf.skey`, `kes.skey`, `op.cert`, a payment address, and a registered pool ID.
+- **~100 tADA** in the pool's payment address (~3 tADA for the registration UTXO + buffer for fees).
+- **Linux host:** 4 vCPU, 8 GB RAM, NVMe SSD, ≥ 100 GB free, Ubuntu 22.04/24.04 LTS or Debian 12, inbound TCP 30333 reachable from the internet. Not WSL2, not Alpine, not Docker Desktop's amd64 emulation. See [Operator Guide → Hardware](operator-guide.md#hardware) for why.
+- **Outbound** HTTPS to `materios.fluxpointstudios.com` and `github.com`.
 
-### Option A — run your own preprod `cardano-node`
+You'll also need a synced Cardano preprod stack:
 
-Reuse the reference compose stack from the [Operator Guide](operator-guide.md#prerequisite-cardano-preprod-stack).
-You'll only need `cardano-node` itself for this guide (db-sync is not needed
-for pool registration; it's only needed if you later run a Materios full
-validator).
+- `cardano-node` on preprod (testnet-magic `1`)
+- `cardano-db-sync` writing to Postgres
+- `ogmios` exposing `ws://<host>:1337`
 
-### Option B — public endpoints (limited)
+A managed provider (TxPipe Dolos, Demeter.run, Blockfrost) is an acceptable substitute for db-sync + Ogmios; you still need a local `cardano-cli`-capable wallet for the registration tx.
 
-Flux Point runs public Cardano infra for **mainnet only** right now
-(`ogmios.saturnswap.io`, `kupo.saturnswap.io`, `submit.saturnswap.io`).
-There is no public preprod endpoint today — Ogmios/Kupo on preprod are
-LAN-only on Node-3. Pick Option A; request WAN access on Discord if you
-need it for a short-lived demo.
+## Chain parameters
 
-> **Required for §5d:** the IOG `smart-contracts register` command speaks
-> Ogmios. You need a reachable preprod Ogmios URL — either your own at
-> `ws://<host>:1337` or via the temporary WAN tunnel if ops has one up.
+These values are stable for the lifetime of the v6 preprod chain. Hard-code them in your scripts.
 
-***
+| Field | Value |
+|---|---|
+| Cardano network | preprod (testnet-magic `1`) |
+| **Genesis UTXO** | `13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0` |
+| Partner-chain genesis hash | `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf` |
+| Governance authority hash | `0x680a93dd4deb4873fc0aa31678eb02c57258717953ffc9a654b0af78` (single key, threshold 1) |
+| CommitteeCandidate validator | `addr_test1wrld9uhaepas48twjy3qevncsyrhjdqnkz2wzu4yzjc2qhq24f4v4` |
+| PermissionedCandidates validator | `addr_test1wzyzwx0kcdgs2hc8t5w0d3g4l7s2qhvv2qcyws0m8sypwxgghu099` |
+| D-parameter | `(5, 2)` — 5 permissioned + 2 registered |
+| Chain spec | `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json` |
+| Latest data snapshot | `https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json` |
+| Public bootnode | `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM` |
 
-## 1. Generate Keys
-
-All cold operations are done **inside a disposable `cardano-node` container**
-so you have the right `cardano-cli` version. Replace `~/cardano-preprod/keys`
-with wherever you want the keys to live; that directory gets mounted into the
-container.
+Convenience env vars (used throughout):
 
 ```bash
-mkdir -p ~/cardano-preprod/keys
-cd ~/cardano-preprod/keys
-
-# Drop into an ephemeral container that has cardano-cli
-docker run --rm -it \
-    -v "$PWD:/keys" \
-    -v cardano-preprod-node-ipc:/ipc \
-    -w /keys \
-    --entrypoint bash \
-    ghcr.io/intersectmbo/cardano-node:10.1.4
+export GENESIS_UTXO="13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0"
+export OGMIOS_URL="ws://127.0.0.1:1337"
+export PAYMENT_SKEY=/path/to/your/pool/payment.skey
+export COLD_SKEY=/path/to/your/pool/cold.skey
 ```
 
-Everything from here to the end of this section runs **inside the container.**
+## 1. Provision Postgres for cardano-db-sync
 
-### 1a. Cold / VRF / KES keys
+Partner-chains queries db-sync's Postgres on every block import. The defaults are too small, and one missing index will stall your validator.
 
-> **Era prefix gotcha.** All key-gen commands below use the `conway`
-> sub-group. Older tutorials use bare `cardano-cli node key-gen`, which errors
-> on conway-era node versions. Always prefix with `conway`.
+Create the partner-chains index before starting materios-node:
 
 ```bash
-# Cold keys — operator identity. BACK THESE UP.
-cardano-cli conway node key-gen \
-    --cold-verification-key-file cold.vkey \
-    --cold-signing-key-file cold.skey \
-    --operational-certificate-issue-counter-file cold.counter
-
-# VRF keys — block leader election
-cardano-cli conway node key-gen-VRF \
-    --verification-key-file vrf.vkey \
-    --signing-key-file vrf.skey
-
-# KES keys — block-signing (rotated every ~9 days)
-cardano-cli conway node key-gen-KES \
-    --verification-key-file kes.vkey \
-    --signing-key-file kes.skey
+psql "$DB_SYNC_CONNECTION_STRING" -c \
+  "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ma_tx_out_ident ON ma_tx_out(ident);"
 ```
 
-### 1b. Payment + stake keys
+The index takes 2-5 min to build on a fresh db-sync. If materios-node starts before it completes, every block import takes 2.5s+ and your peers will drop you.
+
+Apply the tuning baseline (`/etc/postgresql/15/main/postgresql.conf`, adjust path for your version):
+
+```
+shared_buffers = 2GB
+effective_cache_size = 6GB
+work_mem = 64MB
+maintenance_work_mem = 1GB
+random_page_cost = 1.1
+effective_io_concurrency = 200
+```
+
+Then `sudo systemctl restart postgresql && psql "$DB_SYNC_CONNECTION_STRING" -c "ANALYZE;"`. Scale up proportionally on larger hosts.
+
+Full background, diagnostics, and slow-sync recovery: [OPERATOR_KIT.md → Postgres prerequisites](https://github.com/Flux-Point-Studios/materios/blob/main/docs/OPERATOR_KIT.md#postgres-prerequisites-for-cardano-db-sync).
+
+## 2. Download the partner-chains CLI
+
+The IOG `partner-chains-node` v1.8.0 binary handles key generation, signature production, and registration submission. Materios's runtime is pinned to v1.8.0 — do not substitute a newer toolkit version.
 
 ```bash
-# Payment keys (holds pledge, pays fees)
-cardano-cli conway address key-gen \
-    --verification-key-file payment.vkey \
-    --signing-key-file payment.skey
-
-# Stake keys (holds delegation, earns rewards)
-#  ^ Note the era prefix: `conway stake-address key-gen`, NOT `stake-address key-gen`
-cardano-cli conway stake-address key-gen \
-    --verification-key-file stake.vkey \
-    --signing-key-file stake.skey
-
-# Build the stake-enabled payment address (this is what you fund + self-delegate)
-cardano-cli conway address build \
-    --payment-verification-key-file payment.vkey \
-    --stake-verification-key-file stake.vkey \
-    --testnet-magic 1 \
-    --out-file payment.addr
-
-# Plain stake address (used in certs, registration, pool metadata)
-cardano-cli conway stake-address build \
-    --stake-verification-key-file stake.vkey \
-    --testnet-magic 1 \
-    --out-file stake.addr
-
-cat payment.addr; echo; cat stake.addr; echo
+curl -sSLo partner-chains-node \
+  https://github.com/input-output-hk/partner-chains/releases/download/v1.8.0/partner-chains-node-v1.8.0-x86_64-linux
+chmod +x partner-chains-node
+sudo mv partner-chains-node /usr/local/bin/
+partner-chains-node --version   # → 1.8.0-...
 ```
 
-### 1c. Operational certificate (op-cert)
+## 3. Generate Materios validator keys
+
+The `wizards generate-keys` flow creates one 24-word mnemonic and derives all three Substrate keys from it (ECDSA sidechain, sr25519 aura, ed25519 grandpa), seeding the node keystore in one shot.
 
 ```bash
-# Query current KES period
-CURRENT_KES=$(cardano-cli conway query tip --testnet-magic 1 --socket-path /ipc/node.socket \
-    | jq -r '.slot / 129600 | floor')
-#         ^ slotsPerKESPeriod on preprod = 129600; check genesis if unsure
-
-cardano-cli conway node issue-op-cert \
-    --kes-verification-key-file kes.vkey \
-    --cold-signing-key-file cold.skey \
-    --operational-certificate-issue-counter-file cold.counter \
-    --kes-period "$CURRENT_KES" \
-    --out-file op.cert
+mkdir -p ~/materios-keys && cd ~/materios-keys
+partner-chains-node wizards generate-keys
 ```
 
-**Back up everything in `~/cardano-preprod/keys/` immediately** (tar+gpg+offsite).
-Pool keys are irreplaceable without re-registering the pool.
+When the wizard prompts for a base path, answer `./data`. It writes three JSON files into `~/materios-keys/` and prints the three pubkeys:
 
-***
+```
+sidechain (ECDSA)  : 0x<66-char-hex>
+aura  (sr25519)    : 0x<64-char-hex>
+grandpa (ed25519)  : 0x<64-char-hex>
+```
 
-## 2. Fund the Payment Address
+**Back up the mnemonic offline immediately.** Losing it means re-registering on Cardano.
 
-Exit the container for a moment to grab tADA:
+Extract the hexes you'll pass to the next steps:
 
-1. Copy the contents of `payment.addr` (starts with `addr_test1...`).
-2. Paste into the [Cardano preprod faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
-   and request 10,000 tADA (one request is enough; you only need ~630 tADA to
-   register with 100 pledge, but faucet drips come in 10k chunks).
-3. Wait ~20 seconds for the tx to settle. Verify:
+```bash
+SIDECHAIN_PUB=$(jq -r '.publicKey' sidechain.json)   # 66-char hex
+AURA_PUB=$(jq -r '.publicKey' aura.json)             # 64-char hex
+GRANDPA_PUB=$(jq -r '.publicKey' grandpa.json)       # 64-char hex
+```
+
+### Manual sidechain-key derivation
+
+If you'd rather derive the secp256k1 key yourself (e.g. importing an existing 32-byte hex secret), the public key is the compressed-point encoding:
+
+```python
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import serialization
+
+sk_hex = "<your 32-byte secret hex, no 0x prefix>"
+sk = ec.derive_private_key(int(sk_hex, 16), ec.SECP256K1())
+pk = sk.public_key().public_bytes(
+    encoding=serialization.Encoding.X962,
+    format=serialization.PublicFormat.CompressedPoint,
+)
+print("0x" + pk.hex())   # 33-byte compressed pubkey, 66 hex chars
+```
+
+The Substrate keystore wants the secret as the `secretSeed` field of `sidechain.json` (`0x`-prefixed 32-byte hex) and the corresponding public as the `publicKey` field. Write both before starting materios-node.
+
+## 4. Pick a registration UTXO
+
+The Cardano-side registration tx consumes one UTXO from your pool's payment address as a uniqueness nonce.
 
 ```bash
 cardano-cli conway query utxo \
-    --address $(cat payment.addr) \
-    --testnet-magic 1 \
-    --socket-path /ipc/node.socket
+  --testnet-magic 1 \
+  --address $(cat /path/to/pool/payment.addr) \
+  --output-json | jq -r 'to_entries[0].key'
+
+# Pick any UTXO with ≥ 3 tADA:
+export REGISTRATION_UTXO="<txhash>#<ix>"
 ```
 
-You should see one UTXO for ~10,000,000,000 lovelace.
+If your address has only one large UTXO, split off a small one first (`cardano-cli conway transaction build` against your own address).
 
-***
+## 5. Sign the registration
 
-## 3. Register the Stake Pool on Cardano
+This step is fully offline-capable: it produces signatures from your Cardano cold key and your sidechain ECDSA key, bound to the `GENESIS_UTXO` + `REGISTRATION_UTXO` pair so they can't be replayed.
 
-This is one transaction that bundles three certificates:
-
-1. Stake-address registration (deposit: 2 tADA)
-2. Pool registration (deposit: 500 tADA)
-3. Self-delegation of your stake key to your pool
-
-### 3a. Pool metadata
+Strip the CBOR prefix from your cold key (cardano-cli wraps the 32-byte scalar in a CBOR `5820` byte-string):
 
 ```bash
-cat > pool-metadata.json <<'EOF'
+COLD_SKEY_RAW=$(jq -r '.cborHex' "$COLD_SKEY" | sed 's/^5820//')
+SIDECHAIN_SKEY=$(jq -r '.secretSeed' ~/materios-keys/sidechain.json | sed 's/^0x//')
+
+partner-chains-node registration-signatures \
+  --genesis-utxo "$GENESIS_UTXO" \
+  --registration-utxo "$REGISTRATION_UTXO" \
+  --mainchain-signing-key "$COLD_SKEY_RAW" \
+  --sidechain-signing-key "$SIDECHAIN_SKEY" \
+  > phase-a.json
+
+cat phase-a.json
+```
+
+Output:
+
+```json
 {
-    "name": "My Preprod Materios Pool",
-    "description": "Cross-validates Materios partner-chain receipts",
-    "ticker": "MPRE",
-    "homepage": "https://example.com"
+  "spo_public_key":       "0x...",
+  "spo_signature":        "0x...",
+  "sidechain_public_key": "0x...",
+  "sidechain_signature":  "0x..."
 }
-EOF
-
-cardano-cli conway stake-pool metadata-hash \
-    --pool-metadata-file pool-metadata.json > pool-metadata-hash.txt
-cat pool-metadata-hash.txt
 ```
 
-You need an HTTPS URL that serves this exact JSON file for the registration
-cert. On preprod a placeholder URL is fine — the hash is what's verified
-on-chain. For a real demo, host it at a stable URL.
-
-### 3b. Generate certificates
+## 6. Submit the registration
 
 ```bash
-# Stake address registration cert
-cardano-cli conway stake-address registration-certificate \
-    --key-reg-deposit-amt 2000000 \
-    --stake-verification-key-file stake.vkey \
-    --out-file stake-reg.cert
+SPO_PUB=$(jq -r '.spo_public_key'        phase-a.json)
+SPO_SIG=$(jq -r '.spo_signature'         phase-a.json)
+SIDE_SIG=$(jq -r '.sidechain_signature'  phase-a.json)
 
-# Pool registration cert
-cardano-cli conway stake-pool registration-certificate \
-    --cold-verification-key-file cold.vkey \
-    --vrf-verification-key-file vrf.vkey \
-    --pool-pledge 100000000 \
-    --pool-cost 170000000 \
-    --pool-margin 0.01 \
-    --pool-reward-account-verification-key-file stake.vkey \
-    --pool-owner-stake-verification-key-file stake.vkey \
-    --metadata-url "https://example.com/pool-metadata.json" \
-    --metadata-hash $(cat pool-metadata-hash.txt) \
-    --testnet-magic 1 \
-    --out-file pool-reg.cert
-
-# Self-delegation cert (points our stake key at our own pool)
-cardano-cli conway stake-address stake-delegation-certificate \
-    --stake-verification-key-file stake.vkey \
-    --cold-verification-key-file cold.vkey \
-    --out-file delegation.cert
+partner-chains-node smart-contracts register \
+  --genesis-utxo "$GENESIS_UTXO" \
+  --registration-utxo "$REGISTRATION_UTXO" \
+  --ogmios-url "$OGMIOS_URL" \
+  --payment-key-file "$PAYMENT_SKEY" \
+  --partner-chain-public-keys "${SIDECHAIN_PUB}:${AURA_PUB}:${GRANDPA_PUB}" \
+  --spo-public-key "$SPO_PUB" \
+  --spo-signature "$SPO_SIG" \
+  --partner-chain-signature "$SIDE_SIG"
 ```
 
-### 3c. Build, sign, submit
+Successful output ends with `Transaction submitted. ID: <txhash>`. Record the txhash; you'll confirm it on Cardano next.
+
+Verify the tx made it on-chain:
 
 ```bash
-# Grab a UTXO and set TIP
-UTXO_IN=$(cardano-cli conway query utxo --address $(cat payment.addr) \
-    --testnet-magic 1 --socket-path /ipc/node.socket --output-json \
-    | jq -r 'to_entries[0].key')
-
-cardano-cli conway transaction build \
-    --tx-in "$UTXO_IN" \
-    --change-address $(cat payment.addr) \
-    --certificate-file stake-reg.cert \
-    --certificate-file pool-reg.cert \
-    --certificate-file delegation.cert \
-    --witness-override 3 \
-    --testnet-magic 1 \
-    --socket-path /ipc/node.socket \
-    --out-file tx.raw
-
-cardano-cli conway transaction sign \
-    --tx-body-file tx.raw \
-    --signing-key-file payment.skey \
-    --signing-key-file stake.skey \
-    --signing-key-file cold.skey \
-    --testnet-magic 1 \
-    --out-file tx.signed
-
-cardano-cli conway transaction submit \
-    --tx-file tx.signed \
-    --testnet-magic 1 \
-    --socket-path /ipc/node.socket
+partner-chains-node registration-status \
+  --chain /path/to/chain-spec-v6-raw.json \
+  --mainchain-pub-key "$SPO_PUB" \
+  --mainchain-epoch <current-preprod-epoch>
 ```
 
-Write down the TxID:
+The current preprod epoch is on the front page of [preprod.cexplorer.io](https://preprod.cexplorer.io/).
+
+## 7. Restore the latest data snapshot
+
+partner-chains-node v1.8.0 has a known historical-sync bug: a fresh node stalls at block 0 with `Inherent error: Candidates inherent required`. The fix is to import a rocksdb snapshot from a synced node.
+
+The latest snapshot is published hourly; older ones are pruned after 48h. Read the manifest, restore, verify:
 
 ```bash
-cardano-cli conway transaction txid --tx-file tx.signed
+mkdir -p ~/materios-preprod/data/chains
+cd ~/materios-preprod
+
+# Fetch the manifest and pull the current tarball
+MANIFEST=$(curl -fsSL https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json)
+TARBALL_URL=$(echo "$MANIFEST" | jq -r .url)
+EXPECTED_SHA=$(echo "$MANIFEST" | jq -r .sha256)
+
+curl -fLo snapshot.tar.gz "$TARBALL_URL"
+echo "${EXPECTED_SHA}  snapshot.tar.gz" | sha256sum -c -
+
+tar xzf snapshot.tar.gz && rm snapshot.tar.gz
 ```
 
-### 3d. Verify
+The tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore, no peer-id keys, so your validator identity stays yours.
+
+## 8. Start materios-node
+
+The bootstrap script handles binary download, SHA verification, keystore wiring, snapshot restore (if not already done), and systemd unit:
 
 ```bash
-# Pool ID in bech32
-cardano-cli conway stake-pool id --cold-verification-key-file cold.vkey --output-format bech32
+curl -fsSL https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh -o bootstrap-validator.sh
+curl -fsSL https://materios.fluxpointstudios.com/releases/SHA256SUMS | grep bootstrap-validator.sh
+sha256sum bootstrap-validator.sh   # must match
+chmod +x bootstrap-validator.sh
+
+sudo -E ./bootstrap-validator.sh \
+  --operator-label <your-pool-ticker> \
+  --db-sync 'postgres://<user>:<pw>@127.0.0.1:5432/cexplorer' \
+  --ogmios "$OGMIOS_URL" \
+  --aura-pubkey 0x"$AURA_PUB"
 ```
 
-Search https://preprod.cardanoscan.io for that pool ID. Within ~2 minutes
-you should see your pool listed as "Registered". This does **not** mean you
-can be selected on Materios yet — see §5.
-
-***
-
-## 4. Generate Partner-Chain Sidechain Keys
-
-Materios uses three kinds of Substrate keys per validator:
-
-| Key | Type | Purpose |
-|---|---|---|
-| `sidechain` | `ecdsa` (secp256k1) | Partner-chain identity, used to sign registration |
-| `aura` | `sr25519` | Block production |
-| `grandpa` | `ed25519` | Finality |
-
-The Flux Point validators use **mnemonic-derived** keys so any of the three
-can be re-derived from a single 24-word phrase. Do the same:
-
-### 4a. Generate mnemonic and derive all three keys
-
-The IOG `wizards generate-keys` command is **interactive** — it takes no CLI
-flags and prompts you for the base-path when run. It generates one 24-word
-mnemonic, derives the ECDSA/sr25519/ed25519 keys from it, writes the Substrate
-keystore files, and prints the three public keys.
-
-```bash
-mkdir -p ~/materios-spo
-cd ~/materios-spo
-
-/path/to/partner-chains-node-v1.8.0-x86_64-linux wizards generate-keys
-# Follow prompts: it asks where to put keystore (answer: ./data) and prints keys.
-```
-
-When prompted, **also save the printed mnemonic to `~/materios-spo/.secret-mnemonic`
-and back it up offline** — the wizard stores the mnemonic inside the keystore
-files but does not write a separate copy. You'll want one for recovery.
-
-The wizard prints three pubkeys:
-
-```
-Sidechain (ECDSA) : 0x02abcd…     <- used by partner-chains registration
-Aura  (sr25519)   : 0x34ef…       <- block production
-Grandpa (ed25519) : 0x56ab…       <- finality
-```
-
-### 4b. Prefer the manual path?
-
-If you don't trust the wizard and want to do it by hand:
-
-```bash
-# 1. Mnemonic
-/path/to/partner-chains-node-v1.8.0-x86_64-linux key generate \
-    --scheme Sr25519 --words 24
-
-# 2. Derive each pubkey — note the different --scheme per key
-# Sidechain (ecdsa)
-/path/to/partner-chains-node-v1.8.0-x86_64-linux key inspect \
-    --scheme Ecdsa "<your 24 words>"
-# Aura (sr25519)
-/path/to/partner-chains-node-v1.8.0-x86_64-linux key inspect \
-    --scheme Sr25519 "<your 24 words>"
-# Grandpa (ed25519)
-/path/to/partner-chains-node-v1.8.0-x86_64-linux key inspect \
-    --scheme Ed25519 "<your 24 words>"
-```
-
-Record the public keys. You'll need them literally in §5.
-
-### 4c. Extract the sidechain *private* key
-
-For the `registration-signatures` step we need the raw ECDSA secret hex, not
-the mnemonic:
-
-```bash
-/path/to/partner-chains-node-v1.8.0-x86_64-linux key inspect \
-    --scheme Ecdsa --output-type json "<your 24 words>" \
-    | jq -r '.secretSeed'   # 0x-prefixed 32-byte hex
-```
-
-Hold onto that hex as `SIDECHAIN_SKEY` for the next step. Treat it like a
-private key — it is one.
-
-***
-
-## 5. Register on the Partner-Chain
-
-This is a two-phase operation:
-
-- **Phase A** — produce signatures over the registration message with both
-  your Cardano cold key AND your sidechain ECDSA key.
-- **Phase B** — submit a Cardano transaction to the CommitteeCandidateValidator
-  address that includes those signatures as a datum.
-
-Both phases use the IOG `partner-chains-node` binary. **None of this involves
-the Materios node binary.**
-
-### 5a. Pick a registration UTXO
-
-The registration tx spends one UTXO from your payment address — any one you
-control works, as long as it has at least a few tADA (~3 is plenty).
-
-```bash
-cardano-cli conway query utxo --address $(cat payment.addr) \
-    --testnet-magic 1 --socket-path /ipc/node.socket --output-json \
-    | jq -r 'to_entries[0].key'
-# → e.g. 8b4e1f...#1
-```
-
-Record this as `REGISTRATION_UTXO`.
-
-### 5b. Extract the 32-byte cold-key scalar
-
-The `registration-signatures` command wants the **raw 32-byte CBOR payload** of
-your cold.skey, not the whole `.skey` JSON file. Strip the `5820` CBOR prefix
-from the `cborHex` field:
-
-```bash
-cat cold.skey
-# { "type": "StakePoolSigningKey_ed25519", "cborHex": "5820abcd1234…" }
-
-COLD_SKEY_RAW=$(jq -r '.cborHex' cold.skey | sed 's/^5820//')
-echo "$COLD_SKEY_RAW"
-```
-
-### 5c. Phase A — generate signatures
-
-```bash
-GENESIS_UTXO=13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0
-
-/path/to/partner-chains-node-v1.8.0-x86_64-linux registration-signatures \
-    --genesis-utxo "$GENESIS_UTXO" \
-    --mainchain-signing-key "$COLD_SKEY_RAW" \
-    --sidechain-signing-key "$SIDECHAIN_SKEY" \
-    --registration-utxo "$REGISTRATION_UTXO"
-```
-
-Output is a JSON object with `spo_public_key`, `spo_signature`,
-`sidechain_public_key`, `sidechain_signature`, `registration_utxo`. Save the
-whole thing; we pass most of it to the next command.
-
-### 5d. Phase B — submit registration tx
-
-> **Ogmios URL.** The IOG `smart-contracts register` command talks to Cardano
-> via Ogmios, not `cardano-cli`. Pass `--ogmios-url` explicitly or set
-> `OGMIOS_URL` in the environment. External SPOs should point at their own
-> Ogmios running alongside their `cardano-node` (default port 1337).
-
-```bash
-/path/to/partner-chains-node-v1.8.0-x86_64-linux smart-contracts register \
-    --genesis-utxo "$GENESIS_UTXO" \
-    --registration-utxo "$REGISTRATION_UTXO" \
-    --payment-key-file ~/cardano-preprod/keys/payment.skey \
-    --partner-chain-public-keys "<SIDECHAIN_PUB>:<AURA_PUB>:<GRANDPA_PUB>" \
-    --partner-chain-signature "<sidechain_signature from 5c>" \
-    --spo-public-key "<spo_public_key from 5c>" \
-    --spo-signature "<spo_signature from 5c>" \
-    --ogmios-url ws://YOUR-OGMIOS:1337
-```
-
-The `--partner-chain-public-keys` format is literally
-`SIDECHAIN_HEX:AURA_HEX:GRANDPA_HEX` with colons (no spaces, no 0x
-repetition). Each value is the hex-with-0x-prefix pubkey you got in §4.
-
-If the tx succeeds the CLI prints the submission TxID and polls for inclusion
-(default 59 retries × 5s = ~5 min timeout).
-
-### 5e. Sanity-check your registration
-
-A couple of epochs later (but well before stake is effective):
-
-```bash
-/path/to/partner-chains-node-v1.8.0-x86_64-linux registration-status \
-    --chain /path/to/materios-chain-spec-v6-raw.json \
-    --stake-pool-pub-key "<SPO_PUB_KEY>" \
-    --mc-epoch-number <current_cardano_epoch + 2>
-```
-
-This hits the Materios follower and reports whether the indexer has seen your
-registration. If not, re-run with `+2` bumped until it does.
-
-***
-
-## 6. Wait for the Stake Snapshot
-
-Cardano takes a stake snapshot at the **start of each epoch** and the one
-used for Ariadne selection in epoch `E` is the snapshot that was frozen at
-the start of epoch `E-2` (the `pparams_mark` → `pparams_set` → `pparams_go`
-cadence).
-
-Concretely, if you registered in Cardano epoch 283:
-
-| Cardano epoch | Preprod date (5-day epochs) | What's happening |
-|---|---|---|
-| 283 | day of registration | Pool registered; stake visible in ledger but not yet snapshotted |
-| 284 | +5 days | Snapshot taken (`mark`); Ariadne still doesn't count it |
-| 285 | +10 days | Snapshot becomes `set` → **you're selection-eligible from here on** |
-
-On top of that, the Materios team has to bump the D-parameter registered
-bucket from `(3,0)` to `(3,2)` (or higher) so Ariadne even draws from the
-registered pool. That happens in coordination with onboarding — reach out on
-Discord once your pool is live.
-
-During this wait you should:
-
-- Start your Materios node (§8) so it's fully synced by the time you're
-  eligible.
-- Generate and back up your KES rotation plan — op-certs expire every ~9 days.
-- Leave your Cardano pool alone; churning pool params resets the snapshot
-  counter.
-
-***
-
-## 7. Verify Selection
-
-Once the D-parameter shows registered ≥ 1 and at least one full epoch has
-passed since your snapshot became `set`, check the live committee:
-
-```bash
-# Query the Materios chain via public RPC
-curl -s -H 'Content-Type: application/json' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"state_call","params":["SessionCommitteeManagementApi_get_current_committee","0x"]}' \
-  https://materios.fluxpointstudios.com/preprod-rpc | jq .
-```
-
-Or via PolkadotJS Apps → **Developer › Chain State →
-`sessionCommitteeManagement.currentCommittee`**. The authorities listed
-should include your Aura pubkey for epochs where you were drawn.
-
-Your expected draw rate per epoch:
-
-```
-P = your_active_stake / sum_of_active_stake_across_all_registered_candidates
-```
-
-On preprod with 2 registered seats and ~2 registered pools, you can estimate
-how often your Aura key should appear. If you don't see your pubkey after
-3–4 epochs in a row despite reasonable probability, open an issue.
-
-***
-
-## 8. Run the Materios Node (Full Validator)
-
-You've already generated the sidechain/aura/grandpa keys (§4), so the
-Materios operator-kit installer can be run in "bring your own keystore" mode.
-Before running install, move the wizard-generated `keystore/` directory into
-the location the installer expects:
-
-```bash
-mkdir -p ~/materios-operator
-cp -r ~/materios-spo/data/chains/*/keystore ~/materios-operator/keystore
-cp ~/materios-spo/.secret-mnemonic ~/materios-operator/.secret-mnemonic
-```
-
-Then run the installer with your existing mnemonic:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh \
-    | bash -s -- --label my-spo-validator
-```
-
-The installer detects the existing `.secret-mnemonic` and re-uses it (this
-was hardened on 2026-04-16; earlier versions would overwrite). It wires up:
-
-- **bootstrap-validator.sh** ([canonical install path](https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh)) — fetches the v6 binary at [`/releases/materios-node-v6-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v6-x86_64-linux) (sha `dda4f3a7…58ebc`), the v6 chain-spec, and writes a systemd unit. The script verifies all SHAs against [`/releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS) and refuses to run on unsupported environments (WSL2, Alpine, non-x86_64). The native binary needs glibc ≥ 2.38; pre-built arm64 / macOS binaries are not available — see [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the macOS manual path.
-- **v6 data snapshot** at [`/releases/materios_preprod_v6-data-20260428-2245.tar.gz`](https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz) (sha `92641adf…7bd1`) — required to skip a known partner-chains-1.8.0 historical-sync bug. Apply after the bootstrap script finishes.
-- chain spec from `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json`
-- bootnode `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM`
-- port 30333 for P2P
-- `cert-daemon` for attestation (also earns tMATRA on preprod — same testnet-no-economic-value caveat as block rewards)
-
-> Runtime overrides are no longer needed on v6 — the operational patches (IDP-None fallback, Ariadne deduplication, GRANDPA queue-depth guard) are baked into the on-chain runtime (spec_version 211+).
-
-### 8a. Recommended flags
-
-The bootstrap script writes the systemd unit for you. If you build your own unit, the validator should be launched with:
+If you build your own systemd unit instead, the validator must run with:
 
 ```
 materios-node-spo \
@@ -594,128 +263,111 @@ materios-node-spo \
   --name <your-pool-ticker> \
   --port 30333 \
   --rpc-port 9945 \
-  --public-addr /ip4/YOUR.PUBLIC.IP/tcp/30333 \
+  --public-addr /ip4/<YOUR.PUBLIC.IP>/tcp/30333 \
   --bootnodes /ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
 ```
 
-Setting `--public-addr` is **strongly recommended** for SPOs. Without it your
-node advertises an internal IP to peers and other validators can't reach you
-to gossip blocks you author — you'll produce blocks that nobody imports.
+`--public-addr` is required for SPOs. Without it, peers can't dial you back and the blocks you author won't gossip.
 
-### 8b. Keystore format
+Verify health:
 
-Each key sits in `keystore/` as a **single file** named
-`<key-type-4-bytes-hex><pubkey-hex>` (no `0x` in the filename). The key-type
-prefixes are:
-
-| Key | Prefix (hex of ASCII) | ASCII |
-|---|---|---|
-| Aura | `61757261` | `aura` |
-| Grandpa | `6772616e` | `gran` |
-
-Example filename for an Aura key with pubkey
-`0xAAAA...AAAA` (32 bytes):
-
-```
-keystore/61757261AAAA...AAAA
+```bash
+curl -s -X POST http://127.0.0.1:9945 \
+  -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'
 ```
 
-File contents: a JSON-quoted string of **either** the 12/24-word mnemonic
-**or** a `0x`-prefixed 32-byte seed. Substrate accepts both. The
-`wizards generate-keys` command stores the mnemonic form (example shown
-with the public Substrate dev mnemonic — NEVER commit your real one):
+Expect `isSyncing: false` and `peers ≥ 1` within a couple of minutes of starting (snapshot floor is the published `head_block_at_publish`; you should sync past it to the live tip).
 
+## 9. Wait for the stake snapshot
+
+Ariadne reads the **2-epoch-stable** Cardano stake snapshot. Your registration becomes selectable two preprod epochs (~10 days) after the epoch it was included in.
+
+| Cardano epoch | What's happening |
+|---|---|
+| E | Registration tx included. |
+| E+1 | Stake snapshot captured (`mark`). |
+| E+2 | Snapshot becomes `set` → Ariadne considers you from this epoch onward. |
+
+Watch the queue:
+
+```bash
+partner-chains-node ariadne-parameters \
+  --chain ~/materios-preprod/chain-spec-v6-raw.json \
+  --mainchain-epoch <E+2>
 ```
-"bottom drive obey lake curtain smoke basket hold race lonely fit walk"
+
+Your `sidechain_pub_key` appears in `registered_candidates` once you're eligible.
+
+## 10. Verify selection
+
+At the next Materios `mc_epoch` boundary after your snapshot becomes `set`, Ariadne runs a fresh committee draw. With the current D-parameter `(5, 2)` you compete with other SPOs for 2 registered seats; probability is proportional to your active delegated stake.
+
+Watch the [explorer Committee tab](https://fluxpointstudios.com/materios/explorer) — your SS58 (derived from your sidechain pubkey) shows up when selected.
+
+Or query directly:
+
+```bash
+curl -s -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"state_call","params":["SessionCommitteeManagementApi_get_current_committee","0x"]}' \
+  https://materios.fluxpointstudios.com/preprod-rpc | jq .
 ```
 
-If you need to construct the keystore by hand (e.g. importing an existing
-mnemonic), it's one file per key type, filename = prefix + pubkey-hex (no
-0x), contents = `"<mnemonic>"` or `"0x<seed-hex>"` (quotes included).
+Once you're in `currentCommittee`, Aura assigns slots automatically. Your validator starts producing blocks ~6s per assigned slot; rewards accrue per block + per attestation.
 
-### 8c. db-sync — do I need it?
+## 11. Operating
 
-Yes if you want to be a **full validator**. The Materios node queries Cardano
-db-sync's Postgres directly to observe SPO registrations, D-parameter
-changes, and epoch nonces. See the [Operator Guide](operator-guide.md#prerequisite-cardano-preprod-stack)
-for the compose stack.
+| Task | Command |
+|---|---|
+| Logs | `sudo journalctl -u materios-node-spo -f` |
+| Restart | `sudo systemctl restart materios-node-spo` |
+| Peer count | `curl -s -X POST http://127.0.0.1:9945 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"system_health"}'` |
+| Finalized head | `curl -s -X POST http://127.0.0.1:9945 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead"}'` |
+| Upgrade binary | Re-run `bootstrap-validator.sh` (idempotent — fetches the new SHA-verified binary, restarts the unit) |
 
-If you **only** want attestation rewards, you can skip db-sync and run
-attestor mode — but there's no point doing the SPO registration in that case,
-because nothing will read it.
+### KES renewal
 
-***
-
-## 9. Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `registration-signatures` errors "invalid key length" | Passed full `cold.skey` JSON instead of 32-byte raw cbor hex | Re-extract: `jq -r '.cborHex' cold.skey \| sed 's/^5820//'` |
-| `smart-contracts register` hangs on `Waiting for transaction` | Ogmios reachable but `cardano-node` not synced, or wrong magic | `cardano-cli conway query tip --testnet-magic 1` — ensure slot is within 60s of real time; check Ogmios logs |
-| `registration-status` always returns `Pending` | Materios follower not yet caught up, or you're checking an epoch before your `set` snapshot | Wait 2 Cardano epochs after your registration tx, then retry |
-| `sessionCommitteeManagement.currentCommittee` doesn't include you after 2 eligible epochs | D-parameter still `(3,0)` — no registered seats drawn | Check `MainChainScripts`/D-param upsert status with Flux Point ops |
-| Chain spec `build-spec --raw` complains "unknown field `committeeCandidateAddress`" | Used camelCase inside an IOG sub-struct | Inside `mainChainScripts` the field is `committee_candidate_address` (snake_case). See [chain-spec serialization gotchas](https://github.com/...) |
-| My Materios node panics at block proposal with "DParameter not found" | Chain spec stored an all-zero policy ID because an inner field was camelCased and silently Default'd | Same fix: snake_case for IOG sub-struct fields |
-| `MainchainAddress` decoded wrong, follower can't find registrations | Bech32-decoded to 29-byte script header instead of hex-of-UTF-8-bytes | Re-encode: `python3 -c "print('0x' + 'addr_test1...'.encode('utf-8').hex())"` |
-| I registered but have no MATRA so I can't pay for tx fees | You're running `materios-node` as a full validator; faucet drips trigger on first heartbeat | Wait ~60s after install completes; if still empty, ask in Discord |
-| `KES period out of range` on node start | op-cert expired (they last ~9 days, 5 KES periods) | Re-issue: see [KES renewal](#kes-renewal-cadence) below |
-| Node produces blocks but nobody imports them | `--public-addr` not set; peers can't reach you | Add `--public-addr=/ip4/YOUR.PUBLIC.IP/tcp/30333` to the compose command |
-
-### KES renewal cadence
-
-`op.cert` is valid for 5 KES periods (~9 days on preprod). When it expires:
+Cardano KES op-certs expire ~every 9 days on preprod. Re-issue with a fresh KES period and restart your `cardano-node`; no Materios-side action is needed (your partner-chain registration is independent of KES).
 
 ```bash
 CURRENT_KES=$(cardano-cli conway query tip --testnet-magic 1 \
-    --socket-path /ipc/node.socket | jq -r '.slot / 129600 | floor')
+  --socket-path /ipc/node.socket | jq -r '.slot / 129600 | floor')
 
 cardano-cli conway node issue-op-cert \
-    --kes-verification-key-file kes.vkey \
-    --cold-signing-key-file cold.skey \
-    --operational-certificate-issue-counter-file cold.counter \
-    --kes-period "$CURRENT_KES" \
-    --out-file op.cert
+  --kes-verification-key-file kes.vkey \
+  --cold-signing-key-file cold.skey \
+  --operational-certificate-issue-counter-file cold.counter \
+  --kes-period "$CURRENT_KES" \
+  --out-file op.cert
 ```
 
-Restart your `cardano-node` (not your Materios node) so it picks up the new
-cert. The counter file is auto-incremented; do not edit it by hand.
+### Rotating Materios keys
 
-### Getting Help
+Submit a fresh `smart-contracts register` with new keys. The old registration stays on-chain until you call `smart-contracts deregister`. Wait 2 epochs after the new tx before expecting selection with the rotated keys.
 
-- Materios Discord: `#spo-support` channel
-- Chain explorer: https://materios.fluxpointstudios.com
-- Issue tracker: https://github.com/Flux-Point-Studios/materios-operator-kit/issues
-- Cardano preprod faucet: https://docs.cardano.org/cardano-testnets/tools/faucet
+### Going offline
 
-***
+If selected but offline, the slots you would have minted go unclaimed and your Grandpa vote is absent — no slashing on preprod. Finality stays healthy while 2f+1 of the committee is online. Drop out of Ariadne's pool entirely by stopping your Cardano pool (depledge, missed snapshot) or calling `smart-contracts deregister`.
 
-## Appendix — Deployed Addresses (Preprod)
+## Troubleshooting
 
-These are stable (genesis UTXO anchors their derivation). Hard-coding them in
-your scripts is fine for preprod:
+| Symptom | Cause | Fix |
+|---|---|---|
+| Node stuck at block 0, log says `Inherent error: Candidates inherent required` | Fresh DB without snapshot | Apply the snapshot per [step 7](#7-restore-the-latest-data-snapshot) |
+| Snapshot restore succeeds but node stalls at the snapshot floor, peers loop on "Banned, disconnecting" | Stale libp2p peer or slow db-sync | See [OPERATOR_KIT.md → Sync stuck at snapshot floor](https://github.com/Flux-Point-Studios/materios/blob/main/docs/OPERATOR_KIT.md#sync-stuck-at-snapshot-floor--peer-ban-loop) — `--reserved-only` to the FPS bootnode is the immediate workaround |
+| `sqlx::query: slow statement ... elapsed=2.5s` in node logs + repeated peer drops | Postgres missing `idx_ma_tx_out_ident` or untuned | Re-run [step 1](#1-provision-postgres-for-cardano-db-sync) |
+| `registration-signatures` errors on `mainchain-signing-key` | Didn't strip the `5820` CBOR prefix from cold.skey | `jq -r '.cborHex' cold.skey \| sed 's/^5820//'` |
+| `smart-contracts register` fails with `UTxO already spent` | Your `$REGISTRATION_UTXO` was consumed between prep + submit | Pick a fresh UTXO; re-sign (same sidechain / SPO keys are fine) |
+| `registration-status` says "not registered" 10 min after submit | Cardano hasn't included your tx yet | Wait 2 Cardano blocks; check the txhash on [preprod.cexplorer.io](https://preprod.cexplorer.io/) |
+| In `registered_candidates` but never selected | Stake too low vs other pools, or D-parameter `R=0` | Grow your pool's stake or wait for variance; D-parameter is `(5, 2)` today |
+| Validator at peers=0 on a real Linux host | Inbound TCP 30333 unreachable | Open 30333/tcp on your firewall + cloud security group; confirm with `nc -zv <your-public-ip> 30333` from another network |
+| Finality gap > 10 in explorer authority-lag panel | Committee under-quorum or your node behind | Compare your `chain_getFinalizedHead` to the explorer's — if you're the lagger, restart; if the chain is the lagger, check Discord for an active incident |
 
-| Contract | Address |
-|---|---|
-| CommitteeCandidateValidator | `addr_test1wzr6en3y43437qps5wscegufxw0euspmy0c3976mjm95j0cwuvezm` |
-| DParameterValidator | `addr_test1wqt6y9065lr0njwq2zq5yp6pjefuq5dc7nanvfnt2vz95vq80etl7` |
-| PermissionedCandidatesValidator | `addr_test1wqne0zdkw4sj35x7sqxz3cqxqv7n7l5v853nxa7sw8uss9q7npmnm` |
-| VersionOracleValidator | `addr_test1wz2zrp377qxkzlvjqejt8dwl6fqx4l6u4fh264n5xatptjq9y5uxu` |
-| ReserveValidator | `addr_test1wpsr0vlpqjzfn3j5ggwdvyv49gwyuxp8mnjpnz096s28g0gdhgykd` |
-| GovernedMapValidator | `addr_test1wrlzzlrd997kuz6pkqcly4al2l3y7e0ews445cthwhqap3qp4kq4a` |
+Full sync diagnostics, RPC reference, and recovery playbooks: [OPERATOR_KIT.md](https://github.com/Flux-Point-Studios/materios/blob/main/docs/OPERATOR_KIT.md).
 
-**Genesis UTXO (v6):** `13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0`
+## Getting help
 
-**Partner-chain genesis hash (v6):** `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf`
-
-**Committee candidate address (v6):** `addr_test1wrld9uhaepas48twjy3qevncsyrhjdqnkz2wzu4yzjc2qhq24f4v4`
-
-Policy IDs (for reference — you shouldn't need these directly):
-
-| Role | Policy ID |
-|---|---|
-| DParameter | `0x38dddaf5198b927b19dac9b28226ab29eddad176d5d81c7748bc2c31` |
-| PermissionedCandidates | `0xef2890d1e98247819abcf2df6e891824ed950a4216d36c71ee6f9974` |
-| VersionOracle | `0xc65dee78bf5208350433f62cf2d69e87c59cff5df86bf42d69ff7cbe` |
-| ReserveAuth | `0xb4672fef1376b30ef2c010c97cbdb856701c9d776d1d989378a980f7` |
-| GovernedMap | `0x6ee3f9e0812fe39ec82f299470636cfec42ff4887d359df6f83f2cf0` |
-| ICS Auth | `0x29250512dd6b3244b06bfe88d7b808e5c5c8f076c4a92717ddffa7d7` |
+- Materios Discord: `#spo-support`
+- Chain explorer: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer)
+- Issue tracker: [Flux-Point-Studios/materios-operator-kit](https://github.com/Flux-Point-Studios/materios-operator-kit/issues)
+- Preprod faucet: [docs.cardano.org/cardano-testnets/tools/faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
