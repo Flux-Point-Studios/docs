@@ -205,13 +205,16 @@ Successful output ends with `Transaction submitted. ID: <txhash>`. Record the tx
 Verify the tx made it on-chain:
 
 ```bash
+curl -fsSL https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json \
+  -o ~/chain-spec-v6-raw.json
+
 partner-chains-node registration-status \
-  --chain /path/to/chain-spec-v6-raw.json \
+  --chain ~/chain-spec-v6-raw.json \
   --mainchain-pub-key "$SPO_PUB" \
   --mainchain-epoch <current-preprod-epoch>
 ```
 
-The current preprod epoch is on the front page of [preprod.cexplorer.io](https://preprod.cexplorer.io/).
+The current preprod epoch is on the front page of [preprod.cexplorer.io](https://preprod.cexplorer.io/). The chain spec stays in place for step 8.
 
 ## 7. Restore the latest data snapshot
 
