@@ -62,7 +62,7 @@ The five sub-buckets are:
 
 * **Validator Emissions — 115M (11.5%)** — block-production rewards; includes Cardano SPO cross-validation rewards.
 * **Attestor Emissions — 65M (6.5%)** — threshold-attestation rewards + bond/slash economics.
-* **Ecosystem Treasury — 40M (4%)** — grants, ecosystem dev funding, LP Loyalty Bonus, governance-directed programs.
+* **Ecosystem Treasury — 40M (4%)** — grants, ecosystem dev funding, governance-directed programs.
 * **Strategic Allocation — 30M (3%)** — strategic/institutional partners, 12-month cliff + 36-month linear vesting.
 * **Liquidity — 27.5M (2.75%)** — 5M bridge peg reserve, 17.5M Protocol-Owned DEX Liquidity, 5M maker rebates on CLOB.
 
@@ -72,7 +72,7 @@ Because network security, launch liquidity, and ecosystem growth all have to be 
 
 1. **Validator rewards** come from the 115M Validator Emissions sub-bucket (supplemented by 40% of transaction fees routed to the block-author pot).
 2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket (supplemented by 30% of transaction fees).
-3. **Ecosystem growth** — grants, game integrations, LP Loyalty Bonus — comes from the 40M Ecosystem Treasury.
+3. **Ecosystem growth** — grants and game integrations — comes from the 40M Ecosystem Treasury.
 4. **Strategic capital** — the 30M Strategic Allocation funds POL seeding, security audits, and team runway beyond the redemption window, under strict vesting.
 5. **Launch liquidity** — the 27.5M Liquidity sub-bucket seeds the CLOB and AMM pairs, funds maker rebates, and holds the bridge peg reserve.
 
@@ -121,12 +121,11 @@ The TWAP-derived **weights** between assets are unchanged — only the absolute 
 
 ### 11. How is the hit being softened for holders?
 
-Four ways:
+Three ways:
 
 1. **Disclosed Team treasury balances are waived** from public redemption (29.6M AGENT + 447K SHARDS). The rate denominator already excludes these, so the carve-out does not further dilute public holders.
-2. **LP Loyalty Bonus.** Holders with AGENT/SHARDS in any qualifying Cardano DEX LP at snapshot (14 days pre-launch, commit-reveal) receive a **+3% cMATRA bonus** from the Ecosystem Treasury. Eligible DEXs: Minswap v1/v2, WingRiders, CSWAP, SundaeSwap, MuesliSwap, Splash, VyFinance, SaturnSwap. See Q24a for details.
-3. **Team takes the same haircut.** The 15% dilution applies to the Team carve identically (31.3M → 26.7M cMATRA) — fairness signal, same ratio.
-4. **Early redeemers** may receive time-limited MOTRA sponsorship or delegated capacity during onboarding; the Network Incentives Reserve is non-circulating until released on a protocol schedule.
+2. **Team takes the same haircut.** The 15% dilution applies to the Team carve identically (31.3M → 26.7M cMATRA) — fairness signal, same ratio.
+3. **Early redeemers** may receive time-limited MOTRA sponsorship or delegated capacity during onboarding; the Network Incentives Reserve is non-circulating until released on a protocol schedule.
 
 ### 12. Is the Team taking the same hit?
 
@@ -270,32 +269,6 @@ The redeemable assets are the underlying supported legacy tokens once they are b
 
 Materios may try to coordinate with major venues to make this easier, but holders should not wait until the last minute.
 
-### 24a. How does the LP Loyalty Bonus work?
-
-Holders who have AGENT and/or SHARDS deployed in any qualifying Cardano DEX liquidity pool at the pre-launch snapshot receive a **+3% cMATRA bonus** on top of their base redemption amount. The bonus is funded by the 40M Ecosystem Treasury sub-bucket and is expected to cost ~2–3M cMATRA depending on LP participation.
-
-**Snapshot methodology:**
-
-* **Timing:** 14 days before launch, using a commit-reveal protocol to prevent last-second wash-farming. The commit block is announced publicly; the reveal block uses a future Cardano block hash that is not known at commit time.
-* **Data source:** Blockfrost-style indexing of every LP position holding AGENT or SHARDS across the eligible DEX list at the reveal block height.
-* **Eligibility rule:** The wallet that controls the LP token at snapshot height is credited with the underlying AGENT/SHARDS held inside that LP position at the same height.
-* **Withdrawal still required:** You must unfarm / remove liquidity before the redemption deadline and surrender the underlying tokens normally. The +3% is applied at redemption time to the wallet that was credited at snapshot.
-
-**Eligible DEXs at launch:**
-
-* Minswap v1 and v2
-* WingRiders
-* CSWAP
-* SundaeSwap
-* MuesliSwap
-* Splash
-* VyFinance
-* SaturnSwap
-
-The DEX list is fixed at publication time. Positions in DEXs not on this list do not receive the bonus.
-
-This program is designed to reward holders who kept their AGENT and SHARDS productive during the pre-launch period rather than parking them in idle wallets, and to smooth the transition of liquidity from AGENT/SHARDS pairs into the new cMATRA pairs at launch.
-
 ### 25. Do LP tokens redeem?
 
 No.
@@ -401,7 +374,7 @@ From the **Validator Emissions sub-bucket (115M MATRA, 11.5% of supply)** within
 
 This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation and receive cMATRA rewards from the Validator Emissions sub-bucket in proportion to their stake.
 
-Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)**, which also receives 30% of transaction fees under the fee-recycling policy. Ecosystem-side activity (grants, LP Loyalty Bonus, integrations) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**, which additionally receives 20% of transaction fees; the remaining 10% of each fee is burned.
+Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)**, which also receives 30% of transaction fees under the fee-recycling policy. Ecosystem-side activity (grants, integrations, governance-directed programs) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**, which additionally receives 20% of transaction fees; the remaining 10% of each fee is burned.
 
 ### 39a. How do Cardano SPO delegators earn MATRA?
 
