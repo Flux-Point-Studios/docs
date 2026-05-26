@@ -1,33 +1,20 @@
 ---
 description: >-
-  Live launch-status dashboard for the cMATRA Token Merger. Audit posture,
-  support channels, rate-table reference, wallet compatibility, and the
-  current launch date.
+  Launch date, audit posture, rate-table reference, and wallet compatibility
+  for the cMATRA Token Merger.
 ---
 
 # Launch Readiness
-
-This page is the single-pane status board for the cMATRA Token Merger. Anything that needs a human update before launch is marked **TBD** so it is grep-able from CI.
-
-<!-- LAUNCH OWNER: keep this page authoritative. The README and FAQ link
-     here for the live launch date, audit status, and support channel.
-     If those move, update this page first, then push the link forward. -->
 
 ***
 
 ## Launch Date
 
-**TBD — to be announced.**
+**May 28, 2026.** The redemption window opens on this date.
 
-* The redemption window is **6 months** long, measured from the launch date published here. See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
-* The launch date is published here only after:
-  * Legacy reward materialization is reconciled (see [FAQ Q21](faq.md#21-why-are-final-fungible-rates-not-frozen-today)).
-  * Final Team treasury waivers are published.
-  * The final fixed rate table is signed off.
-  * The security audit is complete or the pre-audit launch posture is explicitly disclosed (see [Audit Status](#audit-status) below).
-  * The legal sign-off on [Legal & Disclaimers](legal-and-disclaimers.md) is complete (jurisdiction, KYC threshold, prohibited-jurisdiction list published).
-
-Until **all** of the above land, the launch date stays **TBD** on this page.
+* The redemption window is **6 months** long. It closes on **November 28, 2026**. See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
+* The live redemption portal is at [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
+* The launch is shipping under the **pre-audit posture** disclosed below — the third-party security audit is still in progress. Review [Audit Status](#audit-status) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
 
 ***
 
@@ -36,44 +23,28 @@ Until **all** of the above land, the launch date stays **TBD** on this page.
 **Security audit in progress. Pre-audit launch posture.**
 
 * The Materios chain runtime, the merger contracts, and the cMATRA mint/burn scripts are under active third-party security review.
-* The full audit report will be linked here when it is published: **TBD — audit report URL**.
-* In the interim, Materios is operating a pre-audit launch posture:
-  * Multisig-controlled administrator key with explicit pause/throttle authority (see [Legal § Force Majeure](legal-and-disclaimers.md#force-majeure-and-emergency-pause)).
-  * Internal peer review across the FPS engineering team and external advisors before any live runtime upgrade or deployment.
-  * Public testnet (`materios_preprod_v6`) running the same code path that will be deployed for the merger.
-* Findings that materially affect users will be disclosed in the audit report and announced through the FPS Discord and this page.
-
-***
-
-## Support Channel
-
-**Discord: TBD — [link to FPS Discord with #cmatra-merger-support channel].**
-
-* For urgent merger-specific issues (failed redemption, missing balance, transaction stuck on Cardano), open a ticket in the FPS Discord under **#cmatra-merger-support** once the channel is live.
-* No service-level agreement is offered. The support team is best-effort during the redemption window. Critical operational incidents (chain halt, contract exploit) are triaged immediately under the standard incident-response process.
-* Material status updates during incidents will be posted on the FPS Discord status channel and (where appropriate) on this page.
+* The full audit report will be linked here once published.
+* Pre-audit safeguards in effect during the redemption window:
+  * Multisig-controlled administrator key with explicit pause and throttle authority (see [Legal § Force Majeure](legal-and-disclaimers.md#force-majeure-and-emergency-pause)).
+  * Public testnet running the same code path that handles the merger on mainnet.
+* Findings that materially affect users will be announced via [Discord](https://discord.gg/MfYUMnfrJM) and this page.
+* Material status updates during incidents are posted in [Discord](https://discord.gg/MfYUMnfrJM). Support is best-effort during the redemption window; no service-level agreement is offered. Critical incidents (chain halt, contract exploit) are triaged immediately.
 * Do **not** post seed phrases, raw private keys, or full wallet contents in any support channel. Materios staff will never ask for them.
 
 ***
 
-## Rate Table Reference
+## Rate Table
 
-* The canonical fixed rate table is committed in the `matra-token-merger` repository at:
+The reference rates are published on the live portal: [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
 
-  ```
-  audit_pack/2026-04-19/rate_table_cmatra.json
-  ```
-
-* This file is the byte-exact source the on-chain mint reads from. The display rates rendered in [README → What you get](README.md#what-you-get-reference-rates--april-19-2026) and [FAQ → 10a](faq.md#10a-what-changed-vs-v33) are derived from this file with rounding for human readability.
-* All seven asset buckets sum to exactly **722,500,000 cMATRA** in display units (6-decimal) (verified at publish time in `audit_pack/2026-04-19/`).
-* The rate table is locked for the full 6-month redemption window once published, except under the documented governance-approved correction clause in [README → Window mechanics](README.md#window-mechanics).
+The rate table is locked for the full 6-month redemption window once published, except under the governance-approved correction clause in [README → Window mechanics](README.md#window-mechanics). Source code and historical rate-table revisions are public at [github.com/Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger).
 
 ***
 
 ## Window Length
 
 * **6 months** from the launch date.
-* The `ProcessSurrender` spending path on the Cardano-side merger contract is permanently disabled after the deadline. After the deadline, only the `AdminWithdraw` path is available, and any unreleased cMATRA returns to the project treasury under [README → Deadline and After-Window Handling](README.md#deadline-and-after-window-handling).
+* Public surrenders are permanently disabled at the on-chain validator level once the deadline passes. Any unreleased cMATRA returns to the project treasury under [README → Deadline and After-Window Handling](README.md#deadline-and-after-window-handling).
 * No extension or exceptional late-surrender mechanism is planned. Holders are encouraged to redeem well before the deadline.
 
 ***
@@ -122,5 +93,5 @@ Before the redemption window opens:
 
 ***
 
-**Version:** 1.0 (draft) | **Date:** May 2026 | **Status:** Pre-launch placeholder — see TBD markers above\
-**Owner:** Flux Point Studios. This page is updated as launch milestones land.
+**Version:** 1.0 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026\
+**Owner:** Flux Point Studios.
