@@ -84,21 +84,6 @@ A CLOB-primary launch is enabled by SaturnSwap's CIP-68 Liftoff integration, whi
 
 ***
 
-## Liquidity Programs
-
-### LP Loyalty Bonus
-
-Holders who have AGENT and/or SHARDS deployed in any qualifying Cardano DEX liquidity pool at the pre-launch snapshot receive a **+3% cMATRA bonus** on top of their base redemption amount.
-
-* **Snapshot timing:** 14 days before launch, using a commit-reveal protocol to prevent last-second wash-farming.
-* **Eligible DEXs:** Minswap v1 and v2, WingRiders, CSWAP, SundaeSwap, MuesliSwap, Splash, VyFinance, and SaturnSwap.
-* **Coverage:** The bonus is funded from the Ecosystem Treasury sub-bucket; expected cost ~2–3M cMATRA depending on LP participation at snapshot.
-* **Eligibility rule:** The bonus is credited to the wallet that controls the LP position at snapshot time, applied to the underlying AGENT and SHARDS that the LP token represents when withdrawn and redeemed.
-
-This program rewards holders who kept their AGENT and SHARDS productive during the pre-launch period rather than parking them in idle wallets.
-
-***
-
 ## Strategic Allocation
 
 The 30M MATRA Strategic Allocation sub-bucket (3% of supply) is reserved for institutional partners who commit capital to the network ahead of the public launch.
