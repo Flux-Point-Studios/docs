@@ -7,13 +7,7 @@ description: >-
 
 # Legal & Disclaimers
 
-<!-- LEGAL SIGN-OFF REQUIRED before launch. The placeholders in this page
-     (especially the Jurisdiction Status, KYC threshold, and final tax /
-     advisor copy) need to be swapped for finalized counsel-approved text
-     before the redemption window opens. Search for "TBD" and
-     "JURISDICTION STATUS" to find every spot that still needs to land. -->
-
-This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. If anything on this page conflicts with the [final launch package](README.md#authoritative-launch-materials), the final launch package controls.
+This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. The counsel-approved disclosures rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and the FPS [Terms of Service](https://fluxpointstudios.com/tos) are the canonical form; if anything here conflicts with the portal disclosures or the ToS, the portal and the ToS control.
 
 ***
 
@@ -72,42 +66,18 @@ Participating in the cMATRA merger carries real risk. The following list is not 
 
 ## Jurisdiction Status
 
-**JURISDICTION STATUS: TBD.**
+The cMATRA Merger Portal is operated by **Flux Point Studios, Inc.**, a Delaware corporation. The Portal is **not offered to, and may not be used by**, any person located in, organized under the laws of, or ordinarily resident in any jurisdiction subject to comprehensive sanctions by the U.S. Department of the Treasury's Office of Foreign Assets Control — currently including **Cuba, Iran, North Korea, Syria**, and the **Crimea, Donetsk, and Luhansk** regions of Ukraine — nor by any person identified on any U.S., U.K., E.U., or U.N. sanctions or denied-persons list. By connecting a wallet you represent that you are not such a person and are not acting on behalf of such a person.
 
-<!-- LEGAL SIGN-OFF REQUIRED. Final jurisdictional restrictions (offshore
-     wrapper choice — Cayman / BVI / other; US-non-accredited rules;
-     sanctioned-country geoblock list; sale-of-securities exemption used;
-     prohibited-jurisdiction list) must be published here BEFORE the
-     redemption window opens. Until counsel signs off, this section stays
-     as TBD. Do not announce a launch date until this is replaced. -->
+You are solely responsible for compliance with the laws, regulations, and tax rules of your jurisdiction. Materios reserves the right to geoblock the redemption frontend in any jurisdiction where it cannot comply with local law.
 
-Final jurisdiction restrictions — including any offshore wrapper entity, prohibited-jurisdiction list, accredited-investor gating, sanctions-list screening, and geofence policy for the redemption interface — will be published here **before the redemption window opens**.
-
-Until that publication lands:
-
-* The merger should be treated as **not yet open** to any specific jurisdiction.
-* If you reside in a sanctioned jurisdiction (per OFAC, UK HMT, EU sanctions, or your local equivalent), assume you are excluded.
-* If you are a US person and not an accredited investor, assume the final policy may restrict your participation; wait for the published terms before committing.
-* Materios reserves the right to geoblock the official redemption frontend in any jurisdiction where it cannot comply with local law.
-
-A separate page or addendum may be published listing the prohibited jurisdictions at launch. **Do not assume you are eligible until that list is published and you confirm your jurisdiction is not on it.**
+The full counsel-approved restricted-persons clause, dispute-resolution terms (Utah governing law, AAA binding individual arbitration, class-action and jury-trial waiver, 30-day opt-out), and corporate-law venue are rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and in the [Terms of Service](https://fluxpointstudios.com/tos).
 
 ***
 
 ## KYC / AML
 
-**KYC threshold: TBD.**
-
-<!-- LEGAL SIGN-OFF REQUIRED. Final KYC/AML thresholds, identity-verification
-     vendor, and large-holder review criteria must be published here BEFORE
-     the redemption window opens. Threshold value (e.g. ≥X cMATRA, ≥Y USD
-     equivalent), vendor (e.g. Sumsub, Onfido, in-house), and the
-     enhanced-due-diligence trigger (PEP, sanctions match, source-of-funds
-     review) are all placeholder. -->
-
-* Ordinary public redemptions are expected to proceed via on-chain wallet signature.
-* **Threshold-based KYC may apply for large holders.** The specific threshold (in cMATRA or USD-equivalent), the identity-verification process, and the documentation required will be published in the launch kit.
-* Strategic-allocation participants are subject to a separate enhanced-due-diligence process and will be contacted directly.
+* Public redemptions proceed via on-chain CIP-30 wallet signature. **No general KYC is collected** at the Portal.
+* Strategic-allocation participants are subject to a separate enhanced-due-diligence process and are contacted directly.
 * Materios reserves the right to delay or refuse any redemption that triggers sanctions, anti-money-laundering, or counter-terrorist-financing review until that review is complete.
 
 ***
@@ -134,7 +104,7 @@ A separate page or addendum may be published listing the prohibited jurisdiction
 ## Force Majeure and Emergency Pause
 
 * Materios may **pause, throttle, modify, or roll back the merger** in response to a discovered vulnerability, an active exploit, a credible threat to user funds, a regulatory directive, a chain outage, a Cardano L1 incident, or any other event that materially threatens the safe operation of the protocol.
-* Any such pause will be announced through the official channels (FPS Discord, [docs site](https://docs.fluxpointstudios.com), Materios chain governance notes) as soon as it is safe to do so.
+* Any such pause will be announced through the official channels ([Discord](https://discord.gg/MfYUMnfrJM), [docs site](https://docs.fluxpointstudios.com), Materios chain governance notes) as soon as it is safe to do so.
 * The duration of any pause is bounded by the underlying cause. The administrator does not have unilateral authority to permanently terminate the merger before the 6-month window expires absent one of the conditions above.
 
 ***
@@ -144,7 +114,7 @@ A separate page or addendum may be published listing the prohibited jurisdiction
 These docs are versioned in the public [`Flux-Point-Studios/docs`](https://github.com/Flux-Point-Studios/docs) repository.
 
 * Every change is tracked in the git history (commit, author, date, diff).
-* Material changes to this page or to the merger terms will be **announced on the FPS Discord** and in the [Launch Readiness](launch-readiness.md) status board.
+* Material changes to this page or to the merger terms will be **announced on [Discord](https://discord.gg/MfYUMnfrJM)** and in the [Launch Readiness](launch-readiness.md) status board.
 * Trivial corrections (typos, formatting, broken links) are made without separate announcement; the commit history is the source of truth.
 * If you participated in the merger under an earlier version of these terms, that version of the terms applies to your participation as of your redemption transaction. The git history preserves prior versions for audit.
 
@@ -156,5 +126,5 @@ If anything on this page conflicts with the final launch package, the final laun
 
 ***
 
-**Version:** 1.0 (draft) | **Date:** May 2026 | **Status:** Public draft — legal sign-off pending\
-**Owner:** Flux Point Studios. Final copy will be reviewed by counsel before the redemption window opens.
+**Version:** 1.0 | **Launch:** May 28, 2026\
+**Owner:** Flux Point Studios.
