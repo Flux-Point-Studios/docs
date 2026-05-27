@@ -9,6 +9,10 @@
 * [Litepaper](proof-of-inference/litepaper.md)
 * [Orynq SDK](proof-of-inference/orynq-sdk.md)
 
+## Orynq
+
+* [Orynq Observe](orynq/observe.md)
+
 ## Products
 
 * [ADAM Litepaper](adam-litepaper.md)
