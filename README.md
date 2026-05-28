@@ -27,6 +27,10 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href="cmatra-token-merger/">cMATRA Token Merger</a><br>Surrender-and-redeem model for the 7-asset cMATRA transition</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
+<tr>
+<td><a href="saturnswap/">SaturnSwap</a><br>Cardano-native order-book DEX with cross-chain routing and an AI trading assistant</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
 </tbody></table>
 
 ## Quick Links
@@ -36,6 +40,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 - **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
 - **[cMATRA Token Merger](cmatra-token-merger/)** - Eligibility rules and FAQ for the 7-asset merger
+- **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
 
 ## Community
