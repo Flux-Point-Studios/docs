@@ -23,7 +23,7 @@ pip install orynq-observe
 ### TypeScript / JavaScript
 
 ```bash
-npm install @fluxpointstudios/orynq-observe
+npm install @orynq/observe
 ```
 
 Both packages expose the same fluent builder API and the same byte-pinned canonical encoder.
@@ -62,7 +62,7 @@ print(receipt.materios_tx, receipt.cardano_anchor_tx)
 ### TypeScript
 
 ```typescript
-import { Observation, keypairFromSeed } from "@fluxpointstudios/orynq-observe";
+import { Observation, keypairFromSeed } from "@orynq/observe";
 
 const observer = keypairFromSeed("0x" + "00".repeat(32));
 
