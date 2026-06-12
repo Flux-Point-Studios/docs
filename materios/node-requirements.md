@@ -86,7 +86,7 @@ But you also need to run the **Cardano follower stack** on the same host — `ca
 |---|---|---|
 | CPU | 4 vCPU | 8 vCPU |
 | RAM | **24 GB** | 32 GB |
-| Disk | 100 GB SSD | 200 GB SSD |
+| Disk | **150 GB NVMe/SSD** | 250 GB NVMe/SSD |
 | Network | 10 Mbps, inbound TCP 30333 reachable | 100 Mbps |
 | OS | Native Linux x86_64 + glibc ≥ 2.38 + systemd. Cloud VPS, bare-metal, or Hyper-V/VMware/VirtualBox VM. |
 
@@ -102,7 +102,19 @@ Per-component memory budget (approximate, preprod):
 | OS + headroom | 2 GB |
 | **Total realistic** | **~20–28 GB** |
 
-**A 12 GB host will not work** — Postgres + db-sync + cardano-node alone routinely exceed that under preprod load and the OOM killer will reap one of them, taking the validator with it. **Hetzner CX52 (~€21/mo) or DigitalOcean's general-purpose 4 vCPU / 16 GB tier as the absolute floor; CPX51 (€42/mo, 16 vCPU / 32 GB) is the comfortable spec.**
+Per-component disk budget (measured on the live preprod fleet, June 2026):
+
+| Component | Disk |
+|---|---|
+| `cardano-node` chain db | ~18 GB |
+| db-sync Postgres database | ~26 GB |
+| `materios-node-spo` chain data | ~2 GB fresh, ~12 GB after weeks (cumulative) |
+| Binaries, images, logs, snapshot staging | ~10–15 GB |
+| **Total day-one** | **~60–70 GB** |
+
+The 150 GB minimum is not padding: a db-sync re-sync (version bump, rollback recovery) transiently needs a **second full Postgres database** alongside the old one, Postgres needs vacuum/WAL slack, and everything above grows with chain history. A 100 GB disk starts ~65% full and hits the wall on the first re-sync event.
+
+**A 12 GB host will not work** — Postgres + db-sync + cardano-node alone routinely exceed that under preprod load and the OOM killer will reap one of them, taking the validator with it. A 16 GB host is marginal: it can hold steady-state but tends to OOM during initial db-sync catch-up unless you tune `shared_buffers` down and add swap. **Treat 24 GB as the real floor; Hetzner CPX51 (16 vCPU / 32 GB / 360 GB NVMe, ~€42/mo) or CCX33 (8 dedicated vCPU / 32 GB / 240 GB) is the comfortable spec.** x86_64 only — the materios-node binary does not ship ARM builds, so skip the cheap Ampere/CAX tiers.
 
 > **Cheaper option:** if you don't want to run the full Cardano stack yourself, use a hosted db-sync provider (TxPipe Dolos / Demeter.run / Blockfrost — check endpoint compatibility before committing). That lets you run materios-node-spo on a small host (4 vCPU / 8 GB / 40 GB SSD is plenty), with the Cardano-side state coming from the hosted provider over the network. Trade-off: dependency on a third party for L1 state.
 
@@ -125,7 +137,7 @@ The Materios mainchain-follower reads Cardano preprod state from a **`cardano-db
 
 The follower needs a direct Postgres connection to db-sync (not HTTP). If your provider only exposes HTTP/gRPC, it won't work — operators in this situation typically run db-sync themselves in a small VM.
 
-Disk for db-sync is ~25 GB on preprod and grows with L1 history.
+Disk for db-sync is ~26 GB on preprod (measured June 2026) and grows with L1 history; keep room for a second full database during re-sync events.
 
 ### Ogmios
 
