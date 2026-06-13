@@ -120,3 +120,9 @@ requests signatures for transactions the user explicitly initiates.
 SaturnSwap is **live on Cardano mainnet** at [saturnswap.io](https://saturnswap.io), with the v3
 interface (swap, tokens, orders, liquidity, leaderboard, portfolio, and the Aurora AI surface)
 in active development.
+
+## Building on SaturnSwap?
+
+Aggregators, routers, and apps can execute swaps through SaturnSwap's order book via the public
+GraphQL API — no API key, no on-chain contract work. See
+[API Integration (Aggregators)](api-integration.md).
