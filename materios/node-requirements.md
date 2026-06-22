@@ -49,7 +49,7 @@ Everything an operator needs to download lives under `materios.fluxpointstudios.
 | Bootstrap installer (canonical) | [`releases/bootstrap-validator.sh`](https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh) | see SHA256SUMS |
 | Node binary v6 (x86_64 Linux) | [`releases/materios-node-v6-x86_64-linux`](https://materios.fluxpointstudios.com/releases/materios-node-v6-x86_64-linux) | `dda4f3a7…58ebc` |
 | Chain spec v6 (raw JSON) | [`releases/chain-spec-v6-raw.json`](https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json) | `77877aa6…65aaa` |
-| Data snapshot v6 (rocksdb tarball, ~64MB) | [`releases/materios_preprod_v6-data-20260428-2245.tar.gz`](https://materios.fluxpointstudios.com/releases/materios_preprod_v6-data-20260428-2245.tar.gz) | `92641adf…7bd1` |
+| Data snapshot (current rocksdb pointer) | [`operator-snapshots/preprod/latest.json`](https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json) | sha256 inside the manifest |
 | SHA256SUMS manifest | [`releases/SHA256SUMS`](https://materios.fluxpointstudios.com/releases/SHA256SUMS) | — |
 | LICENSE files | [`/releases/`](https://materios.fluxpointstudios.com/releases/) | — |
 | Releases index | [`releases/`](https://materios.fluxpointstudios.com/releases/) (directory listing) | — |
@@ -58,7 +58,7 @@ Everything an operator needs to download lives under `materios.fluxpointstudios.
 
 > **The recommended path is `bootstrap-validator.sh`** — it handles binary download + verification + keystore seeding + systemd unit generation + validator startup in one command. See [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo) for the full walkthrough.
 
-> **Data snapshot is required.** partner-chains-node v1.8.0 has a known historical-sync bug — fresh validators stall at block #0 (`Inherent error: Candidates inherent required`). Apply the v6 snapshot tarball to the rocksdb directory immediately after the bootstrap script finishes. The tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore, no peer-id keys.
+> **Data snapshot is required.** partner-chains-node v1.8.0 has a known historical-sync bug — fresh validators stall at block #0 (`Inherent error: Candidates inherent required`). Restore the **current** snapshot from [`operator-snapshots/preprod/latest.json`](https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json) (published hourly, sha256-verified) into the rocksdb directory immediately after the bootstrap script finishes. The tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore, no peer-id keys. The one-page recipe with the post-sync divergence self-check is [Current-Snapshot Bootstrap](current-snapshot-bootstrap.md).
 
 > **arm64 / macOS:** the native binary is x86_64 Linux only. macOS operators either build from source (see [Operator Guide → Supported Environments](operator-guide.md#supported-environments) for the home-lab MacBook recipe) or run a Linux VM via UTM / Parallels / Hyper-V. Cert-daemon (attestor role) works natively on macOS via Docker Desktop.
 
@@ -165,7 +165,7 @@ See [Operator Guide → Attestor](operator-guide.md#attestor-permissionless).
 
 | Port | Direction | Purpose | Who opens it |
 |---|---|---|---|
-| **30333/tcp** | Inbound | libp2p P2P | SPO validators + full nodes. Must be reachable from `166.70.250.197` (the public bootnode dials back). |
+| **30333/tcp** | Inbound | libp2p P2P | SPO validators + full nodes. Must be reachable from `bootnode.materios.fluxpointstudios.com` (the public bootnode dials back). |
 | **9945/tcp** | Localhost | JSON-RPC (HTTP + WS) for status queries | Everyone running a node; **never expose publicly** |
 | **9615/tcp** | Localhost / LAN | Prometheus metrics | Optional |
 
@@ -249,7 +249,7 @@ expected_genesis=0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f
 ## Bootnodes
 
 ```
-/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
+/dns4/bootnode.materios.fluxpointstudios.com/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
 ```
 
 One bootnode is enough to discover the rest. More bootnodes may be added as SPO validators come online; additions are published to this page.
