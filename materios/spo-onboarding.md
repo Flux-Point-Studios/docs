@@ -38,7 +38,7 @@ These values are stable for the lifetime of the v6 preprod chain. Hard-code them
 | D-parameter | `(5, 2)` — 5 permissioned + 2 registered |
 | Chain spec | `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json` |
 | Latest data snapshot | `https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json` |
-| Public bootnode | `/ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM` |
+| Public bootnode | `/dns4/bootnode.materios.fluxpointstudios.com/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM` |
 
 Convenience env vars (used throughout):
 
@@ -241,7 +241,7 @@ The tarball contains only `data/chains/materios_preprod_v6/db/` — no keystore,
 
 ## 8. Start materios-node
 
-The bootstrap script handles binary download, SHA verification, keystore wiring, snapshot restore (if not already done), and systemd unit:
+The bootstrap script handles binary download, SHA verification, keystore wiring, snapshot restore (if not already done), and systemd unit. The snapshot restore in [step 7](#7-restore-the-latest-data-snapshot) is the authoritative manual fallback — if the script's restore is ever skipped or fails, your node will genesis-replay and stall at block 0, so do step 7 by hand and re-run with `--skip-snapshot`:
 
 ```bash
 curl -fsSL https://materios.fluxpointstudios.com/releases/bootstrap-validator.sh -o bootstrap-validator.sh
@@ -267,7 +267,7 @@ materios-node-spo \
   --port 30333 \
   --rpc-port 9945 \
   --public-addr /ip4/<YOUR.PUBLIC.IP>/tcp/30333 \
-  --bootnodes /ip4/166.70.250.197/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
+  --bootnodes /dns4/bootnode.materios.fluxpointstudios.com/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM
 ```
 
 `--public-addr` is required for SPOs. Without it, peers can't dial you back and the blocks you author won't gossip.
@@ -281,6 +281,29 @@ curl -s -X POST http://127.0.0.1:9945 \
 ```
 
 Expect `isSyncing: false` and `peers ≥ 1` within a couple of minutes of starting (snapshot floor is the published `head_block_at_publish`; you should sync past it to the live tip).
+
+### Post-sync divergence self-check
+
+Once synced, confirm you landed in the **canonical** GRANDPA room, not a divergent fork. Fetch the network's finalized `{number, hash}` and compare your local block hash at that height:
+
+```bash
+NET=$(curl -fsSL https://materios.fluxpointstudios.com/chain-info)
+H=$(echo "$NET" | jq -r .finalized_block)
+HNET=$(echo "$NET" | jq -r .finalized)   # network's finalized hash at H
+
+# Ask YOUR node for its block hash at the network's finalized height
+HLOCAL=$(curl -s -X POST http://127.0.0.1:9945 \
+  -H 'content-type: application/json' \
+  -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"chain_getBlockHash\",\"params\":[$H]}" | jq -r .result)
+
+if [ "$HLOCAL" = "$HNET" ]; then
+  echo "CANONICAL room ✓ (local $H == network $HNET)"
+else
+  echo "DIVERGENT room ✗ — local $HLOCAL != network $HNET; re-restore from the snapshot (step 7) and restart"
+fi
+```
+
+Compare at the **network's** finalized height — your local node may still be a few blocks behind. A `null` local result just means you haven't reached `H` yet; wait and re-run. A non-null hash that differs is a real fork: wipe `data/chains/materios_preprod_v6/db/`, re-restore the snapshot, and restart.
 
 ## 9. Wait for the stake snapshot
 

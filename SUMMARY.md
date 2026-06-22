@@ -32,6 +32,7 @@
 * [Node Requirements](materios/node-requirements.md)
 * [Operator Guide](materios/operator-guide.md)
 * [SPO Onboarding](materios/spo-onboarding.md)
+* [Current-Snapshot Bootstrap](materios/current-snapshot-bootstrap.md)
 * [Game Integration](materios/game-integration.md)
 * [Witness Network](materios/witness-network.md)
 * [cMATRA Token Merger](materios/cmatra-token-merger/README.md)
