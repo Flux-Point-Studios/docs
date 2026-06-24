@@ -31,6 +31,10 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href="saturnswap/">SaturnSwap</a><br>Cardano-native order-book DEX with cross-chain routing and an AI trading assistant</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
+<tr>
+<td><a href="aegis/">Aegis</a><br>Parametric on-chain insurance for Cardano — crash, depeg, and CDP-liquidation coverage</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
 </tbody></table>
 
 ## Quick Links
@@ -41,6 +45,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
 - **[cMATRA Token Merger](cmatra-token-merger/)** - Eligibility rules and FAQ for the 7-asset merger
 - **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
+- **[Aegis](aegis/)** - Parametric on-chain insurance (crash / depeg / CDP coverage), live at [aegis.fluxpointstudios.com](https://aegis.fluxpointstudios.com)
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
 
 ## Community

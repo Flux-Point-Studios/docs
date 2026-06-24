@@ -19,6 +19,12 @@
 * [T Backend Developer Guide](t-backend-developer-guide.md)
 * [Cardano UE SDK](cardano-ue-sdk.md)
 
+## Aegis
+
+* [Overview](aegis/README.md)
+* [How Aegis Works On-Chain](aegis/architecture.md)
+* [The Seven-Sided Marketplace](aegis/marketplace.md)
+
 ## SaturnSwap
 
 * [Overview](saturnswap/README.md)
