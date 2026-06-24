@@ -89,7 +89,7 @@ end-to-end. Native Cardano settlement always takes precedence when it offers the
 SaturnSwap ships **Aurora**, a conversational assistant that turns natural-language requests
 ("swap 100 ADA for SNEK", "what's trending today") into structured, reviewable trade actions.
 Aurora is backed by Flux Point Studios' T-Backend (see the
-[T-Backend Developer Guide](../products/t-backend-developer-guide.md)) and uses live market data
+[T-Backend Developer Guide](../t-backend-developer-guide.md)) and uses live market data
 for token discovery. It proposes transactions; the user always reviews and signs.
 
 ## Token launches and seasons
