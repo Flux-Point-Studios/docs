@@ -32,31 +32,35 @@ Live on Cardano mainnet at [aegis.fluxpointstudios.com](https://aegis.fluxpoints
   oracle reading the validator checks itself — not by a human adjudicator.
 - **Solvency enforced on-chain.** The pool validator never lets reserved coverage exceed deposited
   liquidity, and never lets an underwriter withdraw funds reserved against open policies.
-- **Oracle-agnostic.** The same protocol settles policies against Charli3, Orcfax, or the AegisSelf
-  publisher feed — chosen per policy, with no validator redeploy to add a provider.
+- **Oracle-agnostic.** The same protocol settles policies against Charli3, Orcfax, the AegisSelf
+  publisher feed, or Indigo's per-iAsset oracle — chosen per policy, with no validator redeploy to
+  add a provider.
 - **A public risk primitive.** Aggregate demand across strikes and durations forms an on-chain
   "fear gauge" any protocol can read via reference inputs.
 
 ## How it works
 
-Aegis is a single Aiken project that compiles to **three Plutus V3 scripts**, connected by a
-build-sign-submit transaction flow:
+Aegis is a single Aiken project that compiles to **four Plutus V3 scripts** (plus a one-shot NFT
+that bootstraps the pool), connected by a build-sign-submit transaction flow:
 
 ```
    Wallet (CIP-30)                Frontend
         |  sign                       |  REST
         v                             v
    Cardano L1   <----- submit -----  API (tx build, indexing)
-   policy / pool / lp_token          Charli3 · Orcfax · AegisSelf
-   Aiken validators                  oracle reference inputs (CIP-31)
+   policy / pool / lp_token /        Charli3 · Orcfax · AegisSelf · Indigo
+   policy_marker validators          oracle reference inputs (CIP-31)
 ```
 
 - The **policy validator** governs one UTxO per policy (its datum encodes the strike, coverage,
-  premium, window, and oracle).
+  premium, window, oracle, and risk class).
 - The **pool validator** is a single shared UTxO holding all underwriter capital and the solvency
-  accounting.
-- The **LP minting policy** is parameterized by the pool's script hash, so `aLP` can only be
+  accounting. It **funds the coverage** for every policy it underwrites — buyers pay only the premium.
+- The **aLP minting policy** is parameterized by the pool's script hash, so `aLP` can only be
   minted or burned when the pool itself is consumed in the same transaction.
+- The **marker minting policy** stamps every policy UTxO with one `AEGIS_POLICY` integrity token at
+  underwrite time and burns it at settlement — so a policy that was never underwritten can never be
+  claimed or cancelled to drain the pool.
 
 The oracle UTxO is read as a **reference input** (CIP-31) — never consumed — so a single feed can
 back many concurrent claims, and the feed's freshness is checked inside the validator.
@@ -67,10 +71,11 @@ For the full datums, redeemers, transaction graphs, and edge cases, see
 
 ## Coverage and oracles
 
-A policy names an `oracle_provider` (Charli3, Orcfax, or AegisSelf) and an `oracle_nft`. At claim
-time the validator locates the matching feed by NFT, parses the Charli3-compatible `OracleDatum`,
-rejects a stale reading (`oracle_expiry > tx.lower_bound`), and pays out only if the price meets
-the strike. Aegis performs no off-chain price-oracle work of its own — it only verifies.
+A policy names an `oracle_provider` (Charli3, Orcfax, AegisSelf, or Indigo) and an `oracle_nft`. At
+claim time the validator locates the matching feed by NFT, parses the Charli3-compatible
+`OracleDatum`, rejects a stale reading (checked against the transaction validity range), and pays
+out only if the price meets the strike for the policy's risk class. Aegis performs no off-chain
+price-oracle work of its own — it only verifies.
 
 ## Treasury give-back
 
