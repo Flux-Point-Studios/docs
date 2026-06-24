@@ -55,6 +55,7 @@ The customer-facing Swagger docs are scoped to:
 - `GET /health`, `GET /api`
 - `POST /chat`
 - `POST /token-analysis`
+- `GET /usage`
 - `POST /images/*`
 
 If you have additional capabilities enabled for your deployment, you'll receive separate documentation for those routes.
@@ -253,7 +254,67 @@ The response is a JSON object whose shape depends on `api_version`.
 
 ---
 
-## 3) Images (`/images/*`)
+## 3) Usage (`GET /usage`)
+
+Return **this API key's own** usage. Authenticated with the same `api-key` header as `/chat` (no x402, no wallet session). The endpoint is **key-scoped**: a caller only ever sees usage attributed to its own key — never another key's data and never aggregate/admin totals.
+
+### Request
+
+No body. Send your service API key:
+
+```bash
+curl -s https://api-v3.fluxpointstudios.com/usage \
+  -H "api-key: YOUR_API_KEY"
+```
+
+### Response schema
+
+```json
+{
+  "key_id": 2,
+  "owner": "saturnswap",
+  "name": "SaturnSwap Frontend",
+  "is_active": true,
+  "created_at": null,
+  "expires_at": null,
+  "lifetime_calls": 4902,
+  "usage": {
+    "total_calls": 3,
+    "total_tokens": 1547,
+    "by_endpoint": {
+      "/chat": { "calls": 2, "total_tokens": 1547 },
+      "/token-analysis": { "calls": 1, "total_tokens": 0 }
+    },
+    "today": { "calls": 3, "total_tokens": 1547 },
+    "this_month": { "calls": 3, "total_tokens": 1547 }
+  },
+  "as_of": "2026-06-24T21:50:43.532893Z",
+  "note": "counts may lag up to ~30s"
+}
+```
+
+| Field | Notes |
+|---|---|
+| `key_id` | Internal numeric id for your key (not the key value). |
+| `owner` / `name` | Your key's owner and label. |
+| `is_active` | Whether the key is currently active. |
+| `created_at` / `expires_at` | Key lifecycle timestamps (UTC; may be `null`). |
+| `lifetime_calls` | All-time call counter for the key. |
+| `usage.total_calls` / `usage.total_tokens` | Totals across all endpoints in the tracked window. |
+| `usage.by_endpoint` | Per-endpoint breakdown — `/chat` and `/token-analysis`, each with `calls` and `total_tokens`. |
+| `usage.today` / `usage.this_month` | Calls and tokens for the current UTC day and month. |
+| `as_of` | UTC timestamp the response was computed. |
+| `note` | Freshness note (see below). |
+
+### Notes & errors
+
+- **Eventual consistency:** per-call events are buffered and flushed about every **30 seconds**, so counts may lag up to ~30s behind real time.
+- **Token cost:** `/chat` records real model token usage. `/token-analysis` calls are counted with a **flat / no token cost** (`total_tokens` is `0`).
+- **`401`** — missing/invalid `api-key`.
+
+---
+
+## 4) Images (`/images/*`)
 
 ### Generate (`POST /images/generate`)
 
