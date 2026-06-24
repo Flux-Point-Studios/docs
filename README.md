@@ -8,23 +8,23 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
-<td><a href="proof-of-inference/orynq-sdk">Orynq SDK</a><br>Developer toolkit for anchoring AI process traces to Cardano</td>
+<td><a href="proof-of-inference/orynq-sdk.md">Orynq SDK</a><br>Developer toolkit for anchoring AI process traces to Cardano</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
-<td><a href="adam-litepaper">ADAM Litepaper</a><br>Autonomous Decentralized Asset Manager</td>
+<td><a href="adam-litepaper.md">ADAM Litepaper</a><br>Autonomous Decentralized Asset Manager</td>
 <td><a href=".gitbook/assets/ADAM.png">ADAM.png</a></td>
 </tr>
 <tr>
-<td><a href="t-backend-developer-guide">T-Backend</a><br>AI assistant platform developer guide</td>
+<td><a href="t-backend-developer-guide.md">T-Backend</a><br>AI assistant platform developer guide</td>
 <td><a href=".gitbook/assets/agent_t_pfp.png">agent_t_pfp.png</a></td>
 </tr>
 <tr>
-<td><a href="cardano-ue-sdk">Cardano UE SDK</a><br>Unreal Engine integration for Cardano blockchain</td>
+<td><a href="cardano-ue-sdk.md">Cardano UE SDK</a><br>Unreal Engine integration for Cardano blockchain</td>
 <td><a href="https://bairesdev.mo.cloudinary.net/blog/2022/08/ue-logo-1400x788-1400x788-8f185e1e3635-1.jpg?tx=w_1920,q_auto">UE Logo</a></td>
 </tr>
 <tr>
-<td><a href="cmatra-token-merger/">cMATRA Token Merger</a><br>Surrender-and-redeem model for the 7-asset cMATRA transition</td>
+<td><a href="materios/cmatra-token-merger/README.md">cMATRA Token Merger</a><br>Surrender-and-redeem model for the 7-asset cMATRA transition</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
@@ -43,7 +43,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 - **[Orynq SDK Documentation](proof-of-inference/orynq-sdk.md)** - Anchor AI traces to blockchain
 - **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
 - **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
-- **[cMATRA Token Merger](cmatra-token-merger/)** - Eligibility rules and FAQ for the 7-asset merger
+- **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Eligibility rules and FAQ for the 7-asset merger
 - **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
 - **[Aegis](aegis/)** - Parametric on-chain insurance (crash / depeg / CDP coverage), live at [aegis.fluxpointstudios.com](https://aegis.fluxpointstudios.com)
 - **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
