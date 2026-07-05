@@ -351,6 +351,33 @@ Once you're in `currentCommittee`, Aura assigns slots automatically. Your valida
 | Finalized head | `curl -s -X POST http://127.0.0.1:9945 -H 'content-type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"chain_getFinalizedHead"}'` |
 | Upgrade binary | Re-run `bootstrap-validator.sh` (idempotent — fetches the new SHA-verified binary, restarts the unit) |
 
+### Show your stats in the explorer (optional)
+
+Your validator shows a green **Producing** badge in the explorer as soon as it authors blocks — that comes straight from the chain and needs nothing extra. But **Best Block / Fin. Gap / Version / Uptime** read `—` for a node-only validator, because those come from a heartbeat that a cert-daemon normally sends. If you want those columns filled, run the **lite-heartbeat** — a ~120-line Python client that reads those stats from your node's RPC and posts them signed with your aura key. It only reports liveness; it can't upload data or spend anything, and your key never leaves the box.
+
+One-time: ask FPS in `#spo-support` to enable the heartbeat feed for your validator's aura SS58 (`5…`). Then:
+
+```bash
+pip install substrate-interface
+cd /opt && sudo curl -fsSLO https://materios.fluxpointstudios.com/releases/materios-lite-heartbeat.py
+curl -s https://materios.fluxpointstudios.com/releases/SHA256SUMS | grep lite-heartbeat.py | sha256sum -c   # -> OK
+
+# test one beat (points at your node's keystore dir; nothing secret is typed or stored):
+ONESHOT=1 AURA_KEYSTORE_DIR=/path/to/base-path/chains/<chain-id>/keystore \
+  python3 materios-lite-heartbeat.py            # expect: ... -> OK {"status":"ok",...,"auth_tier":"sig-only"}
+```
+
+Within ~30s your explorer row fills in. To run it continuously, grab the systemd unit + env template alongside it:
+
+```bash
+sudo curl -fsSLo /usr/local/bin/materios-lite-heartbeat.py https://materios.fluxpointstudios.com/releases/materios-lite-heartbeat.py
+sudo curl -fsSLo /etc/systemd/system/materios-lite-heartbeat.service https://materios.fluxpointstudios.com/releases/materios-lite-heartbeat.service
+curl -fsSL https://materios.fluxpointstudios.com/releases/lite-heartbeat.env.example | sudo tee /etc/materios-lite-heartbeat.env >/dev/null   # then edit: set AURA_KEYSTORE_DIR + NODE_PROC
+sudo systemctl daemon-reload && sudo systemctl enable --now materios-lite-heartbeat
+```
+
+Set `NODE_PROC` in the env file to your node's process name (default `partner-chains-node`) so uptime reports correctly. These stats are display-only — your real liveness and finality are proven on-chain by the blocks you author, heartbeat or not.
+
 ### KES renewal
 
 Cardano KES op-certs expire ~every 9 days on preprod. Re-issue with a fresh KES period and restart your `cardano-node`; no Materios-side action is needed (your partner-chain registration is independent of KES).
