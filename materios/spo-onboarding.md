@@ -355,7 +355,7 @@ Once you're in `currentCommittee`, Aura assigns slots automatically. Your valida
 
 Your validator shows a green **Producing** badge in the explorer as soon as it authors blocks — that comes straight from the chain and needs nothing extra. But **Best Block / Fin. Gap / Version / Uptime** read `—` for a node-only validator, because those come from a heartbeat that a cert-daemon normally sends. If you want those columns filled, run the **lite-heartbeat** — a ~120-line Python client that reads those stats from your node's RPC and posts them signed with your aura key. It only reports liveness; it can't upload data or spend anything, and your key never leaves the box.
 
-One-time: ask FPS in `#spo-support` to enable the heartbeat feed for your validator's aura SS58 (`5…`). Then:
+No sign-up needed — the gateway accepts heartbeats from any active committee member automatically (being seated on-chain is the enrollment; expect a 403 until your first committee selection).
 
 ```bash
 pip install substrate-interface
@@ -420,7 +420,7 @@ Full sync diagnostics, RPC reference, and recovery playbooks: [OPERATOR_KIT.md](
 
 ## Getting help
 
-- Materios Discord: `#spo-support`
+- Materios Discord: open a `#support-ticket`
 - Chain explorer: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer)
 - Issue tracker: [Flux-Point-Studios/materios-operator-kit](https://github.com/Flux-Point-Studios/materios-operator-kit/issues)
 - Preprod faucet: [docs.cardano.org/cardano-testnets/tools/faucet](https://docs.cardano.org/cardano-testnets/tools/faucet)
