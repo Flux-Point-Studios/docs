@@ -372,7 +372,7 @@ Within ~30s your explorer row fills in. To run it continuously, grab the systemd
 ```bash
 sudo curl -fsSLo /usr/local/bin/materios-lite-heartbeat.py https://materios.fluxpointstudios.com/releases/materios-lite-heartbeat.py
 sudo curl -fsSLo /etc/systemd/system/materios-lite-heartbeat.service https://materios.fluxpointstudios.com/releases/materios-lite-heartbeat.service
-curl -fsSL https://materios.fluxpointstudios.com/releases/lite-heartbeat.env.example | sudo tee /etc/materios-lite-heartbeat.env >/dev/null   # then edit: set AURA_KEYSTORE_DIR + NODE_PROC
+curl -fsSL https://materios.fluxpointstudios.com/releases/lite-heartbeat.env.example | sudo tee /etc/materios-lite-heartbeat.env >/dev/null   # then edit: set AURA_KEYSTORE_DIR + NODE_PROC + VALIDATOR_LABEL (your explorer display name)
 sudo systemctl daemon-reload && sudo systemctl enable --now materios-lite-heartbeat
 ```
 
