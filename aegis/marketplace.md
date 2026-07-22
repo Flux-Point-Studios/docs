@@ -22,6 +22,15 @@ without a claim — not token emissions.
   utilization spikes (to protect open policies); premium yield correlates with market fear — high
   APY often precedes high losses.
 
+### V8 improvements for underwriters
+
+- **Non-custodial deposits/withdrawals** — you sign every transaction. No operator key ever
+  touches your funds.
+- **Registry governance** — M-of-N admin (not single operator) with 72h timelock on logic changes.
+  Admin can propose parameter updates but never has LP custody.
+- **Migration path** — V7 LPs can withdraw from the old pool and deposit into the vault without
+  losing position.
+
 ## 2. Borrowers — liquidation-protected
 
 CDP holders on Indigo, Liqwid, Danogo, Surf, and FluidTokens who attach a policy calibrated to

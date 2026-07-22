@@ -65,6 +65,21 @@ that bootstraps the pool), connected by a build-sign-submit transaction flow:
 The oracle UTxO is read as a **reference input** (CIP-31) — never consumed — so a single feed can
 back many concurrent claims, and the feed's freshness is checked inside the validator.
 
+### V8 Stable-Vault (current)
+
+The latest deployed version (V8) replaces the single V7 pool UTxO with a **vault architecture**:
+
+- **VaultState** — a leaner 4-field datum (`lp_supply`, `active_coverage`, `reserve`, `registry_nft`)
+  that drops the redundant `total_liquidity` and `lp_token_policy` fields in favor of derived values.
+- **Registry + M-of-N governance** — the vault is tied to a `RegistryDatum` with configurable
+  M-of-N admin (was single-operator 1-of-1). Admin can only propose logic swaps behind a 72h
+  timelock — never has LP custody.
+- **Non-custodial builders** — users fund and receive directly. No operator key ever touches user
+  funds. All six lifecycle paths (add/remove liquidity, underwrite, claim, cancel, expire) route
+  through the vault with the user signing their own transaction.
+- **V7 → V8 migration** — existing V7 LPs can withdraw from the old pool and move into the vault.
+  The API dispatches to V8 when `AEGIS_V8_VAULT_ADDRESS` is set, else keeps serving V7.
+
 For the full datums, redeemers, transaction graphs, and edge cases, see
 [How Aegis Works On-Chain](architecture.md). For who participates and why, see
 [The Seven-Sided Marketplace](marketplace.md).
@@ -96,4 +111,5 @@ types. No backend integration is required to read pool state or quote a premium.
 
 Aegis is **live on Cardano mainnet** — crash coverage, depeg coverage, CDP protection, the
 underwriter pool, and the AEGIS / FEAR index are all in active use, with partner integrations
-(SaturnSwap, Surf, Indigo CDP protection) onboarding through the SDK.
+(SaturnSwap, Surf, Indigo CDP protection) onboarding through the SDK. The current mainnet deploy
+runs the **V8 stable-vault** with non-custodial builders and registry governance.
