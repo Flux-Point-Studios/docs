@@ -1,13 +1,14 @@
 ---
-description: The on-chain shape of Aegis V4 — four Aiken validators, a marker-based integrity layer, a multi-provider oracle dispatcher, pool-funded coverage with a validator-enforced treasury donation, and the canonical transactions.
+description: The on-chain shape of Aegis — from V4 pool to V8 stable-vault. Four Aiken validators, a marker-based integrity layer, a multi-provider oracle dispatcher, pool-funded coverage with a validator-enforced treasury donation, and the canonical transactions.
 ---
 
 # How Aegis Works On-Chain
 
 Aegis is a single Aiken project that compiles to **four runtime Plutus V3 scripts** plus a one-shot
-NFT that bootstraps the pool. This page is the canonical description of the deployed V4 protocol —
-datums, redeemers, the marker integrity layer, the oracle dispatcher, the pool-funded pricing
-model, and the transaction graphs the validators interlock to enforce.
+NFT that bootstraps the pool. This page covers both the **V4 protocol** (historical) and the
+currently deployed **V8 stable-vault** — datums, redeemers, the marker integrity layer, the oracle
+dispatcher, the pool-funded pricing model, and the transaction graphs the validators interlock to
+enforce.
 
 ```
 aiken/
@@ -16,7 +17,8 @@ aiken/
 │   └─ pool.ak      └─ validation.ak
 └─ validators/
     ├─ policy.ak          # spend  — the policy validator
-    ├─ pool.ak            # spend  — the pool validator
+    ├─ pool.ak            # spend  — the pool validator (V4)
+    ├─ pool_vault.ak      # spend  — the vault validator (V8)
     ├─ lp_token.ak        # mint   — the aLP minting policy
     ├─ policy_marker.ak   # mint   — the marker minting policy (integrity)
     └─ pool_nft.ak        # mint   — one-shot pool NFT (genesis only)
@@ -27,22 +29,39 @@ aiken/
 | Script | Governs | Lifetime |
 |--------|---------|----------|
 | **Policy validator** | one UTxO per policy | short-lived |
-| **Pool validator** | the single shared liquidity UTxO | long-lived |
+| **Pool validator** | the single shared liquidity UTxO | long-lived (V4) |
+| **Vault validator (V8)** | the single shared vault UTxO | long-lived (V8) |
 | **aLP minting policy** | `aLP` LP tokens, parameterized by the pool hash | stateless |
 | **Marker minting policy** | per-policy `AEGIS_POLICY` marker tokens | stateless |
 | _pool NFT (one-shot)_ | identifies the canonical pool | minted once at genesis |
 
-The scripts cross-reference each other: the **pool funds and bears the coverage** for every policy
-it underwrites; the **aLP policy** can only mint/burn when the pool is consumed in the same tx; the
-**marker policy** can only mint/burn when the canonical pool is consumed; and each **policy** routes
-its residual back to the pool when it claims, cancels, or expires. Splitting concerns keeps every
-script small, auditable, and independently upgradeable, while the markers stitch the lifecycle
-together so it can't be forged.
+The scripts cross-reference each other: the **pool/vault funds and bears the coverage** for every
+policy it underwrites; the **aLP policy** can only mint/burn when the pool is consumed in the same
+tx; the **marker policy** can only mint/burn when the canonical pool is consumed; and each
+**policy** routes its residual back to the pool when it claims, cancels, or expires. Splitting
+concerns keeps every script small, auditable, and independently upgradeable, while the markers
+stitch the lifecycle together so it can't be forged.
+
+### V8 Stable-Vault
+
+V8 replaces the V7 `PoolDatum` (6–7 fields) with a leaner `VaultState` (4 fields) and introduces
+a **registry** for governance:
+
+- `lp_supply` — outstanding LP tokens
+- `active_coverage` — capital reserved against open policies
+- `reserve` — pool reserve
+- `registry_nft` — ties the vault to a governance registry
+
+The vault derives `total_liquidity = backing + active_coverage` (where `backing = own − min_utxo −
+reserve`) rather than storing it. The frontend consumes the same 6-key JSON contract, so no UI
+changes are required.
 
 ## 2. Policy validator — one UTxO per policy
 
-Each policy is a UTxO at the policy validator's address. Its 14-field inline datum encodes
-everything needed to settle the contract, plus the bindings that prevent forgery.
+Each policy is a UTxO at the policy validator's address. Its inline datum encodes everything needed
+to settle the contract, plus the bindings that prevent forgery.
+
+### V4 PolicyDatum (14 fields)
 
 ```aiken
 type PolicyDatum {
@@ -61,9 +80,24 @@ type PolicyDatum {
   partner_share_bps: Int,                  // ≤ partner_share_cap_bps (2000)
   risk_class:        RiskClass,            // Barrier | Depeg
 }
-
-type PolicyRedeemer { Claim  BatchClaim  Expire  BatchExpire  Cancel }
 ```
+
+### V8 PolicyDatum (17 fields)
+
+V8 expands the datum to 17 fields, adding observer attestation and eligibility logic bindings:
+
+```aiken
+type PolicyDatum {
+  // ... fields 1-14 same as V4 ...
+  observer_nft:      ByteArray,            // pinned observer feed
+  eligibility_logic: ScriptHash,           // eligibility validator hash
+  valid_until:       Int,                  // observer reading expiry
+}
+```
+
+The additional fields support the **observer attestation** pattern: the validator resolves the
+oracle feed, checks freshness against a `valid_until` ceiling (the K-1 constraint), and verifies
+the eligibility redeemer matches the policy's `eligibility_logic` hash.
 
 Every policy UTxO **must carry exactly one marker token** `(policy_id, "AEGIS_POLICY")` minted by
 the marker policy (see §5). `Cancel`, `Claim`, and `Expire` only spend a policy that holds its
@@ -72,7 +106,7 @@ marker — so a hand-written "policy" UTxO that was never underwritten can never
 - **Claim** — a reference input holds the oracle UTxO (matched by `oracle_nft` for the policy's
   `oracle_provider`); the reading is fresh and meets the strike for the policy's `risk_class`; the
   validity range is within `[start_time, expiry_time]`; the insured is paid `coverage_amount`; the
-  paired `ProcessClaim` on the pool burns the marker and updates accounting.
+  paired `ProcessClaim` on the pool/vault burns the marker and updates accounting.
 - **Expire** — `tx.lower_bound > expiry_time`; the residual returns to the pool; the paired
   `BatchExpireProcess` burns the marker.
 - **Cancel** — signed by the insured within the cancellation window (`3_600_000 ms`); refund =
@@ -84,7 +118,7 @@ marker — so a hand-written "policy" UTxO that was never underwritten can never
 > `cancellation_fee_bps = 1_000`, `price_scale = 1_000_000`, `min_utxo_lovelace = 2_000_000`,
 > `partner_share_cap_bps = 2_000`, marker asset name `"AEGIS_POLICY"`.
 
-## 3. Pool validator — one shared UTxO, seven redeemer paths
+## 3. Pool validator — one shared UTxO, seven redeemer paths (V4)
 
 A single canonical UTxO (identified by the pool NFT) holds all underwriter capital. Every operation
 consumes it and recreates it with updated datum.
@@ -129,25 +163,46 @@ accumulation cap: active_coverage_after × 3 ≤ total_liquidity_after   // ≤ 
 RemoveLiquidity:  amount ≤ available                                  // can't withdraw reserved funds
 ```
 
-**Validator-enforced treasury donation.** Every fee-bearing redeemer (`Underwrite`,
-`BatchUnderwrite`, `AcceptCancellation`) requires the Conway-era `treasury_donation` body field
-(CDDL key 22) to be **≥ `premium × protocol_fee_bps/10_000 × treasury_share_bps/10_000`** — with
-defaults, `0.5%` of the premium. The pool **rejects** any such transaction that under-pays, so the
-give-back is cryptographic, not trust-based.
+### V8 Vault validator
 
-**Strike-aware actuarial floor.** `Underwrite` dispatches on the new policy's `risk_class`:
+The V8 vault replaces `PoolDatum` with `VaultState` and adds a **registry**:
 
-- **Barrier** — reads a fresh oracle spot, requires the strike to be at least
-  `min_strike_distance_bps` (1500 = 15%) below spot, and `premium ≥ coverage × barrier_floor(d, T)`.
-  Freshness is two-legged: `tx_lower ≤ observed_at + 5 min` (no stale reading) **and**
-  `tx_upper ≤ feed.valid_until` (no past-horizon reading).
-- **Depeg** — no spot read; requires `oracle_nft` to be a depeg-eligible stablecoin feed, the strike
-  to sit in the insurable band (5%–50% below the $1 peg), and `premium ≥ coverage × depeg_floor(T)`.
+```aiken
+type VaultState {
+  lp_supply:        Int,        // outstanding aLP
+  active_coverage:  Int,        // reserved against open policies
+  reserve:          Int,        // pool reserve
+  registry_nft:     ByteArray,  // ties to governance registry
+}
 
-**LP math** — standard CPMM shares; integer truncation always favors the pool:
+type VaultRedeemer {
+  AddLiquidity
+  RemoveLiquidity
+  Underwrite        { coverage: Int, premium: Int }
+  Claim             { coverage: Int }
+  Cancel
+  Expire
+}
+```
+
+The vault is **non-custodial**: the connected user funds and receives. The operator key never
+touches user funds. Six lifecycle paths all route through the vault with the user signing their own
+transaction.
+
+**Registry governance.** The vault is tied to a `RegistryDatum` with M-of-N admin (configurable at
+genesis via `--admin-vkeys` and `--admin-threshold`). The admin can only propose logic swaps behind
+a 72h timelock — it never has LP custody.
+
+**Multi-feed mandate.** V8 supports multiple oracle feeds via `allowed_oracle_nfts` (a list, not a
+single feed). A `--deny-all-underwrites` flag sets an empty mandate, closing all underwrites while
+leaving LP add/remove intact.
+
+**LP math** — identical to V4, but `total_liquidity` is derived:
 
 ```
-mint     = (deposit   × lp_supply)       / total_liquidity   // 1:1 if pool empty
+backing = own_value − min_utxo − reserve
+total_liquidity = backing + active_coverage
+mint     = (deposit   × lp_supply) / total_liquidity
 withdraw = (lp_burned × total_liquidity) / lp_supply
 ```
 
@@ -222,7 +277,21 @@ type OracleProvider { Charli3  Orcfax  AegisSelf  Indigo }
 Across providers the validator enforces freshness against the tx validity range (a stale feed is
 rejected on-chain) and only verifies — Aegis does no off-chain price-oracle work of its own.
 
+### V8 observer attestation
+
+V8 adds an **observer attestation** pattern for oracle-bearing transactions:
+
+- The oracle feed is resolved into 5 `Price` fields (spot, 12h low, etc.)
+- An **observer script** attests to the feed's integrity (byte-match check)
+- The **eligibility logic** validator verifies the insured's eligibility via a withdrawal sibling
+- Freshness is two-legged: `tx_lower ≤ observed_at + 5 min` and `tx_upper ≤ valid_until`
+
+The 4-redeemer / 2-withdrawal shape (Underwrite) ensures every oracle-bearing path carries both
+the observer attestation and the eligibility check.
+
 ## 7. The canonical transactions
+
+### V4/V7 — Pool-based
 
 **Buy coverage (`Underwrite`)** — the pool funds the coverage; the buyer pays the premium.
 ```
@@ -256,6 +325,32 @@ Remove: [Wallet aLP   ][Pool] → [Pool (−withdrawal, total_liquidity −= amo
         // withdrawal gated by available = total_liquidity − active_coverage
 ```
 
+### V8 — Vault-based (non-custodial)
+
+**Buy coverage (`Underwrite`)** — identical economics, but non-custodial:
+```
+INPUTS                                   OUTPUTS / MINT
+[ ] Wallet (premium + fees + collateral) [ ] Policy UTxO @ policy_validator
+[ ] Vault UTxO (consumed)                    value = coverage + 1 marker · 17-field PolicyDatum
+ref: Oracle UTxO (for the floor read)    [ ] Vault UTxO (value += premium − coverage; active_coverage += cov)
+                                         [ ] Team fee output
+                                         [ ] Change → wallet
+                                         MINT  +1 (policy_id, "AEGIS_POLICY")
+                                         BODY  treasury_donation (field 22) ≥ required cut
+                                         WITHDRAW  observer attestation + eligibility_logic
+RDM  Vault: Underwrite{coverage,premium} · Marker: MintMarkers{1}
+```
+
+**Claim / Cancel / Expire** — identical to V4, but against the vault UTxO and using the V8
+`BurnForClaim` / `BurnForCancel` / `BurnForExpire` marker redeemers.
+
+**Add / Remove liquidity** — identical math, but the vault derives `total_liquidity` from `backing +
+active_coverage`:
+```
+Add:    [Wallet deposit][Vault] → [Vault (+deposit, backing += amount)][aLP to LP][Change]   MINT +aLP
+Remove: [Wallet aLP   ][Vault] → [Vault (−withdrawal, backing −= amount)][ADA to LP][Change] MINT −aLP
+```
+
 ## 8. Edge cases & invariants
 
 - **Synthetic-policy drain — closed.** A policy can't be claimed or cancelled without a marker, and
@@ -271,3 +366,7 @@ Remove: [Wallet aLP   ][Pool] → [Pool (−withdrawal, total_liquidity −= amo
 - **Solvency.** `total_liquidity ≥ active_coverage` always; LPs can't withdraw reserved funds.
 - **Rounding & min-UTxO.** Integer truncation accrues dust to the pool (favoring LPs); every policy
   UTxO carries ≥ `min_utxo_lovelace` (2 ADA), and residual returns are reduced by exactly that.
+- **V8 vault non-custody.** The operator address never appears in user-funded transactions. The
+  user funds, signs, and receives all outputs.
+- **V8 registry timelock.** Admin proposals require 72h before execution; admin can never withdraw
+  LP funds.
