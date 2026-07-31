@@ -7,7 +7,7 @@ description: >-
 
 # Flux Point Staking (Program Concluded)
 
-> **This program has been retired.** The AGENT & SHARDS staking program — including NFT boosts and all revenue-based reward streams — concluded with the launch of the [cMATRA Token Merger](materios/cmatra-token-merger/README.md) on **May 28, 2026**. No new staking rewards accrue. Valid tracked rewards were reconciled and materialized into redeemable units before the redemption window opened (see [FAQ Q22](materios/cmatra-token-merger/faq.md#22-what-happens-to-legacy-staking-rewards-that-were-tracked-operationally-or-in-dashboards)).
+> **This program has been retired.** The AGENT & SHARDS staking program — including NFT boosts and all revenue-rewards streams — concluded with the launch of the [cMATRA Token Merger](materios/cmatra-token-merger/README.md) on **May 28, 2026**. No new staking rewards accrue. Valid tracked rewards were reconciled and materialized into redeemable units before the redemption window opened (see [FAQ Q22](materios/cmatra-token-merger/faq.md#22-what-happens-to-legacy-staking-rewards-that-were-tracked-operationally-or-in-dashboards)).
 
 ***
 
@@ -25,7 +25,7 @@ Read the [Legal & Disclaimers](materios/cmatra-token-merger/legal-and-disclaimer
 
 ## Going forward: one network token
 
-The era of many assets with bolted-on utility — and of Cardano-side staking programs paying out revenue-based rewards — is over. Everything consolidates into **MATRA, the native network token of the [Materios blockchain](materios/README.md)**, whose utility is the network itself:
+The era of many assets with bolted-on utility — and of Cardano-side staking programs paying out revenue-rewards — is over. Everything consolidates into **MATRA, the native network token of the [Materios blockchain](materios/README.md)**, whose utility is the network itself:
 
 * **Delegate to earn block rewards.** Delegate to Cardano SPOs participating in Materios cross-validation, or stake and delegate MATRA to Materios validators as mainnet staking rolls out — the same way ADA holders delegate to Cardano stake pools and earn ADA. Rewards are protocol block rewards for securing the network, not revenue sharing. See [FAQ Q39–39b](materios/cmatra-token-merger/faq.md#39-how-are-validators-expected-to-be-rewarded).
 * **Use the network.** Holding MATRA generates MOTRA, the capacity token that pays Materios transaction fees.
@@ -33,4 +33,4 @@ The era of many assets with bolted-on utility — and of Cardano-side staking pr
 
 ***
 
-*Historical program details (reward buckets, NFT boost percentages, and revenue-stream allocations) have been removed because they no longer apply; they remain available in the [git history](https://github.com/Flux-Point-Studios/docs) of this page.*
+*Historical program details (reward buckets, NFT boost percentages, and revenue-rewards allocations) have been removed because they no longer apply; they remain available in the [git history](https://github.com/Flux-Point-Studios/docs) of this page.*

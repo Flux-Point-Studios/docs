@@ -404,7 +404,7 @@ Through cross-validation, Cardano stake pool operators participate in Materios c
 
 No, on both counts.
 
-* **There is no Cardano-side staking or revenue-share program for cMATRA.** The legacy AGENT/SHARDS staking program — including its revenue-based reward streams — concluded with the merger launch and is not being replaced with a cMATRA equivalent.
+* **There is no Cardano-side staking or revenue-share program for cMATRA.** The legacy AGENT/SHARDS staking program — including its revenue-rewards streams — concluded with the merger launch and is not being replaced with a cMATRA equivalent.
 * **Earning more MATRA means securing the network.** The paths to additional MATRA are delegation and validation: delegate ADA to SPOs participating in Materios cross-validation (Q39a), and stake or delegate MATRA to Materios validators as mainnet staking rolls out. Rewards come from the published Validator and Attestor Emissions schedules — protocol block rewards for validation work, in the same category as Cardano's ADA staking rewards.
 * **Nothing here is a revenue share.** Staking rewards are paid by the protocol for securing the chain. They are not interest, not dividends, and not a share of Flux Point Studios' (or anyone's) revenue or profits.
 
