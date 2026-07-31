@@ -24,7 +24,7 @@ cMATRA and MATRA are **utility tokens**. MATRA is the native network token of th
 
 Any MATRA a holder may earn through delegation or validation is a **protocol-level block reward** paid by the Materios network for validation work and delegated security — the same category as Cardano's ADA staking rewards. Such rewards:
 
-* are funded by the published Validator and Attestor Emissions sub-buckets and by protocol fee recycling — not by Flux Point Studios;
+* are funded by the published Validator and Attestor Emissions sub-buckets — not by Flux Point Studios;
 * are **not** interest, dividends, revenue share, profit share, or any other claim on FPS or any affiliate;
 * are contingent on network operation, published schedules, and the holder's own participation — they are not guaranteed, and no revenue-sharing or profit-sharing program exists for cMATRA or MATRA. Any earlier description of Cardano-side staking programs with revenue-based reward streams refers to a **concluded legacy program** and does not apply to cMATRA or MATRA.
 

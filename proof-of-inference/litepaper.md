@@ -22,7 +22,7 @@ The verification idea was right. The token economics wrapped around it were not 
 | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | Signed inference receipts, anchored on Cardano (2222) | **Orynq receipts** — threshold-attested on Materios, batch-anchored to Cardano L1 under label **8746**                       |
 | $AGENT as gas / Babel-fee job payments                | Ordinary **Materios network fees** — MATRA holdings generate MOTRA capacity, which pays per-receipt fees                     |
-| 28% staker fee-share, epoch-rolled payouts            | **Retired.** Network security is compensated with validator and attestor **block rewards** (emissions + fee recycling)       |
+| 28% staker fee-share, epoch-rolled payouts            | **Retired.** Network security is compensated with validator and attestor **block rewards** from published emission schedules |
 | $AGENT inference-pool bonds and slashing              | **Attestor bond/slash economics** on Materios (Attestor Emissions sub-bucket)                                                |
 | PoI governance ($AGENT-weighted voting)               | **Retired.** Materios chain governance, carried by MATRA as governance decentralizes                                         |
 | $AGENT token                                          | Consolidating into **cMATRA → MATRA**, the network token of the Materios blockchain, via the merger                          |

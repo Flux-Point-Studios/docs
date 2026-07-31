@@ -17,7 +17,7 @@ Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-
 
 When you surrender a legacy asset, you are trading it in for one thing: **the network token of the Materios blockchain**. MATRA is to Materios what ADA is to Cardano — the asset that secures the chain, meters its capacity, and carries its governance.
 
-* **Staking and delegation.** Holders can earn additional MATRA by delegating — to Cardano SPOs that participate in Materios cross-validation (Minotaur), and to Materios validators as mainnet staking rolls out — the same way ADA holders delegate to stake pools and earn block rewards. These rewards are **protocol block rewards paid by the network for securing it**, funded by the Validator and Attestor Emissions sub-buckets plus recycled transaction fees. They are not payments from Flux Point Studios and not a share of any company's revenue.
+* **Staking and delegation.** Holders can earn additional MATRA by delegating — to Cardano SPOs that participate in Materios cross-validation (Minotaur), and to Materios validators as mainnet staking rolls out — the same way ADA holders delegate to stake pools and earn block rewards. These rewards are **protocol block rewards paid by the network for securing it**, funded by the published Validator and Attestor Emissions schedules. They are not payments from Flux Point Studios and not a share of any company's revenue.
 * **Network capacity.** Holding MATRA generates [MOTRA](faq.md#6-what-is-motra), the non-transferable capacity token that pays transaction fees — so using the network never requires spending the network token itself.
 * **Governance.** MATRA is the transferable, stakeable governance asset of the Materios chain as its governance decentralizes.
 
@@ -69,7 +69,7 @@ The merger uses a fixed supply model with a **Network Incentives Reserve** carve
 
 * The **27.75% Network Incentives Reserve (277.5M cMATRA)** is non-circulating at launch and funds long-term network security, ecosystem growth, strategic partnerships, and launch liquidity. It is not a later inflation switch — it is part of the genesis supply plan.
 * The **72.25% Public Redemption Pool (722.5M cMATRA)** is the only pool used for ordinary public redemptions. Network Incentives sub-bucket distributions do not draw from this pool.
-* **Fee-recycling** supplements the reserves once the network is live: transaction fees are split 40% to a block-author pot, 30% to the attestor reserve, 20% to the Ecosystem Treasury, and 10% burned. This means validator and attestor incentives have multiple sources — genesis reserve plus ongoing fee flow.
+* **Fee model — no MATRA burn.** Transaction fees are paid in **MOTRA**, the non-transferable capacity token generated from MATRA holdings (it decays if unused and is consumed when spent). Fee flow therefore never burns, mints, or dilutes MATRA. Validator and attestor incentives draw on the genesis reserve emission schedules; the attestor pot (`mat/attr`) additionally holds fee-router and slashing accruals, visible live on the [Materios explorer](https://fluxpointstudios.com/materios/explorer#overview).
 * **Team treasury softening** is handled through explicit waiver and disclosure. Team treasury balances locked in on-chain DAOs are waived from the public rate denominator and receive cMATRA directly at mint time at the same published rate. This reduces the surrender pool by the carve amount (~26.7M cMATRA at v5.1 rates) but does not change public rates. See [FAQ](faq.md) for details.
 
 ### Network Incentives Reserve sub-buckets
