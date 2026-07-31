@@ -80,7 +80,7 @@ Seven legacy Cardano assets (AGENT, SHARDS, and 5 NFT collections) will consolid
   - Ecosystem Treasury — 40M (4%)
   - Strategic Allocation — 30M (3%) — long-term on-chain vesting
   - Liquidity — 27.5M (2.75%) — POL, bridge peg reserve, CLOB maker rebates
-- 6-month public redemption window
+- 6-month public redemption window (open May 28 – November 28, 2026)
 
 See the full merger specification: [cMATRA Token Merger](https://docs.fluxpointstudios.com/materios-partner-chain/cmatra-token-merger)
 
@@ -125,7 +125,7 @@ A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for instituti
 
 ## Timeline
 
-The mainnet transition depends primarily on the cMATRA token merger, which requires a 6-month public redemption window. The merger defines the initial MATRA distribution, which is a prerequisite for stake-weighted rewards and Cardano governance.
+The mainnet transition depends primarily on the cMATRA token merger, which requires a 6-month public redemption window (closes November 28, 2026). The merger defines the initial MATRA distribution, which is a prerequisite for stake-weighted rewards and Cardano governance.
 
 All infrastructure milestones (pipeline, anchoring, attestation, multisig governance, validator key rotation) are already complete. The remaining work is token economics and decentralization.
 

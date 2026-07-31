@@ -1,8 +1,9 @@
 ---
 description: >-
   The legacy AGENT & SHARDS staking program has concluded. Unstake, claim, and
-  trade eligible legacy assets for cMATRA — the network token of the Materios
-  blockchain — before the redemption window closes on November 28, 2026.
+  trade eligible legacy assets for cMATRA — the Cardano-side form of MATRA, the
+  network token of the Materios blockchain — before the redemption window
+  closes on November 28, 2026.
 ---
 
 # Flux Point Staking (Program Concluded)

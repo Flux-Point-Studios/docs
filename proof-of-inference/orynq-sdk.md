@@ -14,7 +14,7 @@ The Orynq SDK provides tools for anchoring AI process traces to the Cardano bloc
 - **Self-Hosted Anchoring** - Use your own wallet to anchor directly—no API fees
 - **OpenClaw/Claude Code Integration** - Zero-config anchoring for AI coding sessions
 - **Dual Protocol Support** - x402 (Coinbase standard) for EVM and Flux protocol for Cardano
-- **Multi-Chain Payments** - Pay for anchoring in ADA or EVM stablecoins (per-receipt fees in MATRA on Materios mainnet)
+- **Multi-Chain Payments** - Pay for anchoring in ADA or EVM stablecoins (per-receipt fees on Materios mainnet paid in MOTRA, generated from MATRA holdings)
 - **Auto-Pay Client** - Automatic 402 payment handling with budget controls
 - **Verification Tools** - Independently verify any anchor using only the txHash
 - **TypeScript & Python** - Full SDK support for both languages

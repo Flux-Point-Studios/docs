@@ -7,7 +7,7 @@ description: >-
 
 # Legal & Disclaimers
 
-This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. The counsel-approved disclosures rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and the FPS [Terms of Service](https://fluxpointstudios.com/tos) are the canonical form; if anything here conflicts with the portal disclosures or the ToS, the portal and the ToS control.
+This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. The redemption window closes on **November 28, 2026**. The counsel-approved disclosures rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and the FPS [Terms of Service](https://fluxpointstudios.com/tos) are the canonical form; if anything here conflicts with the portal disclosures or the ToS, the portal and the ToS control.
 
 ***
 
@@ -134,5 +134,5 @@ If anything on this page conflicts with the final launch package, the final laun
 
 ***
 
-**Version:** 1.1 | **Launch:** May 28, 2026 | **Last updated:** July 31, 2026\
+**Version:** 1.1 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026 | **Last updated:** July 31, 2026\
 **Owner:** Flux Point Studios.
