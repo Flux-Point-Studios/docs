@@ -126,7 +126,9 @@ The response returns a directional bias (Bullish / Bearish), confidence level, a
 
 ### Launch & Access
 
-**ADAM** will launch in three controlled phases:
+> **ADAM v2 update (2026).** ADAM v2 removes launch passes and subscriptions entirely — access is open and priced **per transaction only**. T1/T2 ADAM Launch Passes are being bought out with cMATRA through the [cMATRA Token Merger](materios/cmatra-token-merger/faq.md#33a-i-hold-a-t1-or-t2-adam-launch-pass-will-i-lose-access-to-adam-if-i-surrender-it) (redemption window closes November 28, 2026) — surrendering a pass does **not** cost you ADAM access. The phased-access history below is preserved for the record.
+
+**ADAM** launched in three controlled phases:
 
 * ~~**Phase 1** – Access granted for holders of T1 ADAM Launch Pass (Black and Copper - 250,000 $AGENT - Max Supply of 10 - Earliest Access to Launch and all new features) while we closely monitor operational performance.~~ **Phase 1 Complete. There was a mint issue that allowed 43 passes to be minted. We chose to honor them all. (Secondary Market:** [**https://www.jpg.store/collection/t1adamlaunchpass**](https://www.jpg.store/collection/t1adamlaunchpass)**)**
   * **T1 Benefits:**
@@ -138,13 +140,13 @@ The response returns a directional bias (Bullish / Bearish), confidence level, a
       * **+1 Additional Trading Agents**
 * **Phase 3** – Public launch with ~~20,000 $AGENT~~ 50 $USDM per month subscription for access to ADAM.
 
-These _ADAM Launch Passes_ act as a bridge between users having tiered access now versus waiting 30-60 days until our $AGENT Subscription service has been audited and launched on mainnet.\
+These _ADAM Launch Passes_ acted as a bridge for tiered early access during launch. Under ADAM v2 they are no longer required — see the update note above.\
 \
 These Launch Passes will be available starting with T1 on 7/3/2025 at [https://fluxpointstudios.com/adam](https://fluxpointstudios.com/adam)
 
-### $AGENT Subscription
+### Subscription (superseded by ADAM v2)
 
-Once launched, users pay ~~2**0,000 $AGENT**~~ 50 $USDM per month to Flux Point Studios _(**2%** of subscription fees go to the on-chain treasury for ecosystem growth)_ to activate **one trading agent bound to a single wallet**. Support for additional agents per user will be introduced in **November 2025**.
+~~Once launched, users pay 50 $USDM per month to Flux Point Studios to activate **one trading agent bound to a single wallet**.~~ **Superseded:** ADAM v2 has no subscription and no $AGENT-denominated pricing — usage is billed **per transaction only**. ($AGENT itself is consolidating into cMATRA via the [token merger](materios/cmatra-token-merger/README.md).)
 
 ***
 

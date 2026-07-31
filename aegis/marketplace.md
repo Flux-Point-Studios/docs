@@ -65,7 +65,7 @@ Indigo, Liqwid, Danogo, Surf, FluidTokens — protocols that embed Aegis into th
 protect users, and differentiate the product. Premiums can be subsidized from protocol treasuries.
 
 - **Pays in:** integration time; CIP-31 reference inputs in the CDP datum.
-- **Gets:** a lower bad-debt rate; revenue share on referred premiums.
+- **Gets:** a lower bad-debt rate; a referral fee on premiums it originates.
 - **Flows:** the Aegis policy NFT is cited in the CDP datum at open time · insolvency on covered
   positions falls during cascades · a share of premium on protocol-referred policies.
 - **Risks:** tight coupling (an Aegis pause cascades to integrator UX); a mis-calibrated subsidy

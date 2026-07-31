@@ -12,7 +12,17 @@ description: >-
 
 ### 1. What is changing?
 
-Seven legacy Cardano assets are being consolidated into cMATRA on Cardano, which is intended to converge into MATRA as the native capital token of the Materios network. Materios also uses MOTRA as a separate non-transferable capacity token for fees and sponsorship.
+Seven legacy Cardano assets are being consolidated into cMATRA on Cardano, which is intended to converge into MATRA — the native network token of the Materios blockchain. Materios also uses MOTRA as a separate non-transferable capacity token for fees and sponsorship.
+
+### 1a. What am I actually getting when I redeem?
+
+The network token of the Materios blockchain. Flux Point's early ecosystem spread utility across many assets — tokens and NFT collections, each with its own bolted-on perks. The merger replaces all of that with one asset whose utility **is the network itself**:
+
+* **Stake and delegate to earn more MATRA.** Delegate to Cardano SPOs participating in Materios cross-validation, or to Materios validators as mainnet staking rolls out, and earn block rewards — exactly the way ADA holders delegate to Cardano stake pools and earn ADA block rewards. See Q39–39b.
+* **Use the network.** Holding MATRA generates MOTRA, which pays transaction fees (Q6).
+* **Govern the network.** MATRA is the chain's stakeable governance asset as governance decentralizes.
+
+There is no revenue-sharing program, no dividend, and no Cardano-side staking scheme attached to cMATRA. The value proposition is owning and operating a piece of the chain.
 
 ### 2. Is this still a snapshot merger?
 
@@ -44,7 +54,7 @@ It just is **not** the ordinary fungible entitlement rule anymore.
 
 ### 5. What exactly is cMATRA?
 
-cMATRA is the Cardano-side transitional redemption asset. MATRA is the long-term native capital token on Materios. The goal is one economic supply story, not two unrelated supplies.
+cMATRA is the Cardano-side transitional redemption asset. MATRA is the long-term native network token of the Materios blockchain — used for staking, transfers, MOTRA generation, and governance. The goal is one economic supply story, not two unrelated supplies.
 
 ### 6. What is MOTRA?
 
@@ -202,7 +212,7 @@ AGENT is **not** 1:1 with cMATRA, and neither are the other legacy assets. The m
 
 Because this is not a simple 1:1 token rename. Seven separate assets — AGENT, SHARDS, and five NFT collections — are merging into a single token. The 722,500,000 public redemption pool is split across all of them weighted by market value.
 
-The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the combined ecosystem, not a per-unit supply match.
+The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the network token itself — stakeable, delegable, fee-generating, and governing the Materios blockchain (see Q1a) — not a per-unit supply match.
 
 ### 18. So what is the AGENT or SHARDS conversion rate?
 
@@ -362,7 +372,7 @@ No. The intended flow is Cardano-first. Users redeem into cMATRA on Cardano firs
 
 ### 38. Will cMATRA and MATRA be separate supplies?
 
-No. The intended model is one economic supply story. cMATRA is the transitional Cardano-side representation and MATRA is the Materios-native capital token.
+No. The intended model is one economic supply story. cMATRA is the transitional Cardano-side representation and MATRA is the native network token of the Materios blockchain.
 
 ***
 
@@ -387,6 +397,14 @@ Through cross-validation, Cardano stake pool operators participate in Materios c
 * **Distribution:** Periodic distribution to delegator wallets based on epoch snapshots.
 * **Impact on public pool:** None. Delegation rewards draw exclusively from the Validator Emissions sub-bucket, not the 722,500,000 public redemption pool. Public redemption rates are completely unaffected.
 * **ADA rewards:** Delegators continue to receive their normal ADA staking rewards. cMATRA delegation rewards are additional.
+
+### 39b. Is there a cMATRA staking program on Cardano? Is staking a revenue share?
+
+No, on both counts.
+
+* **There is no Cardano-side staking or revenue-share program for cMATRA.** The legacy AGENT/SHARDS staking program — including its revenue-based reward streams — concluded with the merger launch and is not being replaced with a cMATRA equivalent.
+* **Earning more MATRA means securing the network.** The paths to additional MATRA are delegation and validation: delegate ADA to SPOs participating in Materios cross-validation (Q39a), and stake or delegate MATRA to Materios validators as mainnet staking rolls out. Rewards come from the Validator and Attestor Emissions sub-buckets plus recycled transaction fees — protocol block rewards for validation work, in the same category as Cardano's ADA staking rewards.
+* **Nothing here is a revenue share.** Staking rewards are paid by the protocol for securing the chain. They are not interest, not dividends, and not a share of Flux Point Studios' (or anyone's) revenue or profits.
 
 ### 40. Can unused reserve sub-buckets be repurposed later?
 
@@ -481,5 +499,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 7.0 | **Date:** April 19, 2026 | **Status:** Public / governance draft\
+**Version:** 7.1 | **Date:** July 31, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec

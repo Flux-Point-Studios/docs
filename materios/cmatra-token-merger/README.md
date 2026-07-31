@@ -1,15 +1,29 @@
 ---
 description: >-
   Seven legacy Cardano assets are consolidating into cMATRA — the Cardano-side
-  capital token for Materios. This page covers the eligibility rules and
-  redemption model.
+  form of MATRA, the native network token of the Materios blockchain. This page
+  covers the eligibility rules and redemption model.
 ---
 
 # cMATRA Token Merger
 
-Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-side transitional token for [Materios](https://materios.fluxpointstudios.com). cMATRA is intended to converge into **MATRA** as the native capital token of the Materios network.
+Seven legacy Cardano assets are being consolidated into **cMATRA**, the Cardano-side transitional token for [Materios](https://materios.fluxpointstudios.com). cMATRA is intended to converge into **MATRA**, the native network token of the Materios blockchain.
 
 > **Before you redeem:** read the [Legal & Disclaimers](legal-and-disclaimers.md) and check the [Launch Readiness](launch-readiness.md) status board for the live launch date, audit posture, and support channel.
+
+***
+
+## What You Are Redeeming For
+
+When you surrender a legacy asset, you are trading it in for one thing: **the network token of the Materios blockchain**. MATRA is to Materios what ADA is to Cardano — the asset that secures the chain, meters its capacity, and carries its governance.
+
+* **Staking and delegation.** Holders can earn additional MATRA by delegating — to Cardano SPOs that participate in Materios cross-validation (Minotaur), and to Materios validators as mainnet staking rolls out — the same way ADA holders delegate to stake pools and earn block rewards. These rewards are **protocol block rewards paid by the network for securing it**, funded by the Validator and Attestor Emissions sub-buckets plus recycled transaction fees. They are not payments from Flux Point Studios and not a share of any company's revenue.
+* **Network capacity.** Holding MATRA generates [MOTRA](faq.md#6-what-is-motra), the non-transferable capacity token that pays transaction fees — so using the network never requires spending the network token itself.
+* **Governance.** MATRA is the transferable, stakeable governance asset of the Materios chain as its governance decentralizes.
+
+### Why one network token
+
+Flux Point's early ecosystem spread utility across seven separate assets — two fungible tokens and five NFT collections, each with its own bolted-on perks. That chapter is closed. The merger consolidates everything into a single asset with a single job: **MATRA is the utility token of the Materios blockchain, and its utility is the network itself.** There are no revenue-sharing programs, no app-by-app reward schemes, and no Cardano-side staking program for cMATRA. Hold it to use the chain, delegate it to help secure the chain and earn block rewards, and vote with it as governance opens up.
 
 ***
 
@@ -344,4 +358,4 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 4.0 | **Date:** April 19, 2026 | **Status:** Public / governance draft
+**Version:** 4.1 | **Date:** July 31, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)
