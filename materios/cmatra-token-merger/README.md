@@ -79,7 +79,7 @@ The merger uses a fixed supply model with a **Network Incentives Reserve** carve
 | Validator Emissions           | 115,000,000 |  11.5%  | Block-production rewards schedule; Cardano SPO cross-validation |
 | Attestor Emissions            |  65,000,000 |   6.5%  | Threshold-attestation rewards + bond/slash economics            |
 | Ecosystem Treasury            |  40,000,000 |   4.0%  | Grants, dev funding, governance-directed programs               |
-| Strategic Allocation          |  30,000,000 |   3.0%  | Strategic/institutional partners (12mo cliff + 36mo linear)     |
+| Strategic Allocation          |  30,000,000 |   3.0%  | Strategic/institutional partners (long-term on-chain vesting)   |
 | Liquidity (total)             |  27,500,000 |  2.75%  | Bridge peg reserve, Protocol-Owned Liquidity, maker rebates     |
 | **Total reserve**             | **277,500,000** | **27.75%** |                                                        |
 
@@ -102,11 +102,11 @@ A CLOB-primary launch is enabled by SaturnSwap's CIP-68 Liftoff integration, whi
 
 The 30M MATRA Strategic Allocation sub-bucket (3% of supply) is reserved for institutional partners who commit capital to the network ahead of the public launch.
 
-* **Vesting:** 12-month cliff followed by 36-month linear vesting. No pre-cliff liquidity.
+* **Vesting:** All strategic allocations are subject to long-term on-chain vesting, with no liquidity ahead of schedule.
 * **Purpose:** The strategic round is expected to fund Protocol-Owned Liquidity seeding, security audits, and runway for team expansion beyond the redemption window.
 * **Transparency:** All strategic allocations will be disclosed on-chain at mint time and the vesting contracts will be independently verifiable via the Materios explorer.
 
-This bucket is held by Materios until strategic partners are confirmed. None of these tokens enter circulation during the 12-month cliff regardless of partner timing.
+This bucket is held by Materios until strategic partners are confirmed. None of these tokens enter circulation ahead of their vesting schedule regardless of partner timing.
 
 ***
 

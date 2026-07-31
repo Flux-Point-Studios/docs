@@ -75,7 +75,7 @@ The five sub-buckets are:
 * **Validator Emissions — 115M (11.5%)** — block-production rewards; includes Cardano SPO cross-validation rewards.
 * **Attestor Emissions — 65M (6.5%)** — threshold-attestation rewards + bond/slash economics.
 * **Ecosystem Treasury — 40M (4%)** — grants, ecosystem dev funding, governance-directed programs.
-* **Strategic Allocation — 30M (3%)** — strategic/institutional partners, 12-month cliff + 36-month linear vesting.
+* **Strategic Allocation — 30M (3%)** — strategic/institutional partners, subject to long-term on-chain vesting.
 * **Liquidity — 27.5M (2.75%)** — 5M bridge peg reserve, 17.5M Protocol-Owned DEX Liquidity, 5M maker rebates on CLOB.
 
 ### 9. Why does Materios need a Network Incentives Reserve?
@@ -118,7 +118,7 @@ The Team takes exactly the same 15% cut (see Q12 below). No holder class is disa
 | Team carve total                  | ~31.3M cMATRA       | ~26.7M cMATRA                        |
 | Attestor Emissions sub-bucket     | not allocated       | 65M (resolves code↔docs inconsistency) |
 | Ecosystem Treasury sub-bucket     | not allocated       | 40M                                  |
-| Strategic Allocation sub-bucket   | not allocated       | 30M (12mo cliff + 36mo linear)       |
+| Strategic Allocation sub-bucket   | not allocated       | 30M (long-term vesting)              |
 | Liquidity sub-bucket              | not allocated       | 27.5M (POL + bridge + maker rebates) |
 
 The TWAP-derived **weights** between assets are unchanged — only the absolute cMATRA output is reduced proportionally.

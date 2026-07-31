@@ -78,7 +78,7 @@ Seven legacy Cardano assets (AGENT, SHARDS, and 5 NFT collections) will consolid
   - Validator Emissions — 115M (11.5%)
   - Attestor Emissions — 65M (6.5%)
   - Ecosystem Treasury — 40M (4%)
-  - Strategic Allocation — 30M (3%) — 12-month cliff + 36-month linear vesting
+  - Strategic Allocation — 30M (3%) — long-term on-chain vesting
   - Liquidity — 27.5M (2.75%) — POL, bridge peg reserve, CLOB maker rebates
 - 6-month public redemption window
 
@@ -103,7 +103,7 @@ Seed the cMATRA/ADA and cMATRA/USDM markets on **SaturnSwap CLOB** (primary) wit
 
 ### 5. Strategic Fundraise
 
-A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for institutional partners who commit capital ahead of public launch. Allocation terms include a 12-month cliff followed by 36-month linear vesting, with no pre-cliff liquidity. Proceeds are intended to fund Protocol-Owned Liquidity seeding, security audits, and post-window team runway. Partner identities and commitment amounts will be disclosed on-chain at mint time.
+A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for institutional partners who commit capital ahead of public launch. Allocations are subject to long-term on-chain vesting, with no liquidity ahead of schedule. Proceeds are intended to fund Protocol-Owned Liquidity seeding, security audits, and post-window team runway. Partner identities and commitment amounts will be disclosed on-chain at mint time.
 
 ***
 
