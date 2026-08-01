@@ -7,18 +7,26 @@ description: >-
 
 # Legal & Disclaimers
 
-This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. The counsel-approved disclosures rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and the FPS [Terms of Service](https://fluxpointstudios.com/tos) are the canonical form; if anything here conflicts with the portal disclosures or the ToS, the portal and the ToS control.
+This page sets the legal context for participating in the cMATRA Token Merger. Read it before you redeem. The redemption window closes on **November 28, 2026**. The counsel-approved disclosures rendered on the live [redemption portal](https://fluxpointstudios.com/matra-merger) and the FPS [Terms of Service](https://fluxpointstudios.com/tos) are the canonical form; if anything here conflicts with the portal disclosures or the ToS, the portal and the ToS control.
 
 ***
 
 ## Not Investment Advice
 
-cMATRA and MATRA are **utility tokens**.
+cMATRA and MATRA are **utility tokens**. MATRA is the native network token of the Materios blockchain; cMATRA is its Cardano-side transitional form. Their intended use is operating, securing, and governing the network — not investment.
 
 * Nothing on this page — or anywhere else in the cMATRA docs, the FPS Discord, the litepaper, or the rate table — constitutes investment advice, financial advice, legal advice, or tax advice.
 * Nothing here constitutes an offer to sell, or a solicitation of an offer to buy, a security in any jurisdiction.
 * No statement on this site should be read as a representation about future price, return, market cap, or liquidity. Markets are markets; we do not control them.
 * Materios and Flux Point Studios make no recommendation about whether any specific person should or should not redeem.
+
+### Staking rewards are network rewards, not revenue share
+
+Any MATRA a holder may earn through delegation or validation is a **protocol-level block reward** paid by the Materios network for validation work and delegated security — the same category as Cardano's ADA staking rewards. Such rewards:
+
+* are funded by the published Validator and Attestor Emissions sub-buckets — not by Flux Point Studios;
+* are **not** interest, dividends, revenue share, profit share, or any other claim on FPS or any affiliate;
+* are contingent on network operation, published schedules, and the holder's own participation — they are not guaranteed, and no revenue-sharing or profit-sharing program exists for cMATRA or MATRA. Any earlier description of Cardano-side staking programs with revenue-rewards streams refers to a **concluded legacy program** and does not apply to cMATRA or MATRA.
 
 If you are unsure whether the merger is appropriate for your circumstances, consult an independent professional advisor before participating.
 
@@ -126,5 +134,5 @@ If anything on this page conflicts with the final launch package, the final laun
 
 ***
 
-**Version:** 1.0 | **Launch:** May 28, 2026\
+**Version:** 1.1 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026 | **Last updated:** July 31, 2026\
 **Owner:** Flux Point Studios.

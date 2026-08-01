@@ -8,7 +8,7 @@ Materios provides **on-chain proof that a game score is real**. When a player fi
 
 This gives you tamper-proof, publicly auditable leaderboards with zero backend trust.
 
-> **Permissionless by default.** Submitting receipts to Materios does not require an API key — any sr25519 keypair can sign and submit. Games need MATRA tokens for TX fees (free from the faucet on testnet). Blob uploads also use sr25519 signature auth with no API key. The **Orynq managed service** (API key) is an optional offering for studios that want Flux Point Studios to manage the full pipeline on their behalf.
+> **Permissionless by default.** Submitting receipts to Materios does not require an API key — any sr25519 keypair can sign and submit. Games need MATRA, which generates the MOTRA capacity that pays TX fees (free from the faucet on testnet). Blob uploads also use sr25519 signature auth with no API key. The **Orynq managed service** (API key) is an optional offering for studios that want Flux Point Studios to manage the full pipeline on their behalf.
 
 ***
 

@@ -51,7 +51,7 @@ The rate table is locked for the full 6-month redemption window once published, 
 
 ## Where cMATRA Lands
 
-* **Cardano-native at launch.** cMATRA is minted on Cardano under the merger policy; you receive it in the same Cardano wallet that signed the surrender transaction.
+* **Cardano-native at launch.** cMATRA is minted on Cardano under the merger policy; you receive it in the same Cardano wallet that signed the surrender transaction. It is the Cardano-side form of MATRA, the network token of the Materios blockchain — see [What You Are Redeeming For](README.md#what-you-are-redeeming-for).
 * **Materios bridge is future work.** The bridge that moves cMATRA into MATRA on the Materios partner chain is not yet operational. See [FAQ Q37](faq.md#37-do-i-need-to-bridge-to-materios-immediately-after-redeeming) for the intended onboarding flow (Cardano-first, address association, bridge or lock into Materios later as the flow matures).
 
 ***

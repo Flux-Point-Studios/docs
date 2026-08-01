@@ -78,9 +78,9 @@ Seven legacy Cardano assets (AGENT, SHARDS, and 5 NFT collections) will consolid
   - Validator Emissions — 115M (11.5%)
   - Attestor Emissions — 65M (6.5%)
   - Ecosystem Treasury — 40M (4%)
-  - Strategic Allocation — 30M (3%) — 12-month cliff + 36-month linear vesting
+  - Strategic Allocation — 30M (3%) — long-term on-chain vesting
   - Liquidity — 27.5M (2.75%) — POL, bridge peg reserve, CLOB maker rebates
-- 6-month public redemption window
+- 6-month public redemption window (open May 28 – November 28, 2026)
 
 See the full merger specification: [cMATRA Token Merger](https://docs.fluxpointstudios.com/materios-partner-chain/cmatra-token-merger)
 
@@ -103,7 +103,7 @@ Seed the cMATRA/ADA and cMATRA/USDM markets on **SaturnSwap CLOB** (primary) wit
 
 ### 5. Strategic Fundraise
 
-A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for institutional partners who commit capital ahead of public launch. Allocation terms include a 12-month cliff followed by 36-month linear vesting, with no pre-cliff liquidity. Proceeds are intended to fund Protocol-Owned Liquidity seeding, security audits, and post-window team runway. Partner identities and commitment amounts will be disclosed on-chain at mint time.
+A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for institutional partners who commit capital ahead of public launch. Allocations are subject to long-term on-chain vesting, with no liquidity ahead of schedule. Proceeds are intended to fund Protocol-Owned Liquidity seeding, security audits, and post-window team runway. Partner identities and commitment amounts will be disclosed on-chain at mint time.
 
 ***
 
@@ -125,15 +125,15 @@ A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for instituti
 
 ## Timeline
 
-The mainnet transition depends primarily on the cMATRA token merger, which requires a 6-month public redemption window. The merger defines the initial MATRA distribution, which is a prerequisite for stake-weighted rewards and Cardano governance.
+The mainnet transition depends primarily on the cMATRA token merger, which requires a 6-month public redemption window (closes November 28, 2026). The merger defines the initial MATRA distribution, which is a prerequisite for stake-weighted rewards and Cardano governance.
 
 All infrastructure milestones (pipeline, anchoring, attestation, multisig governance, validator key rotation) are already complete. The remaining work is token economics and decentralization.
 
 ### Long-term sustainability
 
-The Network Incentives Reserve is sized as a **first-year runway** rather than a permanent ceiling. Once the network is live under fee load, **fee recycling** kicks in: every transaction's fee is split 40% to a block-author pot, 30% to the Attestor Emissions pot, 20% to the Ecosystem Treasury, and 10% burned. This means validator and attestor income has two compounding sources — the initial emissions schedule plus ongoing fee flow — and the reserves extend proportionally with network usage.
+Validator and attestor rewards are paid from the published **Network Incentives Reserve emission schedules** (115M Validator Emissions, 65M Attestor Emissions); the attestor pot (`mat/attr`) is the designated accrual account for attestor-side economics. Transaction fees themselves are paid in **MOTRA** — generated from MATRA holdings, decaying if unused, consumed when spent — so fee flow never burns, mints, or dilutes MATRA. Live pot balances, the v5.1 allocation table, and active vesting schedules are visible on the [Materios explorer's Tokenomics State panel](https://fluxpointstudios.com/materios/explorer#overview).
 
-At the 1,000-validator + 3,000-attestor target scale, the combined annual reward requirement is approximately 11M MATRA/year. The 180M combined Validator + Attestor Emissions sub-buckets provide ~16 years of runway at 0% fee coverage, ~58 years at 75% fee coverage, and become perpetual at 100% fee coverage. With the unredeemed cMATRA rollover pallet (6-month post-launch trigger), residual redemption-pool balances flow back into the reserve sub-buckets on a governance-directed split, making the reserve effectively perpetual at any realistic level of network activity.
+At the 1,000-validator + 3,000-attestor target scale, the combined annual reward requirement is approximately 11M MATRA/year. The 180M combined Validator + Attestor Emissions sub-buckets provide ~16 years of runway at that scale on emissions alone — MOTRA fees are burned when spent and never fund rewards. With the unredeemed cMATRA rollover pallet (6-month post-launch trigger), residual redemption-pool balances flow back into the reserve sub-buckets on a governance-directed split, making the reserve effectively perpetual at any realistic level of network activity.
 
 ***
 

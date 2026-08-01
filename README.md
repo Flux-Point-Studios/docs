@@ -4,11 +4,23 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 
 <table data-view="cards"><thead><tr><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody>
 <tr>
-<td><a href="proof-of-inference/">Proof-of-Inference</a><br>Verifiable AI on blockchain with cryptographic proofs and on-chain anchoring</td>
+<td><a href="aegis/">Aegis</a><br>Parametric on-chain insurance for Cardano — crash, depeg, and CDP-liquidation coverage</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
-<td><a href="proof-of-inference/orynq-sdk.md">Orynq SDK</a><br>Developer toolkit for anchoring AI process traces to Cardano</td>
+<td><a href="materios/">Materios Partner Chain</a><br>Substrate-based partner chain for certified data anchoring and AI verification, secured by MATRA — its native network token</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
+<tr>
+<td><a href="materios/cmatra-token-merger/README.md">cMATRA Token Merger</a><br>Trade 7 legacy assets for cMATRA — the Cardano-side form of the Materios network token</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
+<tr>
+<td><a href="saturnswap/">SaturnSwap</a><br>Cardano-native order-book DEX with cross-chain routing and an AI trading assistant</td>
+<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
+</tr>
+<tr>
+<td><a href="proof-of-inference/">Orynq — Verifiable AI</a><br>Cryptographic receipts for AI behavior, certified on Materios and anchored to Cardano</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
@@ -23,30 +35,17 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 <td><a href="cardano-ue-sdk.md">Cardano UE SDK</a><br>Unreal Engine integration for Cardano blockchain</td>
 <td><a href="https://bairesdev.mo.cloudinary.net/blog/2022/08/ue-logo-1400x788-1400x788-8f185e1e3635-1.jpg?tx=w_1920,q_auto">UE Logo</a></td>
 </tr>
-<tr>
-<td><a href="materios/cmatra-token-merger/README.md">cMATRA Token Merger</a><br>Surrender-and-redeem model for the 7-asset cMATRA transition</td>
-<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
-</tr>
-<tr>
-<td><a href="saturnswap/">SaturnSwap</a><br>Cardano-native order-book DEX with cross-chain routing and an AI trading assistant</td>
-<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
-</tr>
-<tr>
-<td><a href="aegis/">Aegis</a><br>Parametric on-chain insurance for Cardano — crash, depeg, and CDP-liquidation coverage</td>
-<td><a href=".gitbook/assets/logo.png">logo.png</a></td>
-</tr>
 </tbody></table>
 
 ## Quick Links
 
-- **[Proof-of-Inference Litepaper](proof-of-inference/litepaper.md)** - Technical specification for verifiable AI
-- **[Orynq SDK Documentation](proof-of-inference/orynq-sdk.md)** - Anchor AI traces to blockchain
-- **[Orynq Demo](https://fluxpointstudios.com/orynq)** - Try AI process trace anchoring on testnet
-- **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
-- **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Eligibility rules and FAQ for the 7-asset merger
-- **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
 - **[Aegis](aegis/)** - Parametric on-chain insurance (crash / depeg / CDP coverage), live at [aegis.fluxpointstudios.com](https://aegis.fluxpointstudios.com)
-- **[Flux Point Staking](flux-point-staking.md)** - Staking documentation
+- **[Materios Partner Chain](materios/README.md)** - The blockchain behind MATRA: consensus, nodes, SPO onboarding, roadmap
+- **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Surrender legacy assets for the Materios network token — window closes November 28, 2026
+- **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
+- **[Orynq](proof-of-inference/README.md)** - Verifiable AI: attested receipts anchored via Materios to Cardano
+- **[Orynq SDK](proof-of-inference/orynq-sdk.md)** - Anchor AI process traces
+- **[ADAM Litepaper](adam-litepaper.md)** - Decentralized asset management
 
 ## Community
 

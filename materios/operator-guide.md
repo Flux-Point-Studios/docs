@@ -95,8 +95,8 @@ New operators: **prefer the trustless SPO path.** It puts you in control of your
 
 | Pool | Reserve (mainnet design) | Per-event reward | Earners |
 |---|---|---|---|
-| Block production | 150M MATRA | Per-block credit, distributed at era end (~24 h) | Validators (SPO + permissioned) |
-| Attestation | 50M MATRA | 10 per certification per signer, instant | All signers (validators + attestors) |
+| Block production | 115M MATRA ([Validator Emissions](cmatra-token-merger/README.md#network-incentives-reserve-sub-buckets)) | Per-block credit, distributed at era end (~24 h) | Validators (SPO + permissioned) |
+| Attestation | 65M MATRA ([Attestor Emissions](cmatra-token-merger/README.md#network-incentives-reserve-sub-buckets)) | 10 per certification per signer, instant | All signers (validators + attestors) |
 
 On preprod the same pools mint tMATRA at the same rates. tMATRA is not exchangeable; preprod participation is for operational hardening and leaderboard credit ahead of mainnet.
 

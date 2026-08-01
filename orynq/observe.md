@@ -144,7 +144,7 @@ Receipts are queryable through three surfaces:
 | Network | Materios chain | Cardano L1 | Cost |
 |---|---|---|---|
 | `preprod` | Materios preprod (v6) | Cardano preprod testnet | Free — sponsored receipt submission, plus a Cardano testnet anchor fee covered by the gateway |
-| `mainnet` | Materios mainnet (post-cMATRA launch) | Cardano mainnet | Per-receipt fee in MATRA, paid via the SDK's auto-pay layer |
+| `mainnet` | Materios mainnet (post-cMATRA launch) | Cardano mainnet | Per-receipt fee paid in MOTRA (generated from MATRA holdings) via the SDK's auto-pay layer |
 
 The preprod path is free for researchers and evaluation orgs. A sponsored Bearer token is required for the gateway-hosted submission path; request one at [Discord](https://discord.gg/MfYUMnfrJM).
 

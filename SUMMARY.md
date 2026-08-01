@@ -1,34 +1,12 @@
 # Table of contents
 
 * [Flux Point Studios Docs](README.md)
-* [Flux Point Staking](flux-point-staking.md)
-
-## Proof-of-Inference
-
-* [Overview](proof-of-inference/README.md)
-* [Litepaper](proof-of-inference/litepaper.md)
-* [Orynq SDK](proof-of-inference/orynq-sdk.md)
-
-## Orynq
-
-* [Orynq Observe](orynq/observe.md)
-
-## Products
-
-* [ADAM Litepaper](adam-litepaper.md)
-* [T Backend Developer Guide](t-backend-developer-guide.md)
-* [Cardano UE SDK](cardano-ue-sdk.md)
 
 ## Aegis
 
 * [Overview](aegis/README.md)
 * [How Aegis Works On-Chain](aegis/architecture.md)
 * [The Seven-Sided Marketplace](aegis/marketplace.md)
-
-## SaturnSwap
-
-* [Overview](saturnswap/README.md)
-* [API Integration (Aggregators)](saturnswap/api-integration.md)
 
 ## Materios Partner Chain
 
@@ -47,6 +25,25 @@
 * [cMATRA Launch Readiness](materios/cmatra-token-merger/launch-readiness.md)
 * [cMATRA Legal & Disclaimers](materios/cmatra-token-merger/legal-and-disclaimers.md)
 
-## Governance
+## Orynq
 
-* [PoI Governance](poi-governance.md)
+* [Overview](proof-of-inference/README.md)
+* [Orynq SDK](proof-of-inference/orynq-sdk.md)
+* [Orynq Observe](orynq/observe.md)
+* [PoI Litepaper (Legacy)](proof-of-inference/litepaper.md)
+
+## SaturnSwap
+
+* [Overview](saturnswap/README.md)
+* [API Integration (Aggregators)](saturnswap/api-integration.md)
+
+## Products
+
+* [ADAM Litepaper](adam-litepaper.md)
+* [T Backend Developer Guide](t-backend-developer-guide.md)
+* [Cardano UE SDK](cardano-ue-sdk.md)
+
+## Legacy
+
+* [Flux Point Staking (Concluded)](flux-point-staking.md)
+* [PoI Governance (Retired)](poi-governance.md)

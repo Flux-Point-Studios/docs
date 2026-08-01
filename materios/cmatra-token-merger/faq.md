@@ -12,7 +12,17 @@ description: >-
 
 ### 1. What is changing?
 
-Seven legacy Cardano assets are being consolidated into cMATRA on Cardano, which is intended to converge into MATRA as the native capital token of the Materios network. Materios also uses MOTRA as a separate non-transferable capacity token for fees and sponsorship.
+Seven legacy Cardano assets are being consolidated into cMATRA on Cardano, which is intended to converge into MATRA — the native network token of the Materios blockchain. Materios also uses MOTRA as a separate non-transferable capacity token for fees and sponsorship.
+
+### 1a. What am I actually getting when I redeem?
+
+The network token of the Materios blockchain. Flux Point's early ecosystem spread utility across many assets — tokens and NFT collections, each with its own bolted-on perks. The merger replaces all of that with one asset whose utility **is the network itself**:
+
+* **Stake and delegate to earn more MATRA.** Delegate to Cardano SPOs participating in Materios cross-validation, or to Materios validators as mainnet staking rolls out, and earn block rewards — exactly the way ADA holders delegate to Cardano stake pools and earn ADA block rewards. See Q39–39b.
+* **Use the network.** Holding MATRA generates MOTRA, which pays transaction fees (Q6).
+* **Govern the network.** MATRA is the chain's stakeable governance asset as governance decentralizes.
+
+There is no revenue-sharing program, no dividend, and no Cardano-side staking scheme attached to cMATRA. The value proposition is owning and operating a piece of the chain.
 
 ### 2. Is this still a snapshot merger?
 
@@ -44,15 +54,17 @@ It just is **not** the ordinary fungible entitlement rule anymore.
 
 ### 5. What exactly is cMATRA?
 
-cMATRA is the Cardano-side transitional redemption asset. MATRA is the long-term native capital token on Materios. The goal is one economic supply story, not two unrelated supplies.
+cMATRA is the Cardano-side transitional redemption asset. MATRA is the long-term native network token of the Materios blockchain — used for staking, transfers, MOTRA generation, and governance. The goal is one economic supply story, not two unrelated supplies.
 
 ### 6. What is MOTRA?
 
-MOTRA is the network capacity token. It is non-transferable, generated from MATRA holdings, decays if unused, and is burned when used for fees. It exists so users do not have to sell MATRA just to use the network.
+MOTRA is the network capacity token. It is non-transferable, generated from MATRA holdings, decays if unused, and is burned when used for fees — the same holder-generates-capacity pattern as NIGHT generating DUST on the Midnight network. It exists so users do not have to sell MATRA just to use the network.
 
 ### 7. Is the supply fixed?
 
 Yes. The current design uses a fixed maximum supply of 1,000,000,000 MATRA/cMATRA with 6 decimals.
+
+**No MATRA is ever burned.** Transaction fees are paid in MOTRA (which is consumed on use), so fee flow neither reduces nor inflates the MATRA supply — 1B is both the ceiling and the floor.
 
 ### 8. How is the supply split at genesis?
 
@@ -63,20 +75,20 @@ The five sub-buckets are:
 * **Validator Emissions — 115M (11.5%)** — block-production rewards; includes Cardano SPO cross-validation rewards.
 * **Attestor Emissions — 65M (6.5%)** — threshold-attestation rewards + bond/slash economics.
 * **Ecosystem Treasury — 40M (4%)** — grants, ecosystem dev funding, governance-directed programs.
-* **Strategic Allocation — 30M (3%)** — strategic/institutional partners, 12-month cliff + 36-month linear vesting.
+* **Strategic Allocation — 30M (3%)** — strategic/institutional partners, subject to long-term on-chain vesting.
 * **Liquidity — 27.5M (2.75%)** — 5M bridge peg reserve, 17.5M Protocol-Owned DEX Liquidity, 5M maker rebates on CLOB.
 
 ### 9. Why does Materios need a Network Incentives Reserve?
 
 Because network security, launch liquidity, and ecosystem growth all have to be funded honestly. MOTRA fees are burned and are not designed to pay validators. The Network Incentives Reserve handles all five obligations in transparent sub-buckets rather than surprise inflation later:
 
-1. **Validator rewards** come from the 115M Validator Emissions sub-bucket (supplemented by 40% of transaction fees routed to the block-author pot).
-2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket (supplemented by 30% of transaction fees).
+1. **Validator rewards** come from the 115M Validator Emissions sub-bucket, paid across the published emission schedule.
+2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket; the attestor pot (`mat/attr`) is the designated on-chain accrual account for attestor-side economics.
 3. **Ecosystem growth** — grants and game integrations — comes from the 40M Ecosystem Treasury.
 4. **Strategic capital** — the 30M Strategic Allocation funds POL seeding, security audits, and team runway beyond the redemption window, under strict vesting.
 5. **Launch liquidity** — the 27.5M Liquidity sub-bucket seeds the CLOB and AMM pairs, funds maker rebates, and holds the bridge peg reserve.
 
-Once the network is running under fee load, ongoing transaction fees recycle back into these reserves (40% author / 30% attestor / 20% treasury / 10% burn), so the reserves are designed as a first-year runway rather than a permanent ceiling.
+Transaction fees are paid in MOTRA and consumed on use — **no MATRA is ever burned**, and fee flow does not mint new MATRA. Live pot balances and vesting schedules are visible on the [Materios explorer's Tokenomics State panel](https://fluxpointstudios.com/materios/explorer#overview).
 
 ***
 
@@ -106,7 +118,7 @@ The Team takes exactly the same 15% cut (see Q12 below). No holder class is disa
 | Team carve total                  | ~31.3M cMATRA       | ~26.7M cMATRA                        |
 | Attestor Emissions sub-bucket     | not allocated       | 65M (resolves code↔docs inconsistency) |
 | Ecosystem Treasury sub-bucket     | not allocated       | 40M                                  |
-| Strategic Allocation sub-bucket   | not allocated       | 30M (12mo cliff + 36mo linear)       |
+| Strategic Allocation sub-bucket   | not allocated       | 30M (long-term vesting)              |
 | Liquidity sub-bucket              | not allocated       | 27.5M (POL + bridge + maker rebates) |
 
 The TWAP-derived **weights** between assets are unchanged — only the absolute cMATRA output is reduced proportionally.
@@ -202,7 +214,7 @@ AGENT is **not** 1:1 with cMATRA, and neither are the other legacy assets. The m
 
 Because this is not a simple 1:1 token rename. Seven separate assets — AGENT, SHARDS, and five NFT collections — are merging into a single token. The 722,500,000 public redemption pool is split across all of them weighted by market value.
 
-The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the combined ecosystem, not a per-unit supply match.
+The result is a single token with more holders, better decentralization, and consolidated liquidity instead of seven fragmented assets. The value story is the network token itself — stakeable, delegable, fee-generating, and governing the Materios blockchain (see Q1a) — not a per-unit supply match.
 
 ### 18. So what is the AGENT or SHARDS conversion rate?
 
@@ -362,7 +374,7 @@ No. The intended flow is Cardano-first. Users redeem into cMATRA on Cardano firs
 
 ### 38. Will cMATRA and MATRA be separate supplies?
 
-No. The intended model is one economic supply story. cMATRA is the transitional Cardano-side representation and MATRA is the Materios-native capital token.
+No. The intended model is one economic supply story. cMATRA is the transitional Cardano-side representation and MATRA is the native network token of the Materios blockchain.
 
 ***
 
@@ -370,11 +382,11 @@ No. The intended model is one economic supply story. cMATRA is the transitional 
 
 ### 39. How are validators expected to be rewarded?
 
-From the **Validator Emissions sub-bucket (115M MATRA, 11.5% of supply)** within the Network Incentives Reserve, not from burned MOTRA fees. In addition, 40% of transaction fees route to a block-author pot during normal operation, so validator income has two sources: the initial emissions schedule plus ongoing fee recycling.
+From the **Validator Emissions sub-bucket (115M MATRA, 11.5% of supply)** within the Network Incentives Reserve, not from MOTRA fees (which are consumed on use, not paid to anyone). Validator income follows the published emission schedule.
 
 This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation and receive cMATRA rewards from the Validator Emissions sub-bucket in proportion to their stake.
 
-Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)**, which also receives 30% of transaction fees under the fee-recycling policy. Ecosystem-side activity (grants, integrations, governance-directed programs) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**, which additionally receives 20% of transaction fees; the remaining 10% of each fee is burned.
+Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)** — per-signer rewards paid on availability certification, with the `mat/attr` pot as the designated accrual account for attestor-side economics. Ecosystem-side activity (grants, integrations, governance-directed programs) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**. Transaction fees themselves are paid in MOTRA and consumed on use — no MATRA is burned.
 
 ### 39a. How do Cardano SPO delegators earn MATRA?
 
@@ -387,6 +399,14 @@ Through cross-validation, Cardano stake pool operators participate in Materios c
 * **Distribution:** Periodic distribution to delegator wallets based on epoch snapshots.
 * **Impact on public pool:** None. Delegation rewards draw exclusively from the Validator Emissions sub-bucket, not the 722,500,000 public redemption pool. Public redemption rates are completely unaffected.
 * **ADA rewards:** Delegators continue to receive their normal ADA staking rewards. cMATRA delegation rewards are additional.
+
+### 39b. Is there a cMATRA staking program on Cardano? Is staking a revenue share?
+
+No, on both counts.
+
+* **There is no Cardano-side staking or revenue-share program for cMATRA.** The legacy AGENT/SHARDS staking program — including its revenue-rewards streams — concluded with the merger launch and is not being replaced with a cMATRA equivalent.
+* **Earning more MATRA means securing the network.** The paths to additional MATRA are delegation and validation: delegate ADA to SPOs participating in Materios cross-validation (Q39a), and stake or delegate MATRA to Materios validators as mainnet staking rolls out. Rewards come from the published Validator and Attestor Emissions schedules — protocol block rewards for validation work, in the same category as Cardano's ADA staking rewards.
+* **Nothing here is a revenue share.** Staking rewards are paid by the protocol for securing the chain. They are not interest, not dividends, and not a share of Flux Point Studios' (or anyone's) revenue or profits.
 
 ### 40. Can unused reserve sub-buckets be repurposed later?
 
@@ -481,5 +501,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 7.0 | **Date:** April 19, 2026 | **Status:** Public / governance draft\
+**Version:** 7.1 | **Date:** July 31, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
