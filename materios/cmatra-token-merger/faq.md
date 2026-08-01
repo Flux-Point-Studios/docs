@@ -83,7 +83,7 @@ The five sub-buckets are:
 Because network security, launch liquidity, and ecosystem growth all have to be funded honestly. MOTRA fees are burned and are not designed to pay validators. The Network Incentives Reserve handles all five obligations in transparent sub-buckets rather than surprise inflation later:
 
 1. **Validator rewards** come from the 115M Validator Emissions sub-bucket, paid across the published emission schedule.
-2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket; the attestor pot (`mat/attr`) also holds fee-router and slashing accruals.
+2. **Attestor rewards** come from the 65M Attestor Emissions sub-bucket; the attestor pot (`mat/attr`) is the designated on-chain accrual account for attestor-side economics.
 3. **Ecosystem growth** — grants and game integrations — comes from the 40M Ecosystem Treasury.
 4. **Strategic capital** — the 30M Strategic Allocation funds POL seeding, security audits, and team runway beyond the redemption window, under strict vesting.
 5. **Launch liquidity** — the 27.5M Liquidity sub-bucket seeds the CLOB and AMM pairs, funds maker rebates, and holds the bridge peg reserve.
@@ -386,7 +386,7 @@ From the **Validator Emissions sub-bucket (115M MATRA, 11.5% of supply)** within
 
 This includes **Cardano SPO delegation rewards**. Materios is integrating the IOG partner-chains cross-validation framework (Minotaur), which allows Cardano stake pool operators to participate in Materios consensus. Delegators to participating SPOs contribute to Materios security through cross-chain validation and receive cMATRA rewards from the Validator Emissions sub-bucket in proportion to their stake.
 
-Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)** — per-signer rewards paid on availability certification, with the `mat/attr` pot also holding fee-router and slashing accruals. Ecosystem-side activity (grants, integrations, governance-directed programs) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**. Transaction fees themselves are paid in MOTRA and consumed on use — no MATRA is burned.
+Attestors are rewarded separately from the **Attestor Emissions sub-bucket (65M MATRA, 6.5%)** — per-signer rewards paid on availability certification, with the `mat/attr` pot as the designated accrual account for attestor-side economics. Ecosystem-side activity (grants, integrations, governance-directed programs) is funded by the **Ecosystem Treasury sub-bucket (40M MATRA, 4%)**. Transaction fees themselves are paid in MOTRA and consumed on use — no MATRA is burned.
 
 ### 39a. How do Cardano SPO delegators earn MATRA?
 
