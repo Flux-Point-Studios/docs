@@ -70,9 +70,11 @@ Materios Chain          Cardano L1
 
 > **🧪 Preprod is a public testnet, not mainnet.** Native token on this network is **tMATRA** — testnet tokens with no economic value. Operating a node here is for testing, demonstrating uptime, and previewing mainnet workflows; it is not a revenue stream. Mainnet (with real MATRA + economic rewards) launches per the [Mainnet Roadmap](mainnet-roadmap.md).
 
-- **Chain**: `materios_preprod_v5`
-- **Runtime version**: spec 201 (IOG partner-chains pallets for Minotaur cross-validation; v5 decimal split — MATRA 6-dec, MOTRA 15-dec)
-- **Validators**: 4 permissioned (Gemtek + 2 GMKtec + MacBook) + open SPO-registered seats (D = (3,2))
+- **Chain**: `materios_preprod_v6` (`system_chain` reports `Materios Preprod v6`)
+- **Runtime version**: spec **235**, transaction version **4**
+- **Token decimals**: MATRA 6, MOTRA 15
+- **Validators**: 5-seat committee — 4 FPS permissioned cores + 1 SPO-registered seat
+- **D-parameter**: `(15, 1)` — 15 permissioned seats, 1 registered seat
 - **Block time**: 6 seconds
 - **Finality**: GRANDPA (working)
 - **Governance**: 2-of-3 multisig sudo (transferred from //Alice)
@@ -80,8 +82,13 @@ Materios Chain          Cardano L1
 - **RPC**: `wss://materios.fluxpointstudios.com/preprod-rpc`
 - **Gateway**: `https://materios.fluxpointstudios.com/preprod-blobs`
 - **Explorer**: [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer)
-- **Genesis hash**: `0xbc0531cb311281565036fb397a376f0e0fa37005589655f97a7924b2729a164c`
-- **WASM overrides**: Required. Ships IOG IDP-None fallback + Ariadne output dedup. Download from [`/releases/`](https://materios.fluxpointstudios.com/releases/).
+- **Genesis hash**: `0x0e46e33f639a56cc8780fd871d9a15e16d99af248526f907cb560cb40849f7bf`
+- **Node bootstrap**: restore the current-room snapshot, not a from-genesis replay — see [Current-snapshot bootstrap](current-snapshot-bootstrap.md).
+
+> **Integrating a wallet or SDK?** Materios has two deviations from a stock Substrate
+> chain that will break a naive integration: a non-standard fee extension and an SS58
+> prefix mismatch. Both are documented in [Wallet & SDK Integration](wallet-integration.md).
+> Read that page before writing signing code.
 - **Attestor install (permissionless)**: `curl -sSL https://raw.githubusercontent.com/Flux-Point-Studios/materios-operator-kit/main/install.sh | bash -s -- --mode attestor`
 - **SPO Validator install**: see [SPO Onboarding](spo-onboarding.md).
 

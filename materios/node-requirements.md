@@ -6,7 +6,7 @@ description: Hardware, software, keys, and infrastructure needed to run a Materi
 
 > **🧪 Preprod is a public testnet, not mainnet.** Rewards on this network are paid in **tMATRA** — testnet tokens with no economic value. Running a preprod node is for testing the operator workflow and demonstrating uptime; it is not a revenue stream. Mainnet (with real MATRA + economic rewards) has not launched yet — see [Mainnet Roadmap](mainnet-roadmap.md).
 
-Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current preprod D-parameter is `(8, 0)` — 8 permissioned seats, 0 SPO seats — until enough external SPOs register and the parameter is bumped. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
+Materios is a Cardano Partner Chain. Committee selection uses Ariadne with two tracks: a **permissioned-candidate allowlist** managed via partner-chains governance, and an **SPO-registered pool** weighted by preprod-ADA delegation. The current preprod D-parameter is `(15, 1)` — 15 permissioned seats, 1 SPO-registered seat. The registered seat is filled; the parameter is raised as more external SPOs register. **You can run a validator without being a Cardano SPO** by joining the permissioned-candidate list (see below).
 
 There are four roles:
 
@@ -32,7 +32,7 @@ See the [Operator Guide](operator-guide.md) for end-to-end setup flows.
 | Session length | 60 blocks (~6 minutes) |
 | Cardano L1 | Preprod testnet |
 | Main-chain epoch length | 5 days |
-| D-parameter | `(8, 0)` — 8 permissioned seats, 0 SPO seats (preprod). Will move to a mixed (P, R) split once external SPOs are registered. |
+| D-parameter | `(15, 1)` — 15 permissioned seats, 1 SPO-registered seat (preprod). The registered bucket grows as external SPOs register. |
 | Public RPC (WSS) | `wss://materios.fluxpointstudios.com/preprod-rpc` |
 | Explorer | [fluxpointstudios.com/materios/explorer](https://fluxpointstudios.com/materios/explorer) |
 

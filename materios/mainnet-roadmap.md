@@ -4,18 +4,18 @@ description: Materios mainnet readiness tracker — current status and remaining
 
 # Mainnet Roadmap
 
-Materios is currently running as a **preprod network** (`materios_preprod_v5`, runtime spec 201) with live data, real game integrations, and mainnet Cardano anchoring. This page tracks what's done and what remains before the network is designated as mainnet.
+Materios is currently running as a **preprod network** (`materios_preprod_v6`, runtime spec 235) with live data, real game integrations, and mainnet Cardano anchoring. This page tracks what's done and what remains before the network is designated as mainnet.
 
 ***
 
 ## Current Status: Preprod Network
 
-The Materios preprod network (`materios_preprod_v5`) is fully operational with real workloads:
+The Materios preprod network (`materios_preprod_v6`) is fully operational with real workloads:
 
 - **Live game integration** — Clay Monster Dash submits certified receipts through the full pipeline
 - **Cardano mainnet anchoring** — Checkpoint transactions are submitted to Cardano L1 with label `8746` ([view format](cardano-anchoring.md))
 - **Permissionless attestation** — External operators join the attestation committee with a single command ([operator guide](operator-guide.md))
-- **Permissionless SPO validators** — Cardano preprod SPOs can register via `smart-contracts register` and compete for the 2 open committee seats (D = (3,2)); see [SPO Onboarding](spo-onboarding.md)
+- **Permissionless SPO validators** — Cardano preprod SPOs can register via `smart-contracts register` and compete for the open registered committee seat (D = `(15, 1)`); see [SPO Onboarding](spo-onboarding.md)
 - **~12-second certification** — Receipts go from submitted to certified in approximately 12 seconds
 - **Runtime overrides** — IOG IDP-None fallback + Ariadne output dedup ship as `--wasm-runtime-overrides`; upstream fixes pending
 - **GRANDPA finality** — Working with 4 permissioned validators (Gemtek, 2× GMKtec Ultra 6, MacBook Pro M1 native arm64)
@@ -52,7 +52,7 @@ The preprod network uses the same codebase, pallets, and protocols that will run
 |-----------|--------|---------|
 | Multisig governance | Done | Runtime v114 — `pallet-multisig` + `pallet-utility`. Sudo requires 2-of-3 approval. |
 | MOTRA projected balance | Done | Runtime v115 — `motra_getBalance` RPC returns projected balance for fresh accounts immediately. |
-| Preprod chain launch | Done | Runtime spec 201 — clean genesis (`materios_preprod_v5`), 4 validators, GRANDPA finality working. Ships local runtime overrides for IDP-None + Ariadne dedup until upstream fixes merge. |
+| Preprod chain launch | Done | Runtime spec 235 — clean genesis (`materios_preprod_v6`), 5-seat committee, GRANDPA finality working. Operators bootstrap from the current-room snapshot. |
 | Validator key rotation | Done | Production keypairs (mnemonic-derived, April 12 2026). External validators joining. |
 | Cardano governance contracts | Planned | On-chain voting by MATRA/cMATRA holders via Cardano smart contracts |
 
@@ -111,11 +111,11 @@ A **Strategic Allocation** of 30M MATRA (3% of supply) is reserved for instituti
 
 | Parameter | Current (preprod) | Mainnet target |
 |-----------|------------------|----------------|
-| Runtime version | spec 201 (IOG partner-chains / Minotaur; v5 decimal split) | TBD |
-| Chain ID | `materios_preprod_v5` | `materios` |
+| Runtime version | spec 235, tx version 4 (MATRA 6-dec, MOTRA 15-dec) | TBD |
+| Chain ID | `materios_preprod_v6` | `materios` |
 | Block time | 6 seconds | 6 seconds |
 | Finality | GRANDPA BFT | GRANDPA BFT |
-| Validators | 4 permissioned + open SPO-registered (D = (3,2)) | 7–15+ |
+| Validators | 4 permissioned cores + 1 SPO-registered (D = `(15, 1)`) | 7–15+ |
 | Attestation threshold | 2-of-N | 2-of-N (scales with committee) |
 | Cardano anchoring | Mainnet, label `8746` | Same |
 | Governance | 2-of-3 multisig | Cardano governance contracts |
