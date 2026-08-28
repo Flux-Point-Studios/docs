@@ -35,7 +35,7 @@ These values are stable for the lifetime of the v6 preprod chain. Hard-code them
 | Governance authority hash | `0x680a93dd4deb4873fc0aa31678eb02c57258717953ffc9a654b0af78` (single key, threshold 1) |
 | CommitteeCandidate validator | `addr_test1wrld9uhaepas48twjy3qevncsyrhjdqnkz2wzu4yzjc2qhq24f4v4` |
 | PermissionedCandidates validator | `addr_test1wzyzwx0kcdgs2hc8t5w0d3g4l7s2qhvv2qcyws0m8sypwxgghu099` |
-| D-parameter | `(5, 2)` — 5 permissioned + 2 registered |
+| D-parameter | `(15, 1)` — 15 permissioned + 1 registered |
 | Chain spec | `https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json` |
 | Latest data snapshot | `https://materios.fluxpointstudios.com/operator-snapshots/preprod/latest.json` |
 | Public bootnode | `/dns4/bootnode.materios.fluxpointstudios.com/tcp/30333/p2p/12D3KooWPueKoxRAirTTKH4Y2qQAsJDegWMjS4k89Z7izCbZKgkM` |
@@ -327,7 +327,7 @@ Your `sidechain_pub_key` appears in `registered_candidates` once you're eligible
 
 ## 10. Verify selection
 
-At the next Materios `mc_epoch` boundary after your snapshot becomes `set`, Ariadne runs a fresh committee draw. With the current D-parameter `(5, 2)` you compete with other SPOs for 2 registered seats; probability is proportional to your active delegated stake.
+At the next Materios `mc_epoch` boundary after your snapshot becomes `set`, Ariadne runs a fresh committee draw. With the current D-parameter `(15, 1)` you compete with other SPOs for 1 registered seat; probability is proportional to your active delegated stake.
 
 Watch the [explorer Committee tab](https://fluxpointstudios.com/materios/explorer) — your SS58 (derived from your sidechain pubkey) shows up when selected.
 
@@ -412,7 +412,7 @@ If selected but offline, the slots you would have minted go unclaimed and your G
 | `registration-signatures` errors on `mainchain-signing-key` | Didn't strip the `5820` CBOR prefix from cold.skey | `jq -r '.cborHex' cold.skey \| sed 's/^5820//'` |
 | `smart-contracts register` fails with `UTxO already spent` | Your `$REGISTRATION_UTXO` was consumed between prep + submit | Pick a fresh UTXO; re-sign (same sidechain / SPO keys are fine) |
 | `registration-status` says "not registered" 10 min after submit | Cardano hasn't included your tx yet | Wait 2 Cardano blocks; check the txhash on [preprod.cexplorer.io](https://preprod.cexplorer.io/) |
-| In `registered_candidates` but never selected | Stake too low vs other pools, or D-parameter `R=0` | Grow your pool's stake or wait for variance; D-parameter is `(5, 2)` today |
+| In `registered_candidates` but never selected | Stake too low vs other pools, or the registered bucket is already filled | Grow your pool's stake or wait for variance; D-parameter is `(15, 1)` today |
 | Validator at peers=0 on a real Linux host | Inbound TCP 30333 unreachable | Open 30333/tcp on your firewall + cloud security group; confirm with `nc -zv <your-public-ip> 30333` from another network |
 | Finality gap > 10 in explorer authority-lag panel | Committee under-quorum or your node behind | Compare your `chain_getFinalizedHead` to the explorer's — if you're the lagger, restart; if the chain is the lagger, check Discord for an active incident |
 

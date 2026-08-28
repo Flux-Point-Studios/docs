@@ -11,6 +11,7 @@
 ## Materios Partner Chain
 
 * [Overview](materios/README.md)
+* [Wallet & SDK Integration](materios/wallet-integration.md)
 * [Mainnet Roadmap](materios/mainnet-roadmap.md)
 * [Cardano L1 Anchoring](materios/cardano-anchoring.md)
 * [Intent Settlement](materios/intent-settlement.md)
