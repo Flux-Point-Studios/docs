@@ -44,6 +44,7 @@ Convenience env vars (used throughout):
 
 ```bash
 export GENESIS_UTXO="13313ea0119e0c4330f64f1809159064a371a1bbf2050b1fe13d5492280dca50#0"
+export CANDIDATES_ADDR="addr_test1wrld9uhaepas48twjy3qevncsyrhjdqnkz2wzu4yzjc2qhq24f4v4"
 export OGMIOS_URL="ws://127.0.0.1:1337"
 export PAYMENT_SKEY=/path/to/your/pool/payment.skey
 export COLD_SKEY=/path/to/your/pool/cold.skey
@@ -202,19 +203,59 @@ partner-chains-node smart-contracts register \
 
 Successful output ends with `Transaction submitted. ID: <txhash>`. Record the txhash; you'll confirm it on Cardano next.
 
-Verify the tx made it on-chain:
+### Verify the registration landed
+
+Registration is **immediate on Cardano L1**. The moment your tx is in a block you are registered — there is no pending state, and nothing on the Materios side has to accept it. The ~2-epoch wait everyone hears about is Ariadne **seating** ([step 9](#9-wait-for-the-stake-snapshot)), which is a separate thing that happens after you're already registered.
+
+Your registration is a UTxO at the CommitteeCandidate validator (`$CANDIDATES_ADDR`, from [Chain parameters](#chain-parameters)) whose inline datum embeds your `spo_public_key`. Any one of the three checks below proves it.
+
+> **Don't use `partner-chains-node registration-status` or `ariadne-parameters`.** Both call the runtime API `CandidateValidationApi_validate_registered_candidate_data`, which the genesis runtime shipped inside `chain-spec-v6-raw.json` does not export, so they fail for every operator with `Exported method CandidateValidationApi_validate_registered_candidate_data is not found`. Your registration and your odds of selection are unaffected — the node validates candidates over a separate internal path. Use a check below instead.
+
+**A — your own db-sync** (you already run one, [step 1](#1-provision-postgres-for-cardano-db-sync)):
+
+```bash
+SPO_PUB_HEX=$(jq -r '.spo_public_key' phase-a.json | sed 's/^0x//')
+
+psql "$DB_SYNC_CONNECTION_STRING" -X -v ON_ERROR_STOP=1 \
+  -v addr="$CANDIDATES_ADDR" -v spo="$SPO_PUB_HEX" <<'SQL'
+SELECT encode(tx.hash, 'hex') || '#' || txo.index AS registration_utxo,
+       NOT EXISTS (SELECT 1 FROM tx_in ti
+                    WHERE ti.tx_out_id    = txo.tx_id
+                      AND ti.tx_out_index = txo.index) AS unspent
+  FROM tx_out txo
+  JOIN tx      ON tx.id = txo.tx_id
+  JOIN datum d ON d.id  = txo.inline_datum_id
+ WHERE txo.address = :'addr'
+   AND encode(d.bytes, 'hex') LIKE '%' || :'spo' || '%';
+SQL
+```
+
+One row with `unspent = t` is the answer you want: registered, current. Zero rows means the tx is not on Cardano — look up your txhash on [preprod.cexplorer.io](https://preprod.cexplorer.io/). `unspent = f` means that registration was later replaced or deregistered.
+
+**B — Koios**, if you use a managed Cardano provider and have no local db-sync:
+
+```bash
+curl -s -X POST https://preprod.koios.rest/api/v1/address_utxos \
+  -H 'content-type: application/json' \
+  -d "{\"_addresses\":[\"$CANDIDATES_ADDR\"],\"_extended\":true}" \
+| jq -r --arg k "$(jq -r '.spo_public_key' phase-a.json | sed 's/^0x//')" \
+     '.[] | select(.inline_datum.bytes | contains($k)) | "\(.tx_hash)#\(.tx_index)  spent=\(.is_spent)"'
+```
+
+**C — the explorer**, no tooling at all. Open
+
+```
+https://materios.fluxpointstudios.com/materios/explorer/spo-journey/<SIDECHAIN_PUB>
+```
+
+with your `0x`-prefixed sidechain pubkey from [step 3](#3-generate-materios-validator-keys). It runs check A server-side and renders the whole path — registered → selected → authoring → liveness → finality — so it also answers steps 9 and 10.
+
+Download the chain spec now; step 8 needs it in place:
 
 ```bash
 curl -fsSL https://materios.fluxpointstudios.com/releases/chain-spec-v6-raw.json \
   -o ~/chain-spec-v6-raw.json
-
-partner-chains-node registration-status \
-  --chain ~/chain-spec-v6-raw.json \
-  --mainchain-pub-key "$SPO_PUB" \
-  --mainchain-epoch <current-preprod-epoch>
 ```
-
-The current preprod epoch is on the front page of [preprod.cexplorer.io](https://preprod.cexplorer.io/). The chain spec stays in place for step 8.
 
 ## 7. Restore the latest data snapshot
 
@@ -315,15 +356,11 @@ Ariadne reads the **2-epoch-stable** Cardano stake snapshot. Your registration b
 | E+1 | Stake snapshot captured (`mark`). |
 | E+2 | Snapshot becomes `set` → Ariadne considers you from this epoch onward. |
 
-Watch the queue:
+There is nothing to submit and nothing to retry during this window. Your registration is already final on L1 — re-run [the verify check](#verify-the-registration-landed) any time to confirm it's still there and unspent. All that changes at E+2 is that Ariadne starts counting you.
 
-```bash
-partner-chains-node ariadne-parameters \
-  --chain ~/materios-preprod/chain-spec-v6-raw.json \
-  --mainchain-epoch <E+2>
-```
+To watch the transition, open your [SPO journey page](#verify-the-registration-landed) (check C) and wait for the **selected** milestone to light up.
 
-Your `sidechain_pub_key` appears in `registered_candidates` once you're eligible.
+`ariadne-parameters` fails the same way `registration-status` does — same missing runtime API, see the note in [step 6](#verify-the-registration-landed).
 
 ## 10. Verify selection
 
@@ -331,12 +368,17 @@ At the next Materios `mc_epoch` boundary after your snapshot becomes `set`, Aria
 
 Watch the [explorer Committee tab](https://fluxpointstudios.com/materios/explorer) — your SS58 (derived from your sidechain pubkey) shows up when selected.
 
-Or query directly:
+Or query directly. The call returns the committee SCALE-encoded, so match your own sidechain pubkey against it:
 
 ```bash
-curl -s -H 'Content-Type: application/json' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"state_call","params":["SessionCommitteeManagementApi_get_current_committee","0x"]}' \
-  https://materios.fluxpointstudios.com/preprod-rpc | jq .
+COMMITTEE=$(curl -s -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"state_call","params":["SessionValidatorManagementApi_get_current_committee","0x"]}' \
+  https://materios.fluxpointstudios.com/preprod-rpc | jq -r .result)
+
+case "$COMMITTEE" in
+  *"${SIDECHAIN_PUB#0x}"*) echo "SEATED — you are in the current committee" ;;
+  *)                       echo "not seated yet" ;;
+esac
 ```
 
 Once you're in `currentCommittee`, Aura assigns slots automatically. Your validator starts producing blocks ~6s per assigned slot; rewards accrue per block + per attestation.
@@ -411,8 +453,10 @@ If selected but offline, the slots you would have minted go unclaimed and your G
 | `sqlx::query: slow statement ... elapsed=2.5s` in node logs + repeated peer drops | Postgres missing `idx_ma_tx_out_ident` or untuned | Re-run [step 1](#1-provision-postgres-for-cardano-db-sync) |
 | `registration-signatures` errors on `mainchain-signing-key` | Didn't strip the `5820` CBOR prefix from cold.skey | `jq -r '.cborHex' cold.skey \| sed 's/^5820//'` |
 | `smart-contracts register` fails with `UTxO already spent` | Your `$REGISTRATION_UTXO` was consumed between prep + submit | Pick a fresh UTXO; re-sign (same sidechain / SPO keys are fine) |
-| `registration-status` says "not registered" 10 min after submit | Cardano hasn't included your tx yet | Wait 2 Cardano blocks; check the txhash on [preprod.cexplorer.io](https://preprod.cexplorer.io/) |
-| In `registered_candidates` but never selected | Stake too low vs other pools, or the registered bucket is already filled | Grow your pool's stake or wait for variance; D-parameter is `(15, 1)` today |
+| `registration-status` or `ariadne-parameters` errors with `Exported method CandidateValidationApi_validate_registered_candidate_data is not found` | The genesis runtime in `chain-spec-v6-raw.json` doesn't export that API; neither command works on Materios | Nothing is wrong with your registration. Use the db-sync / Koios / explorer check in [step 6](#verify-the-registration-landed) — it answers the same question |
+| The [step 6](#verify-the-registration-landed) check returns zero rows minutes after submit | Your registration tx never made it onto Cardano | Look the txhash up on [preprod.cexplorer.io](https://preprod.cexplorer.io/). If it's absent, re-run [step 6](#6-submit-the-registration) with a fresh `$REGISTRATION_UTXO` |
+| Registration is unspent on L1 but you're not in the committee | Normal for the first ~2 epochs — registration is immediate, Ariadne seating is not | Confirm the ~10-day window in [step 9](#9-wait-for-the-stake-snapshot) has elapsed, then see the next row |
+| Registered and past E+2 but never selected | Stake too low vs other pools, or the registered bucket is already filled | Grow your pool's stake or wait for variance; D-parameter is `(15, 1)` today |
 | Validator at peers=0 on a real Linux host | Inbound TCP 30333 unreachable | Open 30333/tcp on your firewall + cloud security group; confirm with `nc -zv <your-public-ip> 30333` from another network |
 | Finality gap > 10 in explorer authority-lag panel | Committee under-quorum or your node behind | Compare your `chain_getFinalizedHead` to the explorer's — if you're the lagger, restart; if the chain is the lagger, check Discord for an active incident |
 

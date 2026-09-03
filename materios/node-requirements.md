@@ -38,7 +38,7 @@ See the [Operator Guide](operator-guide.md) for end-to-end setup flows.
 
 > **🔁 v6 chain reset, 2026-04-28.** Preprod was reset from v5 to v6 to fix accumulated state issues. v5 registrations did NOT carry over — operators previously on v5 must re-onboard. The v5 → v6 incident notes are documented in our internal runbook.
 
-The **8 permissioned seats** are filled from the partner-chains permissioned-candidate list. **External operators can apply for a permissioned seat** without becoming a Cardano SPO — see [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo). SPO-registered seats are not enabled on preprod yet; they'll be opened once a quorum of external SPOs are registered.
+The **15 permissioned seats** are filled from the partner-chains permissioned-candidate list. **External operators can apply for a permissioned seat** without becoming a Cardano SPO — see [Operator Guide → Permissioned Validator](operator-guide.md#permissioned-validator-non-spo). The **SPO-registered seat is live and filled** by an external Cardano SPO that self-registered on L1 with no FPS approval — that path is open to you today, see [SPO Onboarding](spo-onboarding.md). The registered bucket grows as more SPOs register.
 
 ## Static Asset Distribution
 
