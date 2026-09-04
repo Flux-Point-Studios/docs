@@ -207,9 +207,23 @@ Successful output ends with `Transaction submitted. ID: <txhash>`. Record the tx
 
 Registration is **immediate on Cardano L1**. The moment your tx is in a block you are registered — there is no pending state, and nothing on the Materios side has to accept it. The ~2-epoch wait everyone hears about is Ariadne **seating** ([step 9](#9-wait-for-the-stake-snapshot)), which is a separate thing that happens after you're already registered.
 
-Your registration is a UTxO at the CommitteeCandidate validator (`$CANDIDATES_ADDR`, from [Chain parameters](#chain-parameters)) whose inline datum embeds your `spo_public_key`. Any one of the three checks below proves it.
+Your registration is a UTxO at the CommitteeCandidate validator (`$CANDIDATES_ADDR`, from [Chain parameters](#chain-parameters)) whose inline datum embeds your `spo_public_key`.
 
-> **Don't use `partner-chains-node registration-status` or `ariadne-parameters`.** Both call the runtime API `CandidateValidationApi_validate_registered_candidate_data`, which the genesis runtime shipped inside `chain-spec-v6-raw.json` does not export, so they fail for every operator with `Exported method CandidateValidationApi_validate_registered_candidate_data is not found`. Your registration and your odds of selection are unaffected — the node validates candidates over a separate internal path. Use a check below instead.
+**What the checks below do and don't tell you.** Each one answers exactly this: *is there an unspent UTxO at the candidates address whose datum contains my public key?* That is the thing that goes wrong in practice — a tx that never landed, or a registration you later replaced — so a clean result is the signal you want before you start waiting on [step 9](#9-wait-for-the-stake-snapshot).
+
+It is not a validity proof. The candidates address is a **permissionless script address**: anyone can pay a UTxO there carrying any datum they like, and these checks only substring-match your key inside the datum bytes. They do not verify your SPO or sidechain signatures, do not confirm the datum is well-formed, and do not confirm Ariadne will accept the registration. Only the chain decides that, and it tells you by seating you. If all three checks look right and you are still unseated well past E+2, the [troubleshooting table](#troubleshooting) is the next stop — not a re-registration.
+
+> **Don't use `partner-chains-node registration-status` or `ariadne-parameters`.** Both fail on Materios with:
+>
+> ```
+> Application(Execution(Other("Exported method CandidateValidationApi_validate_registered_candidate_data is not found")))
+> ```
+>
+> The reason is specific, and worth stating precisely because the obvious sanity-check appears to contradict it. Neither command talks to your running node. Both take `--chain <CHAIN_SPEC>`, build a throwaway **genesis** state from the WASM embedded in that chain spec, and call the runtime API there. The genesis runtime inside `chain-spec-v6-raw.json` does not export `CandidateValidationApi`, so the call fails before any registration is examined.
+>
+> The **live** runtime is a different binary and *does* export it — a runtime upgrade added it after genesis. So if you query the chain directly (`state_getRuntimeVersion`, or the exports of the on-chain `:code`) you will find `CandidateValidationApi` present and conclude these commands should work. They still won't: they never load the live runtime. Fixing this needs a re-issued chain spec, not a runtime upgrade.
+>
+> Your registration and your odds of selection are unaffected either way — the running node validates candidates over its own internal path, not this CLI. Use a check below instead.
 
 **A — your own db-sync** (you already run one, [step 1](#1-provision-postgres-for-cardano-db-sync)):
 
@@ -239,8 +253,14 @@ curl -s -X POST https://preprod.koios.rest/api/v1/address_utxos \
   -H 'content-type: application/json' \
   -d "{\"_addresses\":[\"$CANDIDATES_ADDR\"],\"_extended\":true}" \
 | jq -r --arg k "$(jq -r '.spo_public_key' phase-a.json | sed 's/^0x//')" \
-     '.[] | select(.inline_datum.bytes | contains($k)) | "\(.tx_hash)#\(.tx_index)  spent=\(.is_spent)"'
+     '.[] | select(((.inline_datum.bytes) // "") | contains($k)) | "\(.tx_hash)#\(.tx_index)"'
 ```
+
+One line back means you are registered and that UTxO is current. No output means no unspent registration carrying your key.
+
+The `// ""` is load-bearing — don't drop it. The candidates address is permissionless, so a UTxO posted by anyone else may carry no inline datum at all; without the fallback `jq` aborts the whole pipeline on that entry (`null and string cannot have their containment checked`) and, if the datum-less UTxO sorts before yours, prints **nothing at all** — a false "not registered" for a perfectly good registration.
+
+Note the scope: `address_utxos` returns only **unspent** UTxOs, so this check cannot distinguish "you never registered" from "your registration was spent — replaced or deregistered". Both look like empty output. If you get no output and you know your tx landed on Cardano, use check **A** (its `unspent` column tells the two apart) or **C**, or look the txhash up on [preprod.cexplorer.io](https://preprod.cexplorer.io/) and see whether the output has been consumed.
 
 **C — the explorer**, no tooling at all. Open
 
@@ -360,7 +380,7 @@ There is nothing to submit and nothing to retry during this window. Your registr
 
 To watch the transition, open your [SPO journey page](#verify-the-registration-landed) (check C) and wait for the **selected** milestone to light up.
 
-`ariadne-parameters` fails the same way `registration-status` does — same missing runtime API, see the note in [step 6](#verify-the-registration-landed).
+`ariadne-parameters` fails the same way `registration-status` does — it runs the same genesis runtime from the chain spec, which doesn't export `CandidateValidationApi`. See the note in [step 6](#verify-the-registration-landed).
 
 ## 10. Verify selection
 
@@ -449,12 +469,13 @@ If selected but offline, the slots you would have minted go unclaimed and your G
 | Symptom | Cause | Fix |
 |---|---|---|
 | Node stuck at block 0, log says `Inherent error: Candidates inherent required` | Fresh DB without snapshot | Apply the snapshot per [step 7](#7-restore-the-latest-data-snapshot) |
-| Snapshot restore succeeds but node stalls at the snapshot floor, peers loop on "Banned, disconnecting" | Stale libp2p peer or slow db-sync | See [OPERATOR_KIT.md → Sync stuck at snapshot floor](https://github.com/Flux-Point-Studios/materios/blob/main/docs/OPERATOR_KIT.md#sync-stuck-at-snapshot-floor--peer-ban-loop) — `--reserved-only` to the FPS bootnode is the immediate workaround |
+| Node stalls below tip, peers loop on "Banned, disconnecting" | Your node is requesting a historical range the FPS nodes can't serve, and gets scored as a repeat-requester and banned. Reputation decays in ~69s, it reconnects, re-requests the same range, and is re-banned — so it idles at a fixed height with 0-1 peers. This is on our side, not yours, and no peer-list change fixes it | Restore the **current** snapshot per [step 7](#7-restore-the-latest-data-snapshot) — landing at tip skips the ranges that trigger it, and forward-sync from there is clean. Do **not** add `--reserved-only`: it removes your ability to route around a banned peer and turns a transient ban into permanent isolation. Background: [OPERATOR_KIT.md → Sync stuck at snapshot floor](https://github.com/Flux-Point-Studios/materios/blob/main/docs/OPERATOR_KIT.md#sync-stuck-at-snapshot-floor--peer-ban-loop) |
 | `sqlx::query: slow statement ... elapsed=2.5s` in node logs + repeated peer drops | Postgres missing `idx_ma_tx_out_ident` or untuned | Re-run [step 1](#1-provision-postgres-for-cardano-db-sync) |
 | `registration-signatures` errors on `mainchain-signing-key` | Didn't strip the `5820` CBOR prefix from cold.skey | `jq -r '.cborHex' cold.skey \| sed 's/^5820//'` |
 | `smart-contracts register` fails with `UTxO already spent` | Your `$REGISTRATION_UTXO` was consumed between prep + submit | Pick a fresh UTXO; re-sign (same sidechain / SPO keys are fine) |
-| `registration-status` or `ariadne-parameters` errors with `Exported method CandidateValidationApi_validate_registered_candidate_data is not found` | The genesis runtime in `chain-spec-v6-raw.json` doesn't export that API; neither command works on Materios | Nothing is wrong with your registration. Use the db-sync / Koios / explorer check in [step 6](#verify-the-registration-landed) — it answers the same question |
+| `registration-status` or `ariadne-parameters` errors with `Exported method CandidateValidationApi_validate_registered_candidate_data is not found` | Both commands run the **genesis** runtime embedded in `chain-spec-v6-raw.json`, which doesn't export that API. The live runtime does export it, but these commands never load the live runtime — see the note in [step 6](#verify-the-registration-landed) | Nothing is wrong with your registration. Use the db-sync / Koios / explorer check in [step 6](#verify-the-registration-landed) |
 | The [step 6](#verify-the-registration-landed) check returns zero rows minutes after submit | Your registration tx never made it onto Cardano | Look the txhash up on [preprod.cexplorer.io](https://preprod.cexplorer.io/). If it's absent, re-run [step 6](#6-submit-the-registration) with a fresh `$REGISTRATION_UTXO` |
+| You registered before, the tx is on Cardano, but [step 6](#verify-the-registration-landed) now finds nothing | That registration UTxO has been spent — replaced by a later registration, or deregistered | Use check **A** (`unspent = f` proves this) or check **C**. Check **B** cannot tell you this: Koios `address_utxos` returns only unspent UTxOs, so a spent registration and a missing one both come back empty. Re-register with a fresh `$REGISTRATION_UTXO` if you didn't intend to replace it |
 | Registration is unspent on L1 but you're not in the committee | Normal for the first ~2 epochs — registration is immediate, Ariadne seating is not | Confirm the ~10-day window in [step 9](#9-wait-for-the-stake-snapshot) has elapsed, then see the next row |
 | Registered and past E+2 but never selected | Stake too low vs other pools, or the registered bucket is already filled | Grow your pool's stake or wait for variance; D-parameter is `(15, 1)` today |
 | Validator at peers=0 on a real Linux host | Inbound TCP 30333 unreachable | Open 30333/tcp on your firewall + cloud security group; confirm with `nc -zv <your-public-ip> 30333` from another network |
