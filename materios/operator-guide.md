@@ -47,7 +47,7 @@ Hosted db-sync (TxPipe Dolos, Demeter.run, Blockfrost) cuts the requirement to *
 | **Next `mc_epoch` boundary** | First selection cycle. If drawn, your node enters `currentCommittee`. |
 | **+~6s per slot** | You produce your first block. |
 
-Probability of being drawn each epoch is your active delegated stake divided by the total stake of all registered candidates, weighted by the D-parameter's registered-bucket count. The current preprod D-parameter is `(5, 2)` — 5 permissioned + 2 registered seats.
+Probability of being drawn each epoch is your active delegated stake divided by the total stake of all registered candidates, weighted by the D-parameter's registered-bucket count. The current preprod D-parameter is `(15, 1)` — 15 permissioned + 1 registered seat.
 
 ## Next step
 
