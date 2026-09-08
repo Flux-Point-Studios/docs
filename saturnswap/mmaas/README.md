@@ -20,11 +20,18 @@ Every transaction is built and signed by your own wallet; there is no form to fi
 approval to wait for. One step is still manual, and it is named in
 [What you sign](#what-you-sign).
 
+## Check which validator your book uses
+
+The guarantees below describe the current `18d2246d…` generation. Existing `adc2a7f1…`
+books retain their original code: they lack the input-pair preservation check and
+staking-yield fee exclusion. Read [Validator generations](validator-generations.md)
+to verify your funded address and understand the client-signed migration path.
+
 ## Custody: what we can and cannot do
 
 Your inventory rests at a two-way order address whose **stake credential is a Plutus validator,
-`maker_stake_bound`, compiled from your own parameters**. That validator is the whole custody
-story, and it is worth reading precisely.
+`maker_stake_bound`, compiled from your own parameters**. It governs owner actions;
+permissionless taker fills also follow the DEX spend validator. These are separate paths.
 
 Its `withdraw` handler is a two-branch `or`. The first branch is just:
 
@@ -33,22 +40,22 @@ list.has(self.extra_signatories, client_owner_vkh)
 ```
 
 Your signature, alone, unconditionally — it reads nothing else. Spending a resting order requires
-that credential to appear in the transaction's withdrawals, so **one transaction you sign can
-cancel every order at that address and take the funds anywhere you like.** No cooperation from
+that credential to appear in the transaction's withdrawals, so **you can sign cancellations
+and take the recovered funds anywhere you like**, in batches that fit transaction limits. No cooperation from
 us, no notice, and we never hold that key. Mint, spend, vote and propose under the same hash are
 client-only too, and every certificate except a bare registration needs your signature — so we
 cannot deregister your credential to pocket its deposit, and we cannot delegate your stake.
 
 The second branch is what SaturnSwap can do. It requires our bot key **and** a per-asset
 conservation check: everything spent from your order addresses must land either back at an order
-address carrying the same stake credential with an in-band, decodable datum, or in an
+address carrying the same stake credential and input pair with an in-band, decodable datum, or in an
 exact-address, datum-free output to the payout address your ceremony names — plus a bounded,
 ADA-only fee leg at the published fee address, bounded in total so splitting it across outputs
 does not multiply it. Anything else fails the transaction.
 
-So, stated plainly: **we can reprice your order and we can cancel it back to you. We cannot send
-your value to ourselves, to a third party, or to any address that is not yours.** That is
-enforced by consensus, not by our conduct.
+So, stated plainly: **we can reprice your order and cancel it back to your payout address.**
+Bot transactions must preserve your assets within the permitted outputs, including the bounded
+ADA fee leg described above. These checks are enforced by consensus.
 
 The same check is why the gas is ours. Your order's own value can only reach those three
 destinations, so a transaction that paid its network fee out of your inventory would come up
@@ -78,7 +85,7 @@ Changing it means a new instance at a new address — see
 | Credential deposit | **2 ADA**, the Cardano stake-credential deposit. Refunded in full when you retire the credential. |
 | Our fee | **20 basis points (0.20%) of what a transaction realizes** — the ADA it pays out to you, plus the fee itself. Taken as a separate, **ADA-only** output at the published fee address, so a fee can never be taken in your token. Bounded on chain: the validator declares `max_fee_bps = 500` and refuses to act above it. |
 | Fee on a close | **None.** A transaction that burns a beacon — how a cardano-swaps order closes — must take a fee of exactly zero. You are charged for a position being run, not for getting one back. |
-| Fee on staking yield | **None.** Any rewards withdrawn in the same transaction are subtracted from the fee basis before the rate is applied. |
+| Fee on staking yield | **None on `18d2246d…`.** Any rewards withdrawn in the same transaction are subtracted from the fee basis before the rate is applied. |
 | Network fees | You pay the fee on the transactions you sign. We pay it on every reprice we sign. |
 
 The five operator-side parameters — fee address, fee rate, bot key hash, DEX validator hash and
