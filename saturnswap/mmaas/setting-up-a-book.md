@@ -189,7 +189,7 @@ Press **Build the funding transaction**. Nothing is signed yet. What you get bac
 - the command to check it yourself with `verify_create_body.py` (see
   [Checking it yourself](#checking-it-yourself)).
 
-Build and sign are separate on purpose: you can run the audited Python gate over the downloaded
+Build and sign are separate on purpose: you can run the source-available Python gate over the downloaded
 body before you sign, so signing never rests on this page's word.
 
 Then press **Sign and submit with my wallet**.
@@ -263,7 +263,7 @@ key from SaturnSwap and is not self-serve.
 
 ## Checking it yourself
 
-Two audited Python tools ship in the public
+Two source-available Python tools ship in the public
 [saturnswap-maker-verify](https://github.com/Flux-Point-Studios/saturnswap-maker-verify) repo,
 and both work from a fresh clone with nothing from us:
 
