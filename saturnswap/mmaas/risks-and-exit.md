@@ -290,11 +290,13 @@ If you are running real size, watch your order address yourself.
 - **No guarantee the keeper is running at any instant.** It is one service. It can be down,
   paused by its own risk rail, or refusing your book for a reason that is correct. There is no
   uptime commitment here.
-- **No third-party audit.** The protocol is red-teamed in-house rather than certified by an
-  outside firm. That is a deliberate choice and you should weigh it as one.
-- **No control over your inventory.** This one is a guarantee, in the other direction: we cannot
-  send your value to ourselves, to a third party, or to any address that is not yours. That is
-  enforced by the validator on every keeper action, and by consensus rather than by our conduct.
+- **No third-party audit.** We run an internal red team weekly with Claude, Codex and Kimi,
+  investigate findings and check for regressions. This is a deliberate choice, not external
+  certification or a guarantee that no vulnerabilities remain. See [Security evidence](security-evidence.md).
+- **Bounded control over trading inventory.** The current validator requires keeper actions to
+  preserve assets within the permitted order, client payout and bounded ADA fee outputs.
+  The prepaid fee channel is separate and its operator signing branch can spend that balance;
+  the inventory fee bound does not protect it. See [What it costs](README.md#what-it-costs).
 - **No ability to stop you leaving.** Your key alone cancels every order and pulls the funds
   back, unconditionally, with no notice to us and no cooperation from us. We cannot deregister
   your credential to pocket its deposit, and we cannot delegate your stake.

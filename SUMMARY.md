@@ -38,6 +38,7 @@
 * [Overview](saturnswap/README.md)
 * [Market Making as a Service](saturnswap/mmaas/README.md)
 * [MMaaS: Setting Up a Book](saturnswap/mmaas/setting-up-a-book.md)
+* [MMaaS: Security Evidence](saturnswap/mmaas/security-evidence.md)
 * [MMaaS: Validator Generations](saturnswap/mmaas/validator-generations.md)
 * [MMaaS: Risks & Exit](saturnswap/mmaas/risks-and-exit.md)
 * [API Integration (Aggregators)](saturnswap/api-integration.md)

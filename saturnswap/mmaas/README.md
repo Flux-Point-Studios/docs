@@ -83,15 +83,45 @@ Changing it means a new instance at a new address — see
 |  |  |
 |---|---|
 | Credential deposit | **2 ADA**, the Cardano stake-credential deposit. Refunded in full when you retire the credential. |
-| Our fee | **20 basis points (0.20%) of what a transaction realizes** — the ADA it pays out to you, plus the fee itself. Taken as a separate, **ADA-only** output at the published fee address, so a fee can never be taken in your token. Bounded on chain: the validator declares `max_fee_bps = 500` and refuses to act above it. |
-| Fee on a close | **None.** A transaction that burns a beacon — how a cardano-swaps order closes — must take a fee of exactly zero. You are charged for a position being run, not for getting one back. |
-| Fee on staking yield | **None on `18d2246d…`.** Any rewards withdrawn in the same transaction are subtracted from the fee basis before the rate is applied. |
-| Network fees | You pay the fee on the transactions you sign. We pay it on every reprice we sign. |
+| Service fee | Default **20 basis points (0.20%) of eligible settled ADA notional**, subject to the client's billing grant and any configured cap. Metered by the backend and collected from a **separate prepaid ADA fee channel**. This is not a deduction from each swap or the inventory validator's payout fee. |
+| Prepaid balance | You fund the fee channel separately from trading inventory. The operator can collect from it under the channel's signing policy; you can reclaim the remaining balance with your own key. |
+| Network fees | You pay transactions you sign. The operator funds keeper reprices and inventory cancellations. A fee-channel collection pays its network fee from the channel balance, in addition to the amount collected. |
 
-The five operator-side parameters — fee address, fee rate, bot key hash, DEX validator hash and
-beacon policy id — are published under **Check us, don't trust us** on
-[saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas), each with the chain query that confirms
-it, so you can check them against the ledger rather than take them from us.
+### How service billing works
+
+The backend values an eligible fill by the ADA that moved, applies the grant's fee rate, and
+limits the accrued amount by its configured cap. It checks consent lineage, grant timing and
+finality, excludes known operator fills using the transaction's full signer set, and holds
+historical fills whose signer evidence is missing. An unfamiliar signer is **unattributed**;
+it does not prove the counterparty is independent. Token-to-token fills with no ADA leg have
+no ADA notional under this meter.
+
+The fee collector draws the uncollected amount from your prepaid channel. The two-operator-key
+channel has the native-script policy **either both operator keys together, or your client key
+alone**. A legacy channel instead permits **either one operator key, or your client key alone**.
+Verify which script and keys your channel uses before funding it.
+
+**The prepaid balance has different protections from trading inventory.** The native script
+checks signatures. It does not check an invoice, a fee rate, a period cap or how much an
+authorised operator branch spends. Billing eligibility and collection limits are software and
+co-signer policy controls. The inventory validator's `max_fee_bps = 500` does **not** cap a
+fee-channel draw. Keep the channel balance consistent with the exposure you accept.
+
+Signing the nine-parameter possession challenge authorises keeper consent for that ceremony;
+it does not itself enrol a billing grant or place the grant's commercial terms on chain.
+
+### The separate inventory-validator fee capability
+
+The inventory validator permits a bounded, ADA-only fee output at its published fee address.
+Its bound is calculated on realised ADA payout plus that fee, with `max_fee_bps = 500` in the
+published parameters. A beacon-burning close requires this **inventory fee** to be zero.
+The `18d2246d…` generation subtracts withdrawn staking rewards from that fee basis; the older
+`adc2a7f1…` generation does not. These rules describe the inventory transaction, not commercial
+fee-channel collection; closing a book does not erase already accrued service fees.
+
+The operator-side ceremony parameters are published under **Check us, don't trust us** on
+[saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas). Check the
+[validator generation](validator-generations.md) of the address you actually funded.
 
 ## What your token needs
 
