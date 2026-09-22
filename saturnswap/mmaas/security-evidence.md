@@ -36,17 +36,18 @@ provides the validator source and ceremony/address verification path.
 
 ## Bind evidence to the code your book uses
 
-The tested current generation's **unapplied** validator hash is
-`18d2246d8b552b9e462ec93dece5716a7154314680b3f326a854789d`.
+Evidence binds to a **generation**, and a book keeps the generation its credential hashes.
+Which one that is, and which unapplied hash identifies it, is stated in
+[GENERATIONS.md](https://github.com/Flux-Point-Studios/saturnswap-maker-verify/blob/main/GENERATIONS.md)
+beside the source itself — not here, where a copy would go stale the moment a generation is
+cut and would then deny a real book's existence.
+
 Applying the nine ceremony parameters derives each book's different credential and addresses.
 Match those against your funded address using the public verifier; matching a source revision
 alone is insufficient.
 
-Existing books using the older unapplied hash
-`adc2a7f19bf63b378c06c7d941bba6b7f6312cb8cce5b153f356efe4`
-retain that generation's code. The newer pair-preservation and staking-reward fee protections
-do not appear in an old book merely because source or documentation changed. See
-[Validator generations](validator-generations.md).
+A protection added in a later generation does not appear in an older book merely because
+source or documentation changed. See [Validator generations](validator-generations.md).
 
 We make no Z3 or other formal-proof claim for the active validator without a reproducible
 artifact naming the exact validator hash, assumptions, properties proved and verifier command.
