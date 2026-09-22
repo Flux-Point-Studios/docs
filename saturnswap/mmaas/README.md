@@ -22,10 +22,11 @@ approval to wait for. One step is still manual, and it is named in
 
 ## Check which validator your book uses
 
-The guarantees below describe the current `18d2246d…` generation. Existing `adc2a7f1…`
-books retain their original code: they lack the input-pair preservation check and
-staking-yield fee exclusion. Read [Validator generations](validator-generations.md)
-to verify your funded address and understand the client-signed migration path.
+The guarantees below describe the CURRENT generation. A book already funded keeps the
+generation its credential hashes, and an older one lacks the protections added after it —
+a guarantee is not acquired by source or documentation changing. Read
+[Validator generations](validator-generations.md) for which generations exist, what each
+one enforces, how to verify your funded address, and the client-signed migration path.
 
 ## Custody: what we can and cannot do
 
@@ -115,8 +116,9 @@ it does not itself enrol a billing grant or place the grant's commercial terms o
 The inventory validator permits a bounded, ADA-only fee output at its published fee address.
 Its bound is calculated on realised ADA payout plus that fee, with `max_fee_bps = 500` in the
 published parameters. A beacon-burning close requires this **inventory fee** to be zero.
-The `18d2246d…` generation subtracts withdrawn staking rewards from that fee basis; the older
-`adc2a7f1…` generation does not. These rules describe the inventory transaction, not commercial
+Generations after the earliest subtract withdrawn staking rewards from that fee basis; the
+earliest does not, and [Validator generations](validator-generations.md) says which is which.
+These rules describe the inventory transaction, not commercial
 fee-channel collection; closing a book does not erase already accrued service fees.
 
 The operator-side ceremony parameters are published under **Check us, don't trust us** on
