@@ -168,7 +168,7 @@ each client's order around the live mid as the market moves.
 | Setting | Value | What it does |
 |---|---|---|
 | Spread | 8% | The ask sits 4% above the live mid and the bid 4% below it, each clamped into the client's band. |
-| Minimum reprice move | 1.5% | A quote is rebuilt only once the mid has moved at least this far from the one it is centred on. |
+| Minimum reprice move | 0.5% | A quote is rebuilt only once the mid has moved at least this far from the one it is centred on. |
 | Value cap | 120 ADA | A book worth more than this, its token valued at the live mid, is closed back to the payout address. |
 | Daily loss | 5 ADA | A book whose value falls by more than this within a UTC day is closed back to the payout address. |
 

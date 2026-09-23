@@ -290,7 +290,7 @@ it at your posted prices, whether or not the keeper is working it yet.
 
 What the keeper does once your book is enrolled: each round it reads a mid from the two feeds and
 quotes your book at an **8% spread**, the ask 4% above the mid and the bid 4% below it, each
-clamped into your band. It rebuilds your order only when the mid has moved at least **1.5%** from
+clamped into your band. It rebuilds your order only when the mid has moved at least **0.5%** from
 the one your resting quote is centred on, so smaller moves leave your quote where it is. SaturnSwap
 signs and pays the network fee for every one of those reprices.
 

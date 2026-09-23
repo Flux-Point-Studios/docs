@@ -13,23 +13,31 @@ sides of a market with real inventory, and the on-chain guarantees in
 
 ## The keeper can close your book
 
-The keeper does more than reprice. In three cases it closes your book: it cancels the orders it
-quotes for you and sends everything in them to the payout address your ceremony names, and
-SaturnSwap signs and pays the network fee. **In every case the funds go back to your payout
-address.** The validator backs this: a keeper transaction can only move your value to your order
-address, your payout address or the bounded ADA fee leg (see
-[Custody](README.md#custody-what-we-can-and-cannot-do)).
+The keeper does more than reprice. In three cases it closes your book on its own: it cancels the
+orders it quotes for you and sends everything in them to the payout address your ceremony names,
+and SaturnSwap signs and pays the network fee. SaturnSwap can also close a book by hand, to the
+same address. **In every case the funds go back to your payout address.** The validator backs
+this: a keeper transaction can only move your value to your order address, your payout address or
+the bounded ADA fee leg (see [Custody](README.md#custody-what-we-can-and-cannot-do)).
 
 | The keeper closes your book when | How it is measured |
 |---|---|
-| **It is worth more than 120 ADA** | Every round: the ADA in your orders plus your token valued at the live mid. A rise in your token's price counts, so a book funded close to 120 ADA can be closed by an ordinary move. |
-| **It loses more than 5 ADA in a UTC day** | Against the book's opening value for the UTC day (its value the first time the keeper valued it that day), with your token at the live mid. A fall in your token's price counts as a loss even with no trade: a book holding 100 ADA of your token is closed by a fall of more than 5% in its price. Each book is measured against its own value. |
-| **Your token has had no usable price for 15 minutes** | 15 minutes in a row with fewer than two feeds answering, or with the two disagreeing by more than 5%. |
+| **It is worth more than 120 ADA** | Each round the keeper can price your token: the ADA in your orders plus your token valued at the keeper's mid, which moves at most 10% per round. A rise in your token's price counts, so a book funded close to 120 ADA can be closed by an ordinary move. The first round of a UTC day that can price your token only records the book's opening value: it neither quotes nor checks either limit. |
+| **It loses more than 5 ADA in a UTC day** | Each round the keeper can price your token, against the book's opening value for the UTC day: its lowest value in the first 10 minutes after the keeper first valued it that day. Your token is valued at the keeper's mid, which moves at most 10% per round, so after a sharper move the verdict trails the market by a round or more. A fall in your token's price counts as a loss even with no trade: a book holding 100 ADA of your token is closed by a fall of more than 5% in its price. Each book is measured against its own value. |
+| **No usable price for 15 minutes** | 15 minutes in a row in which either feed (bending.ai or GeckoTerminal) gives no price, or the two disagree by more than 5%, for any reason, including an outage at either provider. Every book reads the same two feeds, so a 15-minute outage at one provider closes every book at once. |
 
 A close is not a pause. Your inventory is back at your payout address, as whatever mix of ADA and
-token the book held at that moment, and nothing is quoted until you fund again. A feed-outage close is also
-remembered: that instance is not quoted again, even after the feeds recover, and anything you fund
-there later is not quoted either. To be quoted again, set up a new instance.
+token the book held at that moment, and nothing is quoted until you fund again.
+
+**Funding the same instance again the same UTC day.** The daily-loss rule still measures against
+the value your book opened that UTC day with, after any close, including your own exit. If you
+fund the same instance again that day with less than that opening value minus 5 ADA, it is closed
+again as soon as the keeper prices it, and until that close lands the new order rests at the edge
+of your range. Wait until 00:00 UTC, or set up a new instance.
+
+A feed-outage close is also remembered: that instance is not quoted again, even after the feeds
+recover, and anything you fund there later is sent straight back to your payout address. To be
+quoted again, set up a new instance.
 
 A close needs what a reprice needs: a running keeper, a synced node and our gas. During a
 [pause that stops every book](#pauses-that-stop-every-book-at-once), a close waits too. Your own
@@ -290,7 +298,8 @@ them, and refuses an operator-set constant mid on mainnet. See
 [What your token needs](README.md#what-your-token-needs) for the rule and the reason. The short
 version: **fewer than two healthy feeds means the pair is not quoted that round**, because
 divergence is unverifiable and quoting into an unchecked number is worse than not quoting. If it
-lasts 15 minutes, the keeper closes your book; see
+lasts 15 minutes, the keeper closes your book. Every book reads the same two feeds, so an outage at
+either provider does that to every book at once; see
 [The keeper can close your book](#the-keeper-can-close-your-book).
 
 A token with no listing on either feed cannot currently be quoted at all.
@@ -312,6 +321,10 @@ the closes in [The keeper can close your book](#the-keeper-can-close-your-book) 
 no alert to clients: the **"last worked"** figure is how you tell. A pause cannot cost you custody,
 and your own exit needs neither: your wallet signs and pays for it, and `escape.sh` runs against
 any node you choose.
+
+A price-feed outage also reaches every book at once, because every book reads the same two feeds,
+but it does not pause them: after 15 minutes it closes every book, and each instance stays closed.
+See [The keeper can close your book](#the-keeper-can-close-your-book).
 
 ### What you can actually see
 
