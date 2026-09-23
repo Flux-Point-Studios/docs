@@ -225,7 +225,7 @@ The panel states the token you picked and how much of it you hold. Fill in:
 
 **How much to rest.** Keep the whole book under **120 ADA**, counting your token at today's price.
 The keeper closes any book worth more than that and sends everything back to your payout address,
-and it values your token at the live price every round, so a book funded close to the cap is
+and it values your token again each round it can price it, so a book funded close to the cap is
 closed by an ordinary rise (see
 [The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book)). Start well
 under the cap, for that reason and the one in
