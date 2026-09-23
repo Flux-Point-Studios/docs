@@ -41,6 +41,11 @@ Do not substitute another generation's possession proof: its challenge also chan
 Seven-parameter and other unlisted generations need their own matching source release;
 the nine-parameter packages do not verify them.
 
+Clone the verifier yourself from the
+[public repository](https://github.com/Flux-Point-Studios/saturnswap-maker-verify) rather than
+running a copy anyone hands you, including SaturnSwap. A doctored clone can pass its own checks, so
+a clean run from someone else's copy proves nothing.
+
 ## What the distinction means
 
 Generations differ in what the bot is allowed to do with a client's order, and

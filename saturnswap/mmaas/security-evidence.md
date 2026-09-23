@@ -1,8 +1,9 @@
 # Security evidence and its scope
 
 We run an internal red team against MMaaS every week using Claude, Codex and Kimi models.
-The work attacks the protocol, investigates findings and checks for regressions. We choose
-ongoing adversarial review as the protocol changes. **There is no third-party audit.**
+The work attacks the protocol, investigates findings and checks for regressions. We choose ongoing
+adversarial review because a point-in-time audit records one review of one version, and the
+protocol keeps changing. **There is no third-party audit.**
 This process is internal evidence, not external certification or a guarantee that no
 vulnerabilities remain.
 

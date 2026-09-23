@@ -66,6 +66,12 @@ These are real transactions. Follow them on an explorer rather than taking the n
 
 Total 0.926439 ADA, against 2 ADA returned.
 
+**Who signed the close and the retire.** They ran on a pilot book SaturnSwap funded with its own
+ADA, so SaturnSwap's wallet signed them as that book's owner. Open either one on cexplorer and look
+at the witness set: it carries the book's owner key and not the ADAM bot key, which is the property
+that matters. No outside client has exited on mainnet yet, so this shows that the owner key alone
+can empty the address; it is not yet a record of a third-party client leaving.
+
 A **funded** book carrying real inventory went the same way in
 [`181bde67…`](https://cexplorer.io/tx/181bde674d8a3baceba666647cc979fdf6c97052b2b1935337631292b304e7eb)
 (fee 0.591181 ADA, block 13,855,967). Decoded from the chain: the order address held
@@ -113,8 +119,9 @@ print(hashlib.blake2b(bytes([2]) + bytes.fromhex(v['compiledCode']), digest_size
 # 11928a3ac3b65edbf103ea6bb3362e39b879a36f02897df31c40917b
 ```
 
-That is the `dapp_hash` published under **Check us, don't trust us** on
-[saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas), and baked into your ceremony. It is a
+That is the `dapp_hash` listed in
+[The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes),
+and baked into your ceremony. It is a
 third party's open-source contract, not ours.
 
 ### Running it
@@ -151,6 +158,9 @@ are recoverable from chain, but that is a reconstruction, and a reconstruction i
 want to be doing on the day you need it.
 
 ## The honest risk list
+
+SaturnSwap ran books of its own on mainnet, with its own ADA, to find the sharp edges with its own
+money at risk. The measurements below that say "our own book" come from them.
 
 ### You are holding inventory, on both sides
 
@@ -205,9 +215,10 @@ The ADA in your vault is yours, and so is the stake on it. At registration you c
 pool (optional — blank means it stakes nowhere and earns nothing) and a governance position
 (Abstain by default).
 
-Staking yield is **excluded from our fee basis** by the validator itself: the basis subtracts any
-withdrawn rewards before the rate is applied. You are charged for the position being run, not for
-the yield your own stake produced.
+Staking yield is excluded from the inventory validator's fee basis in every generation after the
+earliest: the basis subtracts any withdrawn rewards before the rate is applied. The earliest
+generation does not do this, and [Validator generations](validator-generations.md) explains how to
+tell which one your book uses.
 
 ### Why the default is Abstain, and not nothing
 
@@ -280,6 +291,28 @@ Honestly: not much, and you should not rely on us to tell you.
   people it exists to protect.
 
 If you are running real size, watch your order address yourself.
+
+## What you still have to trust
+
+The validator bounds where your value can go. It does not bound everything, and what remains is
+short but real.
+
+- **Quote quality is off-chain conduct.** The chain proves the keeper cannot take your inventory.
+  It does not prove the keeper quotes well. Judge that from the public book, from "last worked",
+  and from your own dashboard at [saturnswap.io/v3/mmaas/book](https://saturnswap.io/v3/mmaas/book).
+- **The bot key touches your inventory on every reprice.** Repricing is the service: each reprice
+  spends your order and rebuilds it. The validator fixes where the value can land, not whether the
+  bot key can move it.
+- **The five published values are ours to publish and yours to check.** The verifier takes
+  `dapp_hash` and `beacon_id` as given. Check them against
+  [The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes)
+  and on chain.
+- **Your keys are your own claim.** The setup records your wallet's key and payout address. No tool
+  can prove to anyone else that they are really yours.
+- **The verifier you run must be the real one.** A doctored clone can pass its own checks. See
+  [Check an existing address](validator-generations.md#check-an-existing-address).
+- **No outside client has exited on mainnet yet.** See
+  [What it costs, measured on mainnet](#what-it-costs-measured-on-mainnet).
 
 ## What SaturnSwap does not promise
 

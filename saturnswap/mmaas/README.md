@@ -1,7 +1,8 @@
 ---
 description: >-
-  Market Making as a Service — a continuously quoted two-sided book on your
-  token, resting at an address only your own key can empty.
+  Market Making as a Service: a continuously quoted two-sided book on your
+  token. Your key alone can move it anywhere; our bot key can only reprice it
+  in place, return it to your payout address, or pay a bounded ADA fee leg.
 ---
 
 # What MMaaS is
@@ -10,15 +11,15 @@ A new Cardano token usually has no resting bid and no resting ask. Someone who w
 nothing to lift; someone who wants to sell has nothing to hit. The usual fix is to hand a market
 maker your inventory and hope.
 
-**MMaaS is that service without the handover.** You keep the keys. SaturnSwap's keeper posts a
-two-way order for you on SaturnSwap's on-chain order book — a canonical cardano-swaps two-way
-order carrying both legs at once, a bid and an ask — and reprices it around a live mid as the
-market moves, so both sides stay quoted instead of going stale.
+**MMaaS is that service without the handover.** You keep the keys. You fund a two-way order on
+SaturnSwap's on-chain order book, a canonical cardano-swaps two-way order that carries a bid and
+an ask at once, and SaturnSwap's keeper reprices it around a live mid as the market moves, so
+both sides stay quoted instead of going stale.
 
 Setup is self-serve, in your browser, at [saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas).
 Every transaction is built and signed by your own wallet; there is no form to fill in and no
-approval to wait for. One step is still manual, and it is named in
-[What you sign](#what-you-sign).
+approval to wait for. What is still manual is listed in
+[What is not automatic yet](setting-up-a-book.md#what-is-not-automatic-yet).
 
 ## Check which validator your book uses
 
@@ -88,6 +89,9 @@ Changing it means a new instance at a new address — see
 | Prepaid balance | You fund the fee channel separately from trading inventory. The operator can collect from it under the channel's signing policy; you can reclaim the remaining balance with your own key. |
 | Network fees | You pay transactions you sign. The operator funds keeper reprices and inventory cancellations. A fee-channel collection pays its network fee from the channel balance, in addition to the amount collected. |
 
+For how this compares with a desk retainer or a token loan, and what gas and fees came to on
+SaturnSwap's own measured book, see [Measured economics](measured-economics.md).
+
 ### How service billing works
 
 The backend values an eligible fill by the ADA that moved, applies the grant's fee rate, and
@@ -121,9 +125,9 @@ earliest does not, and [Validator generations](validator-generations.md) says wh
 These rules describe the inventory transaction, not commercial
 fee-channel collection; closing a book does not erase already accrued service fees.
 
-The operator-side ceremony parameters are published under **Check us, don't trust us** on
-[saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas). Check the
-[validator generation](validator-generations.md) of the address you actually funded.
+The five operator-side ceremony values, and how to check each one on chain, are listed in
+[The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes).
+Check the [validator generation](validator-generations.md) of the address you actually funded.
 
 ## What your token needs
 
@@ -155,10 +159,12 @@ Three wallet prompts, in this order — and one more if you are moving an existi
 2. **Register** your credential on chain (the 2 ADA deposit).
 3. **Fund** the order — your inventory into your own order address.
 
-**The order matters.** That first signature is your consent to be market-made, and it travels
-*inside* the registration transaction as metadata under label 8747. Register first and it carries
-none — and a certificate cannot be amended afterwards, so the only way to add it later is a new
-instance at a new address.
+**The order matters.** That first signature is your consent to be market-made. Sign it before you
+register and it travels *inside* the registration transaction as metadata under label 8747, where
+the keeper finds it by your credential for as long as the book exists. A registration cannot be
+amended afterwards. If you registered first, the page offers **Publish my consent**, a separate
+transaction that carries the same record; see
+[If your credential is already registered without consent](setting-up-a-book.md#if-your-credential-is-already-registered-without-consent).
 
 You publish it yourself, in your own transaction. There is nothing to send us. The keeper reads it
 back off the chain and checks it against your ceremony: the signature must come from the payout
@@ -166,6 +172,12 @@ address your parameters baked in, and the challenge it carries must be the one t
 parameters hash to. Without a proof that passes both, the keeper declines to quote your book — your
 order still rests on the public book, fillable by anyone at the prices you set, and nobody
 reprices it.
+
+## Talk to us
+
+To ask about quoting your token, email **saturnswap@fluxpointstudios.com** with your token's policy
+id, ticker, circulating supply and where it trades today, or ask in
+[Discord](https://discord.gg/MfYUMnfrJM).
 
 Next: [Setting up a book](setting-up-a-book.md) ·
 [Risks, limits, and how to leave](risks-and-exit.md)
