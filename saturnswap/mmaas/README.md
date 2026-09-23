@@ -24,8 +24,8 @@ approval to wait for. What is still manual is listed in
 ## Check which validator your book uses
 
 The guarantees below describe the CURRENT generation. A book already funded keeps the
-generation its credential hashes, and an older one lacks the protections added after it —
-a guarantee is not acquired by source or documentation changing. Read
+generation its credential hashes, and an older one lacks the protections added after it.
+A guarantee is not acquired by source or documentation changing. Read
 [Validator generations](validator-generations.md) for which generations exist, what each
 one enforces, how to verify your funded address, and the client-signed migration path.
 
@@ -41,17 +41,17 @@ Its `withdraw` handler is a two-branch `or`. The first branch is just:
 list.has(self.extra_signatories, client_owner_vkh)
 ```
 
-Your signature, alone, unconditionally — it reads nothing else. Spending a resting order requires
+Your signature, alone, unconditionally. It reads nothing else. Spending a resting order requires
 that credential to appear in the transaction's withdrawals, so **you can sign cancellations
 and take the recovered funds anywhere you like**, in batches that fit transaction limits. No cooperation from
 us, no notice, and we never hold that key. Mint, spend, vote and propose under the same hash are
-client-only too, and every certificate except a bare registration needs your signature — so we
+client-only too, and every certificate except a bare registration needs your signature, so we
 cannot deregister your credential to pocket its deposit, and we cannot delegate your stake.
 
 The second branch is what SaturnSwap can do. It requires our bot key **and** a per-asset
 conservation check: everything spent from your order addresses must land either back at an order
 address carrying the same stake credential and input pair with an in-band, decodable datum, or in an
-exact-address, datum-free output to the payout address your ceremony names — plus a bounded,
+exact-address, datum-free output to the payout address your ceremony names, plus a bounded,
 ADA-only fee leg at the published fee address, bounded in total so splitting it across outputs
 does not multiply it. Anything else fails the transaction.
 
@@ -67,17 +67,17 @@ short and be rejected. Every reprice we sign, we fund.
 
 You set two prices, and the validator enforces them on every quote:
 
-- **`min_asset1_price` — the most we may bid.** The keeper can never pay more than this in ADA
+- **`min_asset1_price` is the most we may bid.** The keeper can never pay more than this in ADA
   per token.
-- **`min_asset2_price` — the least we may ask.** The keeper can never sell your token below this.
+- **`min_asset2_price` is the least we may ask.** The keeper can never sell your token below this.
 
 Both are checked by `rational_geq` against the continuation datum, so an out-of-band quote is not
-a policy we promise to follow — it is a transaction the chain refuses. The validator also refuses
+a policy we promise to follow but a transaction the chain refuses. The validator also refuses
 a **crossed** band: the ask floor must sit at or above the bid ceiling, which is what stops a
 filler round-tripping your own book for a profit.
 
 The band is fixed at setup, because it is one of the nine parameters the address is derived from.
-Changing it means a new instance at a new address — see
+Changing it means a new instance at a new address. See
 [Risks, limits, and how to leave](risks-and-exit.md#one-band-per-instance).
 
 ## What it costs
@@ -131,14 +131,14 @@ Check the [validator generation](validator-generations.md) of the address you ac
 
 ## What your token needs
 
-**A live market, on two feeds.** Prices come from two independent public sources — bending.ai and
-GeckoTerminal — read by policy id and asset name, with a divergence breaker between them.
+**A live market, on two feeds.** Prices come from two independent public sources (bending.ai and
+GeckoTerminal), read by policy id and asset name, with a divergence breaker between them.
 
 - Setting up a band needs **both** feeds to answer and to agree within **5%**. One feed is not
   enough: a band is permanent, and a mid read from a single source is a permanent decision made
   on an unchecked number.
 - Once you are running, the keeper applies the same rule each round. A pair sourced from feeds is
-  priced by its feeds **or not at all** — a feed outage or a divergence trip means your book is
+  priced by its feeds **or not at all**. A feed outage or a divergence trip means your book is
   not quoted that round rather than quoted badly.
 - An operator-set constant mid is **refused outright on mainnet** by the keeper's own code. It
   would stub both feeds with one number and defeat the breaker.
@@ -153,11 +153,11 @@ your token publishes decimals nowhere, register it before you come back.
 
 ## What you sign
 
-Three wallet prompts, in this order — and one more if you are moving an existing book:
+Three wallet prompts, in this order (and one more if you are moving an existing book):
 
 1. **Prove** the wallet is yours: a CIP-30 signature, no transaction and no fee.
 2. **Register** your credential on chain (the 2 ADA deposit).
-3. **Fund** the order — your inventory into your own order address.
+3. **Fund** the order (your inventory into your own order address).
 
 **The order matters.** That first signature is your consent to be market-made. Sign it before you
 register and it travels *inside* the registration transaction as metadata under label 8747, where
@@ -169,7 +169,7 @@ transaction that carries the same record; see
 You publish it yourself, in your own transaction. There is nothing to send us. The keeper reads it
 back off the chain and checks it against your ceremony: the signature must come from the payout
 address your parameters baked in, and the challenge it carries must be the one those nine
-parameters hash to. Without a proof that passes both, the keeper declines to quote your book — your
+parameters hash to. Without a proof that passes both, the keeper declines to quote your book. Your
 order still rests on the public book, fillable by anyone at the prices you set, and nobody
 reprices it.
 

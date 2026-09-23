@@ -40,7 +40,7 @@ provides the validator source and ceremony/address verification path.
 Evidence binds to a **generation**, and a book keeps the generation its credential hashes.
 Which one that is, and which unapplied hash identifies it, is stated in
 [GENERATIONS.md](https://github.com/Flux-Point-Studios/saturnswap-maker-verify/blob/main/GENERATIONS.md)
-beside the source itself — not here, where a copy would go stale the moment a generation is
+beside the source itself, and not here, where a copy would go stale the moment a generation is
 cut and would then deny a real book's existence.
 
 Applying the nine ceremony parameters derives each book's different credential and addresses.

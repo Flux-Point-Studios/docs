@@ -7,11 +7,11 @@ existing address or move its funds.
 
 ## The list lives in the verifier, not here
 
-**[Validator generations — saturnswap-maker-verify/GENERATIONS.md](https://github.com/Flux-Point-Studios/saturnswap-maker-verify/blob/main/GENERATIONS.md)**
+**[Validator generations (saturnswap-maker-verify/GENERATIONS.md)](https://github.com/Flux-Point-Studios/saturnswap-maker-verify/blob/main/GENERATIONS.md)**
 
 That file is the only place the published generations are enumerated, and this page
 deliberately does not repeat them. A copy of that list on a docs site is a copy that
-goes stale the moment a generation is cut — and a stale copy is worse than none,
+goes stale the moment a generation is cut. A stale copy is worse than none,
 because a client whose book runs the newest generation reads an older list, does not
 find their hash, and concludes their source was never published. That page sits beside
 the source it describes and beside the tests that check it lists exactly what the
