@@ -222,14 +222,20 @@ tell which one your book uses.
 
 ### Why the default is Abstain, and not nothing
 
-Proven on a real Cardano ledger: a credential with **no DRep delegation at all cannot withdraw
-its rewards**. The node rejects the transaction with `ConwayWdrlNotDelegatedToDRep`. Every
-action on your vault, including closing it and including your own recovery tooling, is authorised
-by a withdrawal from that credential. A vault that cannot move its rewards cannot be repriced,
-closed, or recovered.
+Your vault is registered by one certificate that also records a governance choice, so the page
+always sets one. Abstain is the default because it is the neutral choice: it takes no governance
+position and hands voting power to nobody. No confidence and a named DRep are equally valid.
 
-Abstain takes no governance position and hands voting power to nobody, and it keeps that door
-open. No confidence and a named DRep are equally valid. "None" is the one that can brick you.
+No DRep delegation at all would not lock your vault either. Every owner action on your vault,
+the keeper's included, is authorised by a withdrawal from its credential. Conway refuses a
+withdrawal from a reward account with no DRep delegation (`ConwayWdrlNotDelegatedToDRep`), but
+only when a key controls that account. Your vault's credential is a script, so the check never
+applies to it. On preprod, one vault credential,
+[`3227e143…`](https://preprod.cexplorer.io/stake/stake_test17qez0c2rsvpvdqpswfeadhpwxfs7fdsvxex4addseaasz5g8z86ce),
+was registered with a plain certificate that set no governance choice and has never delegated to
+a DRep. Since then, 14 transactions under protocol version 11.0, where the check is active, have
+been authorised by a withdrawal from it. One of them is
+[`a210b667…`](https://preprod.cexplorer.io/tx/a210b66797bdadf59d5fa2d86b2db2af190e60fddceb2663a6ce911c0918f174).
 
 ### What changes the moment you delegate to a pool
 

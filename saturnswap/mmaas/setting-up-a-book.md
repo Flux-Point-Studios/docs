@@ -177,10 +177,10 @@ You also choose, here and only here, what your own stake and governance weight d
   [what changes the moment you delegate](risks-and-exit.md#what-changes-the-moment-you-delegate-to-a-pool)
   before you name one.**
 - **Governance**: Abstain (default), No confidence, or a DRep you name. None of the three moves your
-  ADA or lets anyone else spend it; a DRep votes, it never holds funds. Abstain is the default for a
-  mechanical reason, not a political one:
-  [a credential with no DRep delegation cannot withdraw at all](risks-and-exit.md#why-the-default-is-abstain-and-not-nothing),
-  and every owner action on your book is authorised by a withdrawal. If you name a DRep, the page
+  ADA or lets anyone else spend it; a DRep votes, it never holds funds. Abstain is the default
+  because it takes no governance position, not because your vault needs a DRep:
+  [your vault's credential can withdraw with no DRep delegation at all](risks-and-exit.md#why-the-default-is-abstain-and-not-nothing),
+  so none of the three changes what your book can do. If you name a DRep, the page
   checks that the ID is well formed and is a DRep ID, not a committee key, before your wallet
   opens. It does not check that the DRep is registered, so copy the ID from a directory.
 
