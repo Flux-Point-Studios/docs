@@ -57,7 +57,8 @@ does not multiply it. Anything else fails the transaction.
 
 So, stated plainly: **we can reprice your order and cancel it back to your payout address.**
 Bot transactions must preserve your assets within the permitted outputs, including the bounded
-ADA fee leg described above. These checks are enforced by consensus.
+ADA fee leg described above. These checks are enforced by consensus. The three cases in which the
+keeper cancels are in [The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 
 The same check is why the gas is ours. Your order's own value can only reach those three
 destinations, so a transaction that paid its network fee out of your inventory would come up
@@ -139,7 +140,9 @@ GeckoTerminal), read by policy id and asset name, with a divergence breaker betw
   on an unchecked number.
 - Once you are running, the keeper applies the same rule each round. A pair sourced from feeds is
   priced by its feeds **or not at all**. A feed outage or a divergence trip means your book is
-  not quoted that round rather than quoted badly.
+  not quoted that round rather than quoted badly. If it lasts 15 minutes, the keeper closes your
+  book back to your payout address; see
+  [The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 - An operator-set constant mid is **refused outright on mainnet** by the keeper's own code. It
   would stub both feeds with one number and defeat the breaker.
 

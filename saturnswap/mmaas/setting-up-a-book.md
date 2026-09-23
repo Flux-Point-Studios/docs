@@ -96,6 +96,11 @@ If the market is already outside the range you typed, **Set up my instance** is 
 you widen it. If the range is wider than the spread can serve, you get an explicit *unreachable*
 message naming the widest range that spread can reach.
 
+**The keeper quotes at 8%, whatever spread this step used.** The page sizes your range with a
+spread drawn from your token's measured volatility. That spread is not passed to the keeper, which
+quotes books set up on this page at an 8% spread (see [After funding](#after-funding)). Where the
+two differ, the range over which both sides actually quote differs from the one restated here.
+
 If you come back in the same browser you set it up from, the page restores the prices you chose
 last time, not today's market, because your address is built from them. From another browser or
 device it starts from today's market, which builds a different instance; use **Already have an
@@ -169,13 +174,11 @@ lag and leaving the **Re-check** button to you.
 
 You also choose, here and only here, what your own stake and governance weight do:
 
-- **Stake pool**: optional. Leave it blank and the vault's ADA stakes nowhere and earns nothing,
-  which is the default. SaturnSwap runs a stake pool and deliberately does not pre-fill it, because
-  your stake is not ours to point. If you ask us which pool to use, the honest answer starts with the
-  fact that a small pool pays less: ours sits far below saturation and carries a fixed cost per
-  epoch, so its yield is materially under the network average. **Read
-  [what changes the moment you delegate](risks-and-exit.md#what-changes-the-moment-you-delegate-to-a-pool)
-  before you name one.**
+- **Stake pool**: **leave it blank.** Today a book stops being repriced at its first reward
+  payout, so a delegated vault loses the service as soon as staking starts to pay; see
+  [what changes the moment you delegate](risks-and-exit.md#what-changes-the-moment-you-delegate-to-a-pool).
+  Blank is the default, and it means the vault's ADA stakes nowhere and earns nothing. SaturnSwap
+  runs a stake pool and deliberately does not pre-fill it, because your stake is not ours to point.
 - **Governance**: Abstain (default), No confidence, or a DRep you name. None of the three moves your
   ADA or lets anyone else spend it; a DRep votes, it never holds funds. Abstain is the default for a
   mechanical reason, not a political one:
@@ -220,9 +223,12 @@ The panel states the token you picked and how much of it you hold. Fill in:
 - **ADA to rest (bid side)**: optional. This is the ADA the keeper may buy with, inside your
   range. Leave it empty and your order can only sell until a sale gives it ADA to buy back with.
 
-**How much to rest.** Enough that a fill is worth a taker's while. A few hundred ADA of depth is a
-reasonable floor; below that the network fee eats the trade and nobody takes it. Start at that
-floor rather than at full size, for the reason in
+**How much to rest.** Keep the whole book under **120 ADA**, counting your token at today's price.
+The keeper closes any book worth more than that and sends everything back to your payout address,
+and it values your token at the live price every round, so a book funded close to the cap is
+closed by an ordinary rise (see
+[The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book)). Start well
+under the cap, for that reason and the one in
 [The order of operations that matters](#the-order-of-operations-that-matters).
 
 Press **Build the funding transaction**. Nothing is signed yet. What you get back is:
@@ -282,9 +288,15 @@ small book first and let it be worked before you commit size.
 Once the create lands, your order is a live two-way order on SaturnSwap's book. Anyone can fill
 it at your posted prices, whether or not the keeper is working it yet.
 
-What the keeper does once your book is enrolled: each round it reads a mid from the two feeds,
-clamps the quote into your band, and rebuilds your order at the new prices. SaturnSwap signs and
-pays the network fee for every one of those reprices.
+What the keeper does once your book is enrolled: each round it reads a mid from the two feeds and
+quotes your book at an **8% spread**, the ask 4% above the mid and the bid 4% below it, each
+clamped into your band. It rebuilds your order only when the mid has moved at least **1.5%** from
+the one your resting quote is centred on, so smaller moves leave your quote where it is. SaturnSwap
+signs and pays the network fee for every one of those reprices.
+
+Every book set up on this page gets these defaults, and you cannot change them here. The same goes
+for the two limits that close a book: 120 ADA of value and 5 ADA of loss in a UTC day. See
+[The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 
 ### How to check your book is live
 
