@@ -1,13 +1,13 @@
 ---
 description: >-
   Step by step from a connected wallet to a funded, self-custodial two-sided
-  book — what you sign, what it costs, and how to tell each step worked.
+  book: what you sign, what it costs, and how to tell each step worked.
 ---
 
 # Setting up a book
 
 Everything below happens at [saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas) in your
-browser. You sign with your own wallet. There is no form and no approval step — but one part of the
+browser. You sign with your own wallet. There is no form and no approval step, but one part of the
 flow is still manual, and it is named in [What is not automatic yet](#what-is-not-automatic-yet).
 
 Read [What MMaaS is](README.md) first if you have not. This page assumes you already understand
@@ -18,7 +18,7 @@ permanent for that instance.
 
 **A mainnet CIP-30 wallet with a key-based address.** The page detects Eternl, Vespr, Lace, Nami,
 Typhon, NuFi, Gero, Begin and Yoroi from `window.cardano`. Your address must be an ordinary
-payment-key address — base or enterprise — because the page reads your escape-hatch key from its
+payment-key address (base or enterprise), because the page reads your escape-hatch key from its
 payment credential. A script-controlled address yields no identity, and the flow will not start.
 
 **Stay on one address for the whole flow.** Your address is one of the nine ceremony parameters.
@@ -29,7 +29,7 @@ different instance.
 **The token, in that wallet.** Step 1 lists what the connected wallet actually holds. Nothing is
 typed.
 
-**Decimals and a live price** — see
+**Decimals and a live price.** See
 [What your token needs](README.md#what-your-token-needs). Both are checked before you can build.
 
 ### ADA, and the shape it is in
@@ -41,7 +41,7 @@ typed.
 | Order min-UTxO | **2 ADA**, resting in the order alongside your inventory | Yes, when you close the order |
 | ADA you want quoted on the bid side | your choice | Yes, less whatever gets bought with it |
 | Funding fee | 0.293094 ADA on the measured mainnet create [`dab1fd6a…`](https://cexplorer.io/tx/dab1fd6a38cea94d6b6176c08596e8a4e8ab3f0b62970ec052e1579777988466) | No |
-| Collateral UTxO | **at least 7 ADA**, set aside rather than spent | Yes — it is never consumed |
+| Collateral UTxO | **at least 7 ADA**, set aside rather than spent | Yes, it is never consumed |
 
 The funding step also requires the inputs it picks to cover the order's own lovelace plus about
 5 ADA of fee headroom. In practice: hold **roughly 20 ADA free** beyond whatever ADA you intend
@@ -54,11 +54,11 @@ tokens.** Not 5, and not 6.
 The builders set 5 ADA of that UTxO aside as script collateral, and the remainder has to come
 back as its own output, which must itself clear the minimum for an output. A UTxO of exactly
 5 ADA leaves nothing to return, and the build fails **reporting a shortfall on the change
-output** — which reads as "you need more ADA" and is not what is wrong. Sending more ADA does not
+output**, which reads as "you need more ADA" and is not what is wrong. Sending more ADA does not
 fix it: the wallet in the report that produced this rule held 890 ADA.
 
 If you hit it, the page offers a **Set up collateral** button that carves a clean 10 ADA box off
-what you already hold — a payment from your wallet back to itself, so you keep every lovelace —
+what you already hold (a payment from your wallet back to itself, so you keep every lovelace)
 and then re-runs the build. You can also do it by hand: send yourself about 10 ADA on its own,
 then retry.
 {% endhint %}
@@ -96,8 +96,17 @@ If the market is already outside the range you typed, **Set up my instance** is 
 you widen it. If the range is wider than the spread can serve, you get an explicit *unreachable*
 message naming the widest range that spread can reach.
 
+If you come back in the same browser you set it up from, the page restores the prices you chose
+last time, not today's market, because your address is built from them. From another browser or
+device it starts from today's market, which builds a different instance; use **Already have an
+instance?** to find the one you funded. If the market has since left
+that range, the page names the side that would sit idle. Your inventory stays where it is and your
+wallet can take it back at any time. That side simply will not trade until the market returns, or
+until you move to a new instance with **Set up a new instance at today's market** (see
+[If you are moving an existing book](#if-you-are-moving-an-existing-book)).
+
 Press **Set up my instance**. The nine parameters are assembled and the address is derived on the
-server — never in your browser, because the browser build of the Cardano library applies script
+server, never in your browser, because the browser build of the Cardano library applies script
 parameters differently and would produce a different address from the same inputs.
 
 **Signs nothing. Costs nothing.** Afterwards you see your order address, with the line *"Nothing
@@ -120,15 +129,34 @@ one ceremony and run another. Press **Sign with my wallet**, and the signed
 sign in the next step, as transaction metadata under label 8747. There is nothing to send us: no
 Discord message, no email, no file transfer. The keeper reads it back off the chain, checks the
 signature against the payout address your ceremony baked in, and checks that the challenge it
-carries is the one your nine parameters hash to — so a proof for anyone else's ceremony, or for an
+carries is the one your nine parameters hash to, so a proof for anyone else's ceremony, or for an
 earlier version of yours, will not do.
 
 **Take the download anyway.** It is your own copy of what you agreed to, and it is the input the
 independent verifier needs to judge your ceremony offline.
 
-**Sign this before you register.** The consent travels inside the registration transaction, so a
-registration signed first carries none — and a certificate cannot be amended afterwards. The page
-puts this step ahead of registering for that reason.
+**Sign this before you register.** The consent travels inside the registration transaction, which
+is the most durable place for it, and the page puts this step ahead of registering for that
+reason.
+
+### If your credential is already registered without consent
+
+A registration cannot be amended, so a credential registered without consent has no second
+registration to carry it. When the registration panel finds your credential already registered,
+and this tab has not sent a registration with your consent since the page was last loaded (a
+reload forgets it), the page cannot tell whether the earlier registration carried one. If your book is not being quoted, press **Publish my
+consent**.
+
+That builds one transaction: 2 ADA from your wallet back to your own payout address, with your
+signed consent as metadata under label 8747. The 2 ADA stays yours; you pay only the network fee.
+The page refuses to build it unless the connected wallet holds the ceremony's escape-hatch key.
+
+The record is exactly as valid as one carried in a registration. What makes it valid is your
+signature, checked against your payout address and your nine parameters, not the transaction that
+carries it. It is found differently, though. Consent carried in a registration is found by your
+credential and never ages out. A published one is found among the recent transactions at your
+address, so if you move funds from this wallet a great deal and your book stops being quoted,
+publish it again.
 
 ## 4 · Register it on chain
 
@@ -141,48 +169,65 @@ lag and leaving the **Re-check** button to you.
 
 You also choose, here and only here, what your own stake and governance weight do:
 
-- **Stake pool** — optional. Leave it blank and the vault's ADA stakes nowhere and earns nothing,
-  which is the default. SaturnSwap does not pre-fill its own pool. **Read
+- **Stake pool**: optional. Leave it blank and the vault's ADA stakes nowhere and earns nothing,
+  which is the default. SaturnSwap runs a stake pool and deliberately does not pre-fill it, because
+  your stake is not ours to point. If you ask us which pool to use, the honest answer starts with the
+  fact that a small pool pays less: ours sits far below saturation and carries a fixed cost per
+  epoch, so its yield is materially under the network average. **Read
   [what changes the moment you delegate](risks-and-exit.md#what-changes-the-moment-you-delegate-to-a-pool)
   before you name one.**
-- **Governance** — Abstain (default), No confidence, or a DRep you name. Abstain is the default
-  for a mechanical reason, not a political one:
+- **Governance**: Abstain (default), No confidence, or a DRep you name. None of the three moves your
+  ADA or lets anyone else spend it; a DRep votes, it never holds funds. Abstain is the default for a
+  mechanical reason, not a political one:
   [a credential with no DRep delegation cannot withdraw at all](risks-and-exit.md#why-the-default-is-abstain-and-not-nothing),
-  and every owner action on your book is authorised by a withdrawal.
+  and every owner action on your book is authorised by a withdrawal. If you name a DRep, the page
+  checks that the ID is well formed and is a DRep ID, not a committee key, before your wallet
+  opens. It does not check that the DRep is registered, so copy the ID from a directory.
 
 Press **Register my credential (2 ADA deposit)** and sign in your wallet.
 
 **You sign:** one Conway `RegisterAndDelegateCredential` certificate, witnessed by your
 instance's own Plutus script. The ledger accepts it only with your signature.
 
-**It costs:** a 2 ADA deposit, refundable in full when you retire, plus the network fee —
-0.337761 ADA on the measured mainnet certificate.
+**It costs:** a 2 ADA deposit, refundable in full when you retire, plus the network fee
+(0.337761 ADA on the measured mainnet certificate).
 
-**How to tell it worked:** the panel flips to *"Your credential is registered on chain —
-certificate `<hash>`"*, with a **View the certificate ↗** link and the line *"Funding can proceed
+**How to tell it worked:** the panel flips to *"Your credential is registered on chain"*, followed
+by the certificate hash, a **View the certificate ↗** link and the line *"Funding can proceed
 below."* If the indexers have not caught up you get the hash and the explorer link anyway, and
 the panel keeps re-checking.
 
 ### If you are moving an existing book
 
-When the page can tell you have replaced an earlier band, an extra step — **5 · Move your
-existing order here** — appears between registration and funding, and funding renumbers to 6.
-It moves your whole book from the old instance to the new one in a
-single transaction you sign: no close and re-open, and your inventory never passes back through
-your wallet. The move never makes your quote more aggressive than it already is — it carries the
-resting quote across and raises only the leg the new band forbids.
+When the page can tell you have replaced an earlier band, an extra step, **5 · Move your
+existing order here**, appears between registration and funding, and funding renumbers to 6.
+It moves your whole book, the token, the ADA and the three beacons, from the old instance to the
+new one in a single transaction you sign. Nothing is burned or re-minted, and your inventory never
+passes back through your wallet.
+
+The move carries your current quote across; it does not reprice it. A leg changes only where the
+new band forbids it: a sell price below the new ask floor is raised to that floor, and a buy price
+above the new bid ceiling is lowered to that ceiling. The page names each leg it changed before you
+sign. Once the move lands, the old instance is empty and the page offers **Reclaim my 2 ADA
+deposit** for it, so moving costs roughly the network fees (see
+[One band per instance](risks-and-exit.md#one-band-per-instance)).
 
 ## 5 · Put your inventory to work
 
 The panel states the token you picked and how much of it you hold. Fill in:
 
-- **Tokens to rest (ask side)** — in whole tokens; a **Use all** shortcut fills in your balance.
-- **ADA to rest (bid side)** — optional. This is the ADA the keeper may buy with, inside your
+- **Tokens to rest (ask side)**: in whole tokens; a **Use all** shortcut fills in your balance.
+- **ADA to rest (bid side)**: optional. This is the ADA the keeper may buy with, inside your
   range. Leave it empty and your order can only sell until a sale gives it ADA to buy back with.
+
+**How much to rest.** Enough that a fill is worth a taker's while. A few hundred ADA of depth is a
+reasonable floor; below that the network fee eats the trade and nobody takes it. Start at that
+floor rather than at full size, for the reason in
+[The order of operations that matters](#the-order-of-operations-that-matters).
 
 Press **Build the funding transaction**. Nothing is signed yet. What you get back is:
 
-- a plain-English verdict — one output to your derived order address resting *N* token units with
+- a plain-English verdict: one output to your derived order address resting *N* token units with
   *M* lovelace, exactly three beacons minted, the fee, and every other output returning to your
   own wallet;
 - a **Download** button for `body.tx`, the exact unsigned transaction body;
@@ -194,8 +239,8 @@ body before you sign, so signing never rests on this page's word.
 
 Then press **Sign and submit with my wallet**.
 
-**You sign:** one cardano-swaps two-way create — your inventory into your order address, three
-beacons minted, an inline datum carrying both your bid and your ask.
+**You sign:** one cardano-swaps two-way create (your inventory into your order address, three
+beacons minted, an inline datum carrying both your bid and your ask).
 
 **It costs:** the network fee (0.293094 ADA on the measured mainnet create `dab1fd6a…`), plus the
 2 ADA min-UTxO that rests inside the order with your inventory and comes back when you close it.
@@ -203,15 +248,15 @@ beacons minted, an inline datum carrying both your bid and your ask.
 **How to tell it worked:** *"Submitted: `<hash>`. Your order goes live once this lands…"*, with a
 **View the transaction ↗** link.
 
-The registration check runs twice — once before anything is planned, and again immediately before
-the signature — so a credential retired in between cannot let a funding through.
+The registration check runs twice (once before anything is planned, and again immediately before
+the signature), so a credential retired in between cannot let a funding through.
 
 ## The order of operations that matters
 
 **Register before you fund.** Every owner action on a cardano-swaps order is authorised by a
 withdrawal from your credential, and an unregistered credential cannot appear in a withdrawal. An
 order funded at an unregistered credential can still be **filled by takers** while being
-**repriced or closed by nobody, you included** — until somebody registers the credential. It is
+**repriced or closed by nobody, you included**, until somebody registers the credential. It is
 stuck rather than lost: registration is permissionless, so anyone can register it for the 2 ADA
 deposit. The page enforces the order anyway: funding refuses unless the chain positively says the
 credential is registered, and an unreadable chain is a refusal too, not a pass.
@@ -219,22 +264,22 @@ credential is registered, and an unreadable chain is a refusal too, not a pass.
 {% hint style="danger" %}
 **Never send funds to your order address with an ordinary wallet transfer.** It is a script
 address. A plain send arrives with no datum, and the validator decodes the datum before it
-reaches any branch — so the transfer is permanently unspendable, by SaturnSwap, by you, and by
+reaches any branch, so the transfer is permanently unspendable, by SaturnSwap, by you, and by
 the wallet that owns it. The only safe funding is the transaction step 5 builds, which attaches
 the beacons and the price datum. To add more later, run step 5 again.
 {% endhint %}
 
 **Close your orders before you retire the credential.** See
-[Retire the credential](risks-and-exit.md#2-retire-the-credential-and-take-the-2-ada-back).
+[Retire the credential](risks-and-exit.md#id-2.-retire-the-credential-and-take-the-2-ada-back).
 
 **A freshly funded order rests at the edge of your range** until the keeper's first reprice moves
-it. That is the outermost price you authorised, and it is a gift to whoever trades against it —
-it cost SaturnSwap 14.6 ADA on a live mainnet order, found deliberately on its own money. Fund a
+it. That is the outermost price you authorised, and it is a gift to whoever trades against it.
+It cost SaturnSwap 14.6 ADA on a live mainnet order, found deliberately on its own money. Fund a
 small book first and let it be worked before you commit size.
 
 ## After funding
 
-Once the create lands, your order is a live two-way order on SaturnSwap's book — anyone can fill
+Once the create lands, your order is a live two-way order on SaturnSwap's book. Anyone can fill
 it at your posted prices, whether or not the keeper is working it yet.
 
 What the keeper does once your book is enrolled: each round it reads a mid from the two feeds,
@@ -244,9 +289,9 @@ pays the network fee for every one of those reprices.
 ### How to check your book is live
 
 Come back to [saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas) and connect the same
-wallet. Under **Already have an instance?** the page finds your instances from the chain — the
+wallet. Under **Already have an instance?** the page finds your instances from the chain (the
 ceremony's own validator carries the numbers it was built with, so there is nothing to look up or
-type — and lists each one roughly like this:
+type) and lists each one roughly like this:
 
 ```
 44.00 ADA · 0.0891 – 0.1094 ADA · last worked 3h ago · 3c265036cwm9…
@@ -258,8 +303,33 @@ process are indistinguishable from outside, which is exactly why the check does 
 them apart. A number that keeps climbing means nobody is repricing you.
 
 You can compute the same number yourself from any indexer, or just watch your order address on a
-block explorer. The per-client volume-and-fees dashboard at `/v3/mm` currently requires an API
-key from SaturnSwap and is not self-serve.
+block explorer. Your settled volume, fills and fees are also on your own dashboard at
+[saturnswap.io/v3/mmaas/book](https://saturnswap.io/v3/mmaas/book): sign in with the wallet your
+book was set up with. It shows figures once SaturnSwap has linked that wallet to a billing grant;
+until then it says no market was found for the wallet.
+
+If this wallet has no funded instance, the page lists any instance you registered but never funded
+as set up and waiting for inventory. It still holds its 2 ADA deposit. To use it, open the page in
+the browser you set it up from and pick its token: the page restores the range and spread you last
+used for that token there. Elsewhere, entering the same range can build a different instance,
+because the spread is set from the token's measured volatility and is not an input, and that
+instance charges another 2 ADA deposit. The page does not yet offer a retire step for an
+instance that was never funded, so that deposit stays with the instance until it does.
+
+### Finding an instance by its two floors
+
+The list is built from your registration transactions. If one cannot be read, **Enter the floors
+by hand instead** takes the two floors as fractions, `min_asset2_price` and `min_asset1_price`,
+exactly as they appear in your params file, plus your token's decimals, and derives the instance
+they describe.
+
+- **If nothing rests there,** the page says so. Those floors describe a different instance from
+  the one you funded. Check them against your params file before you sign anything.
+- **Decimals do not change which instance you land on;** the two fractions decide that. Decimals
+  appear in the message you sign, so a wrong value produces a proof the verifier refuses, not one
+  that points somewhere else.
+- **The page offers the possession signature only after the chain confirms a book rests there.** A
+  signature for an instance that holds nothing looks exactly like a signature for one that does.
 
 ## Checking it yourself
 
@@ -267,41 +337,75 @@ Two source-available Python tools ship in the public
 [saturnswap-maker-verify](https://github.com/Flux-Point-Studios/saturnswap-maker-verify) repo,
 and both work from a fresh clone with nothing from us:
 
-- **`verify_create_body.py`** — judges the funding transaction body before you sign it. The
+- **`verify_create_body.py`** judges the funding transaction body before you sign it. The
   funding panel prints the exact command and offers `body.tx`.
-- **`verify_ceremony.py`** — rebuilds the validator from source, re-applies your nine parameters,
+- **`verify_ceremony.py`** rebuilds the validator from source, re-applies your nine parameters,
   derives the script hash and both addresses, and checks your possession proof against them.
 
-Both take `--params my-ceremony.params.json`. **The guided flow does not hand you that file** —
+`verify_ceremony.py` will not judge a ceremony until someone has proved they can sign for the
+escape-hatch key; without that proof it would only confirm that SaturnSwap's arithmetic agrees with
+itself. If anything SaturnSwap told you disagrees with what the source derives, it exits loudly,
+names the difference, and prints *"DO NOT FUND THIS ADDRESS"*. So do not fund an order address on
+the page's word: the page derives it from your parameters, and the verifier re-derives it from the
+published source. Clone the verifier yourself rather than taking a copy from anyone (see
+[Check an existing address](validator-generations.md#check-an-existing-address)).
+
+Both take `--params my-ceremony.params.json`. **The guided flow does not hand you that file**,
 only the possession proof. Two ways to get it:
 
 - Open **Set this up by hand, from a cold key** on the same page and enter the two floors the
   guided flow showed you (*"Never buy above X, never sell below Y"*) plus your token's decimals.
-  The expert form converts them with the same functions the guided flow does, so it reproduces
-  the identical nine parameters and prints the file.
+  The expert form converts them with the same functions the guided flow does, so it reproduces the
+  identical nine parameters and prints the file. The guided flow fills in seven of the nine for you
+  (five published by SaturnSwap, two read from your wallet); the expert form lets you set your four
+  values yourself (escape-hatch key, payout address and both floors) and shows the five published
+  ones for you to check, which is what you want if your escape-hatch key lives somewhere this
+  browser will never see. The address is still derived on SaturnSwap's server from the values you enter, for the reason
+  in step 2.
 - Recover them from the chain: the applied validator carries all nine and rides in the witness
   set of your own registration transaction.
 
 Keep that file. It is nine public values, and it is the simplest input to the recovery tool
 described in [Leaving if SaturnSwap is gone](risks-and-exit.md#leaving-if-saturnswap-is-gone).
 
-Cross-check the five values SaturnSwap publishes against a channel this page does not control.
-They are listed under **Check us, don't trust us**, each with the chain query that confirms it.
+### Checking a params file you already have
+
+**Already set up? Check what your vault bound** on the page takes a params file or ceremony receipt
+and lists what it claims: the bound script hash, your floors, your payout address, your
+escape-hatch key and the five published values. It then gives you the verifier command. The list is
+only an echo of the file. The check is the command, run on your own machine against the public
+source; the page plays no part in it.
+
+### The five values SaturnSwap publishes
+
+Five of the nine parameters behind your vault are SaturnSwap's to publish and yours to check. The
+page fills them in so you cannot mistype one, and a mistake would be permanent: each value is an
+input to your address. This table is a second place to check them, outside the page. Compare the
+values in your params file against it, and confirm each one on chain the way the last column
+says. The verifier takes `dapp_hash` and `beacon_id` as given, so this check is yours to do.
+
+| Parameter | Published value | What it is | How to check it |
+|---|---|---|---|
+| `fee_address` | `addr1v9wr69p2tx8dx2lat8rzznahxh4xhfl075yzm8uxmth4tvcf3lx47` | The only address the inventory validator's fee leg may pay. | An enterprise mainnet address (header `0x61`) with payment key hash `5c3d142a598ed32bfd59c6214fb735ea6ba7eff5082d9f86daef55b3`. It receives this fee and nothing else: no change, no payouts, no treasury. |
+| `fee_bps` | `20` | The most the inventory validator's fee leg may take, 0.20% of what the transaction pays out to you, and nothing on a transaction that closes an order. This is not the service fee drawn from your prepaid channel; see [What it costs](README.md#what-it-costs). | The validator declares its own ceiling, `const max_fee_bps = 500`. An instance built with a higher rate rejects every bot action. |
+| `adam_bot_pkh` | `cea98dfce26e0ffbf5ab892edcb8f8ab8b794d5390f80ec0b9aafed3` | The one key SaturnSwap holds against your instance. It can reprice and cancel. Your value can only land at your order address, your payout address or the bounded ADA fee leg. | The key funds its own enterprise address, `addr1v882nr0uufhql7l44wyjah9clz4ck72d2wg0srkqhx40a5c6g5gjp`, whose payment credential is this hash and whose mainnet history is this key signing for itself. The transaction count grows every day the keeper runs, so check the credential, not a count. |
+| `dapp_hash` | `11928a3ac3b65edbf103ea6bb3362e39b879a36f02897df31c40917b` | The two-way cardano-swaps validator your orders rest against. Only the two-way order datum carries both a bid ceiling and an ask floor. | The beacon policy below commits to it: fetch that policy's script from any mainnet indexer and this hash appears inside it as an applied parameter. You can also rebuild it from source; see [What it actually does](risks-and-exit.md#what-it-actually-does). |
+| `beacon_id` | `8a199a17ef4517215945aaf3c8c5204c60fd94d34c46d341e99c8fcf` | The policy that marks your orders on the book. | Fetch its script from any mainnet indexer and read its error strings: *"Two-way swaps must have exactly three kinds of beacons"*, *"Wrong asset1_beacon"* and *"Wrong asset2_beacon"*. A one-way policy says *"One-way"* and *"Wrong offer_beacon"* instead. That is the only way to tell the two deployments apart. |
 
 ## What is not automatic yet
 
 Stated plainly, because acting on a stale claim here costs real money:
 
-- **The keeper has to be pointed at your book once.** Your consent reaches the chain by itself, and
-  the keeper verifies it there, but the address list it works is still set when the process starts.
-  Your order rests and is fillable by takers in the meantime, at whatever price it last carried.
-- **Enrolling a book in the keeper is still an operator step.** The keeper does not yet discover
-  books from the chain by itself; the address list it works is set when the process starts. Your
-  order rests and is fillable by takers in the meantime, at whatever price it last carried.
-- **The guided flow does not give you your parameters file** — see above for the two ways to
+- **Enrolment is automatic only when your consent names your token.** The guided flow signs a
+  consent that names the token you picked, and the keeper finds that book on the chain and starts
+  quoting it without anyone at SaturnSwap adding it. Consent signed without a token, which is what
+  the expert form produces, still needs an operator to supply the pair. Until the keeper's first
+  reprice, your order rests and is fillable by takers at whatever price it last carried.
+- **The guided flow does not give you your parameters file.** See above for the two ways to
   obtain it.
-- **The client dashboard needs an API key.** Until then, "last worked" on the re-entry panel and
-  a block explorer are the honest checks.
+- **The client dashboard shows figures only after SaturnSwap links your wallet to a billing
+  grant.** Until then it says no market was found for your wallet, and "last worked" on the
+  re-entry panel and a block explorer are the honest checks.
 
 None of these can take your funds, and none of them can stop you leaving: every exit is
 authorised by your signature alone.

@@ -15,7 +15,7 @@ sides of a market with real inventory, and the on-chain guarantees in
 
 Both are built and signed in your browser, by your wallet, from
 [saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas). Connect the wallet that owns the vault
-and your instances are found **from chain alone** — no file to upload, nothing for us to look up.
+and your instances are found **from chain alone**, with no file to upload and nothing for us to look up.
 The exit steps sit under **Getting your funds out**.
 
 ### 1. Close the order
@@ -26,13 +26,13 @@ wallet supplies only the network fee.
 
 Before your wallet ever opens, the builder refuses if:
 
-- the connected wallet is not the ceremony's payout address — the recovery is authorised by that
+- the connected wallet is not the ceremony's payout address. The recovery is authorised by that
   key and nothing else can sign it;
 - the credential is not **registered** on chain. The spend is authorised by the credential
   appearing in the transaction's withdrawals map, and an unregistered credential cannot appear
   there at all;
 - the planned payout goes anywhere other than your payout address;
-- the assembled CBOR fails an independent re-read — the bytes are checked against the order, the
+- the assembled CBOR fails an independent re-read. The bytes are checked against the order, the
   beacons and your address by code that shares nothing with the planner that produced them.
 
 If your vault holds several resting orders, this closes one and tells you how many remain. Press
@@ -44,12 +44,12 @@ Registering the vault cost a 2 ADA Cardano stake deposit. Retiring it returns th
 full.
 
 **Order matters, and the page enforces it.** Retiring the credential while anything still rests
-at the order address leaves that inventory fillable by takers and repriceable by nobody —
+at the order address leaves that inventory fillable by takers and repriceable by nobody,
 including you, because your own recovery path withdraws from that same credential. So the retire
 step stays closed until the chain says, twice over, that there is nothing to strand:
 
 - the order address holds **no UTxOs**, and
-- the chain still reports the credential as **registered** — an unreadable answer is not a yes.
+- the chain still reports the credential as **registered** (an unreadable answer is not a yes).
 
 Both are re-read in the moment before you sign, not once at build time. If it does happen, it is
 stuck rather than lost: registration is permissionless, so anyone can re-register the credential
@@ -66,12 +66,18 @@ These are real transactions. Follow them on an explorer rather than taking the n
 
 Total 0.926439 ADA, against 2 ADA returned.
 
+**Who signed the close and the retire.** They ran on a pilot book SaturnSwap funded with its own
+ADA, so SaturnSwap's wallet signed them as that book's owner. Open either one on cexplorer and look
+at the witness set: it carries the book's owner key and not the ADAM bot key, which is the property
+that matters. No outside client has exited on mainnet yet, so this shows that the owner key alone
+can empty the address; it is not yet a record of a third-party client leaving.
+
 A **funded** book carrying real inventory went the same way in
 [`181bde67…`](https://cexplorer.io/tx/181bde674d8a3baceba666647cc979fdf6c97052b2b1935337631292b304e7eb)
 (fee 0.591181 ADA, block 13,855,967). Decoded from the chain: the order address held
 27.000000 ADA and 120,605,319 units of NIGHT plus its three beacons; the transaction produced
-**two outputs, both to the owner's address**, carrying 27.000000 ADA and 120,605,319 NIGHT —
-every unit preserved — all three beacons burned, and the whole thing authorised by a
+**two outputs, both to the owner's address**, carrying 27.000000 ADA and 120,605,319 NIGHT
+(every unit preserved), all three beacons burned, and the whole thing authorised by a
 zero-lovelace withdrawal from the vault's own credential.
 
 ## Leaving if SaturnSwap is gone
@@ -95,8 +101,8 @@ your ceremony:
 | the two-way beacon policy | that same blueprint, applied with `dapp_hash` | `beacon_id` |
 
 Any mismatch is fatal and nothing is submitted. Because every input is public and every script is
-checked locally, you can point it at **any node you trust** — a hostile node can refuse you
-service, it can never redirect your funds.
+checked locally, you can point it at **any node you trust**. A hostile node can refuse you
+service, but it can never redirect your funds.
 
 You can check one link of that chain right now, without running anything of ours. **The tag
 matters**: cardano-swaps has moved on since the deployment SaturnSwap books against, and the
@@ -113,8 +119,9 @@ print(hashlib.blake2b(bytes([2]) + bytes.fromhex(v['compiledCode']), digest_size
 # 11928a3ac3b65edbf103ea6bb3362e39b879a36f02897df31c40917b
 ```
 
-That is the `dapp_hash` published under **Check us, don't trust us** on
-[saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas), and baked into your ceremony. It is a
+That is the `dapp_hash` listed in
+[The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes),
+and baked into your ceremony. It is a
 third party's open-source contract, not ours.
 
 ### Running it
@@ -145,12 +152,15 @@ node. Two things worth knowing:
 It will **refuse** rather than guess if your vault has unclaimed staking rewards, or if it cannot
 read that balance at all. See [Staking and governance](#staking-and-governance).
 
-**Keep your ceremony params file** — see
+**Keep your ceremony params file.** See
 [Checking it yourself](setting-up-a-book.md#checking-it-yourself). If you lose it all nine values
 are recoverable from chain, but that is a reconstruction, and a reconstruction is work you do not
 want to be doing on the day you need it.
 
 ## The honest risk list
+
+SaturnSwap ran books of its own on mainnet, with its own ADA, to find the sharp edges with its own
+money at risk. The measurements below that say "our own book" come from them.
 
 ### You are holding inventory, on both sides
 
@@ -165,24 +175,24 @@ Nothing in the design offsets this. Our fee is a fee, not a hedge.
 ### The band bounds the price, not the outcome
 
 Your two floors are enforced by the validator on every quote, so the keeper can never bid above
-your ceiling or ask below your floor. That is a hard constraint — an out-of-band quote is a
+your ceiling or ask below your floor. That is a hard constraint: an out-of-band quote is a
 transaction the chain refuses.
 
 **It says nothing about where the band sits relative to the market.** The band bounds the spread;
 it does not put a floor under your loss. You chose those two numbers, and a band chosen around
 the wrong mid is a band the validator will faithfully enforce.
 
-### ⚠️ A book nobody re-quotes is not idle — it is a live mispriced offer
+### ⚠️ A book nobody re-quotes is not idle: it is a live mispriced offer
 
 This is the risk most people get wrong, so it is worth stating flatly.
 
 A resting order keeps the datum it was funded with. If nothing reprices it, that datum stays
 exactly where it was while the market moves away. **A stale book is a standing offer at a stale
-price** — and if it has never been repriced at all, that price is your ceremony floors, which are
+price**. If it has never been repriced at all, that price is your ceremony floors, which are
 *the worst quote you ever authorised*.
 
 We have measured this on our own book. One sat for 89.8 hours quoting a bid about 5% above the
-market, with 27 ADA behind it. Nothing took it, so it cost nothing — that was luck, not a
+market, with 27 ADA behind it. Nothing took it, so it cost nothing. That was luck, not a
 property of the design.
 
 Do not read "idle" as "safe". Ask which side is on the wrong side of the market, and how much
@@ -192,7 +202,7 @@ you can compute it yourself from any indexer.
 ### One band per instance
 
 Your nine parameters are a pure function: the applied script hash **is** the stake credential
-**is** the order address. Changing any parameter — including either floor — produces a different
+**is** the order address. Changing any parameter, including either floor, produces a different
 instance at a different address, with its own 2 ADA deposit. There is no in-place edit.
 
 Moving to a new band is a single signed transaction that carries your whole book across, and the
@@ -202,17 +212,18 @@ an edit, and it is yours to initiate.
 ## Staking and governance
 
 The ADA in your vault is yours, and so is the stake on it. At registration you choose a stake
-pool (optional — blank means it stakes nowhere and earns nothing) and a governance position
+pool (optional, and blank means it stakes nowhere and earns nothing) and a governance position
 (Abstain by default).
 
-Staking yield is **excluded from our fee basis** by the validator itself: the basis subtracts any
-withdrawn rewards before the rate is applied. You are charged for the position being run, not for
-the yield your own stake produced.
+Staking yield is excluded from the inventory validator's fee basis in every generation after the
+earliest: the basis subtracts any withdrawn rewards before the rate is applied. The earliest
+generation does not do this, and [Validator generations](validator-generations.md) explains how to
+tell which one your book uses.
 
 ### Why the default is Abstain, and not nothing
 
 Proven on a real Cardano ledger: a credential with **no DRep delegation at all cannot withdraw
-its rewards** — the node rejects the transaction with `ConwayWdrlNotDelegatedToDRep`. Every
+its rewards**. The node rejects the transaction with `ConwayWdrlNotDelegatedToDRep`. Every
 action on your vault, including closing it and including your own recovery tooling, is authorised
 by a withdrawal from that credential. A vault that cannot move its rewards cannot be repriced,
 closed, or recovered.
@@ -227,7 +238,7 @@ to drain that account **exactly**. Measured against a real reward account holdin
 lovelace: a withdrawal one lovelace short was rejected outright, naming both figures. It is an
 equality, not a ceiling.
 
-On the browser side this is handled. Every owner action — close, retire, move house — measures
+On the browser side this is handled. Every owner action (close, retire, move house) measures
 the balance from chain, states it, and **re-reads it in the moment before you sign**. If an epoch
 boundary moved it in between, the page refuses, tells you the old and new figures, and asks you
 to rebuild. Nothing is signed and nothing is touched. Retiring drains the account and deregisters
@@ -235,18 +246,18 @@ the credential in the same transaction, on one signature.
 
 **But the keeper does not measure it.** Its reprice transaction carries a zero withdrawal for
 your credential, because nothing in the keeper reads a reward balance. Once your first staking
-reward lands, the node will reject every keeper action on your book — which means **your book
+reward lands, the node will reject every keeper action on your book, which means **your book
 stops being repriced and rests at its last quote**, i.e. the stale-book exposure above.
 
 So, plainly: **if you delegate your vault to a stake pool today, expect quoting to stop at your
-first reward payout.** Your funds are not at risk and your own exit still works — the browser
+first reward payout.** Your funds are not at risk and your own exit still works: the browser
 path handles a non-zero balance, and `escape.sh` refuses until you claim it and tells you so. But
 the service stops working for you. **Leave the pool blank until this is fixed**, or watch your
 book's age closely.
 
 ## Operational limits
 
-### If a price feed goes down, your pair is not quoted — it is not quoted wrongly
+### If a price feed goes down, your pair is not quoted: it is not quoted wrongly
 
 The keeper prices your pair from two independent public feeds, with a divergence breaker between
 them, and refuses an operator-set constant mid on mainnet. See
@@ -259,12 +270,12 @@ A token with no listing on either feed cannot currently be quoted at all.
 ### Quoting can pause for reasons that are not about your token
 
 The keeper runs a drawdown rail that stops it quoting when equity falls past its limit for
-several cycles in a row. **A pause is not necessarily about your market** — the rail is not fully
+several cycles in a row. **A pause is not necessarily about your market**. The rail is not fully
 isolated per book today, and per-book isolation is open work rather than a shipped property.
 
 A halt cannot cost you custody: on any keeper action, your value can only reach your order
 address, your payout address, or the bounded ADA fee leg, and the chain enforces that. What it
-does cost you is quoting — and a book that is not being worked is exposed, not parked.
+does cost you is quoting, and a book that is not being worked is exposed, not parked.
 
 ### What you can actually see
 
@@ -275,11 +286,33 @@ Honestly: not much, and you should not rely on us to tell you.
 - That number comes from the chain, so you can compute it yourself from any indexer without
   asking us. The age of the UTxO at your order address is the whole signal.
 - There is **no public health endpoint and no alerting to clients today.** Our own book-health
-  check is internal and deliberately not public — it is a list of which books are not being
+  check is internal and deliberately not public. It is a list of which books are not being
   repriced and exactly what they hold, which is an adverse-selection target list aimed at the
   people it exists to protect.
 
 If you are running real size, watch your order address yourself.
+
+## What you still have to trust
+
+The validator bounds where your value can go. It does not bound everything, and what remains is
+short but real.
+
+- **Quote quality is off-chain conduct.** The chain proves the keeper cannot take your inventory.
+  It does not prove the keeper quotes well. Judge that from the public book, from "last worked",
+  and from your own dashboard at [saturnswap.io/v3/mmaas/book](https://saturnswap.io/v3/mmaas/book).
+- **The bot key touches your inventory on every reprice.** Repricing is the service: each reprice
+  spends your order and rebuilds it. The validator fixes where the value can land, not whether the
+  bot key can move it.
+- **The five published values are ours to publish and yours to check.** The verifier takes
+  `dapp_hash` and `beacon_id` as given. Check them against
+  [The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes)
+  and on chain.
+- **Your keys are your own claim.** The setup records your wallet's key and payout address. No tool
+  can prove to anyone else that they are really yours.
+- **The verifier you run must be the real one.** A doctored clone can pass its own checks. See
+  [Check an existing address](validator-generations.md#check-an-existing-address).
+- **No outside client has exited on mainnet yet.** See
+  [What it costs, measured on mainnet](#what-it-costs-measured-on-mainnet).
 
 ## What SaturnSwap does not promise
 
