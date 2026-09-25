@@ -160,15 +160,24 @@ difference measured zero.
 
 Resting orders only become volume when something fills them, so SaturnSwap runs the taker side
 too: an autonomous agent that reads the live book, decides what is worth taking, and composes the
-multi-fill transactions the economics above depend on. The same agent family quotes the maker
-side, repricing as the market moves, skewing on inventory, and standing down when the spread is
-too thin to justify a fill.
+multi-fill transactions the economics above depend on. On the maker side, the keeper reprices
+each client's order around the live mid as the market moves.
 
-**Appetite is a setting.** Each client gets their own parameter set on a shared model: target
-pairs, order size and ladder shape, spread and skew targets, per-token caps, a ceiling on outflow
-per window, and how hard to chase depth. SaturnSwap tunes those numbers per client and keeps
-re-tuning them against measured results, and what is learned tuning one client carries to the
-next.
+**Appetite is four numbers, and the client signs them.** Each client chooses four terms inside
+published bounds and signs them in their consent statement. The keeper runs each book on the terms
+its owner signed, and on nothing else:
+
+| Term | Default | Bounds | What it does |
+|---|---|---|---|
+| Spread | 8% | 4% to 60% | The ask sits half the spread above the live mid and the bid half below it, each clamped into the client's band. |
+| Reprice threshold | 1.5% | 1.5% to 10% | A quote is rebuilt only once the mid has moved at least this far from the one it was set at. |
+| Book value cap | 120 ADA | 60 to 120 ADA | A book worth more than this, its token valued at the live mid, is closed back to the payout address. |
+| Daily loss limit | 5% | 1% to 50% | A book whose value falls by more than this share of its value at the start of the UTC day is closed back to the payout address. |
+
+The spread must be more than twice the reprice threshold. A client changes their terms by signing
+and publishing a newer statement; see
+[Changing your terms](setting-up-a-book.md#changing-your-terms). When and how a book is closed is
+in [The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 
 **Autonomy is bounded in two independent places.** The agent enforces its own risk configuration.
 Beneath it, the validator bounds what any keeper-signed action can do: value can land only at your
@@ -198,8 +207,8 @@ is not a mainnet record.
   cap and the finality gate would carry over unchanged.
 - **Batch depth is bounded by transaction execution limits.** On the measured preprod book the
   practical ceiling is about 16 fills; past it the cost per fill rises.
-- **Security scope.** There is no third-party audit. See
-  [Security evidence](security-evidence.md).
+- **Security scope.** This page measures cost, not safety. For what has been tested, at which
+  revision, and what that evidence does not cover, see [Security evidence](security-evidence.md).
 - **The fee channel has different protections from your inventory.** See
   [How service billing works](README.md#how-service-billing-works).
 

@@ -1,7 +1,7 @@
 ---
 description: >-
-  What can go wrong, what SaturnSwap does not promise, and the two transactions
-  that take your whole book back to your own wallet.
+  What can go wrong, when the keeper closes your book, what SaturnSwap does not
+  promise, and the two transactions that take your whole book back to your own wallet.
 ---
 
 # Risks, limits, and how to leave
@@ -10,6 +10,57 @@ Read this before you fund anything. Market making is not a yield product. You ar
 sides of a market with real inventory, and the on-chain guarantees in
 [What MMaaS is](README.md#custody-what-we-can-and-cannot-do) are about **custody**, not about
 **outcome**.
+
+## The keeper can close your book
+
+The keeper does more than reprice. In the cases below it closes your book on its own: it cancels
+the order it quotes for you and sends everything in it to the payout address your ceremony names,
+and SaturnSwap signs and pays the network fee. SaturnSwap can also close a book by hand, to the
+same address. **In every case the funds go back to your payout address.** The validator backs
+this: a keeper transaction can only move your value to your order address, your payout address or
+the bounded ADA fee leg (see [Custody](README.md#custody-what-we-can-and-cannot-do)).
+
+Three of the four cases are your own terms, the ones you signed in your consent statement (see
+[What the statement says](setting-up-a-book.md#what-the-statement-says)).
+
+| The keeper closes your book when | How it is measured |
+|---|---|
+| **It is worth more than your book value cap** | Each round the keeper can price your token: the ADA in your order plus your token valued at the keeper's mid, which moves at most 10% per round. A rise in your token's price counts, so a rise alone can close a book that no one has traded with. |
+| **It loses more than your daily loss limit in a UTC day** | Against the book's opening value for the UTC day, which is the keeper's first complete valuation of your book that day, measured the same way as the cap. Your limit is your share of that value: at the default 5%, a book that opens the day at 100 ADA is closed once it is worth less than 95 ADA. A fall in your token's price counts as a loss even with no trade. A round in which the keeper cannot value your book completely, for example while a fill is not yet confirmed, neither sets the opening value nor closes the book. |
+| **Your terms are outside the published bounds, or two of your statements conflict** | Checked each round against [the bounds on your terms](setting-up-a-book.md#the-bounds-on-your-terms). The keeper never quotes on terms nearer the bounds than the ones you signed. It returns your order once. Two different statements with the same *signed at* time conflict, and the keeper returns the order rather than choose between them. |
+| **No usable price for 15 minutes** | 15 minutes in a row in which either feed (bending.ai or GeckoTerminal) gives no price, or the two disagree by more than 5%, for any reason, including an outage at either provider. Every book reads the same two feeds, so a 15-minute outage at one provider closes every book at once. |
+
+A close is not a pause. Your inventory is back at your payout address, as whatever mix of ADA and
+token the book held at that moment, and nothing is quoted until you fund again.
+
+**A rise alone can close your book.** The page lets you fund at most five sixths of your cap, so a
+book funded at the most allowed and held entirely in your token is closed by a rise of more than
+20% in its price; a book holding some ADA needs a larger rise. That rise is not rare. For a token
+as volatile as NIGHT has been, a measured daily standard deviation of 5.68%, we estimate the
+chance that its price touches +20% at some point as about 6% within 3 days, 22% within 7 days,
+39% within 14 days and 56% within 30 days. These are estimates from a random-walk model with no drift, not
+measurements. When it happens, the book comes back to your payout address at its higher value.
+
+**Two cases are about capacity, not your book's value.** The keeper quotes one order per book. Any
+other order at your order address is sent back to your payout address, up to two a day for each
+client, and any beyond that rests unquoted. One keeper also quotes at most five books: a book that arrives while
+five are enrolled has its order returned to your payout address, and it can enrol again once a
+seat is free.
+
+**Funding the same instance again the same UTC day.** After a daily-loss close, that instance stays
+closed until 00:00 UTC: anything you fund there before then is sent straight back to your payout
+address. After any other close, including your own exit, the daily loss limit still measures
+against the value your book opened that UTC day with, so a smaller book funded at the same
+instance that day can be closed again as soon as the keeper values it. Wait until 00:00 UTC, or set
+up a new instance.
+
+A feed-outage close is also remembered: that instance is not quoted again, even after the feeds
+recover, and anything you fund there later is sent straight back to your payout address. To be
+quoted again, set up a new instance.
+
+A close needs what a reprice needs: a running keeper, a synced node and our gas. During a
+[pause that stops every book](#pauses-that-stop-every-book-at-once), a close waits too. Your own
+exit, below, needs none of them.
 
 ## Leaving, in two transactions
 
@@ -212,8 +263,10 @@ an edit, and it is yours to initiate.
 ## Staking and governance
 
 The ADA in your vault is yours, and so is the stake on it. At registration you choose a stake
-pool (optional, and blank means it stakes nowhere and earns nothing) and a governance position
-(Abstain by default).
+pool and a governance position (Abstain by default). **Leave the stake pool blank**: today a book
+stops being repriced at its first reward payout, for the reason in
+[What changes the moment you delegate to a pool](#what-changes-the-moment-you-delegate-to-a-pool).
+Blank means the vault's ADA stakes nowhere and earns nothing.
 
 Staking yield is excluded from the inventory validator's fee basis in every generation after the
 earliest: the basis subtracts any withdrawn rewards before the rate is applied. The earliest
@@ -250,16 +303,16 @@ boundary moved it in between, the page refuses, tells you the old and new figure
 to rebuild. Nothing is signed and nothing is touched. Retiring drains the account and deregisters
 the credential in the same transaction, on one signature.
 
-**But the keeper does not measure it.** Its reprice transaction carries a zero withdrawal for
-your credential, because nothing in the keeper reads a reward balance. Once your first staking
-reward lands, the node will reject every keeper action on your book, which means **your book
-stops being repriced and rests at its last quote**, i.e. the stale-book exposure above.
+**The keeper does not handle it yet.** It plans every reprice as if your reward balance were zero,
+so the reprice it plans has no output to pay a reward into. Before building, it reads the real
+balance from the node, and once that balance is non-zero it refuses the reprice, every round.
+From your first reward payout, **your book stops being repriced and rests at its last quote**,
+which is the stale-book exposure above.
 
-So, plainly: **if you delegate your vault to a stake pool today, expect quoting to stop at your
-first reward payout.** Your funds are not at risk and your own exit still works: the browser
+So, plainly: **leave the stake pool blank.** A vault delegated to a pool today stops being quoted
+at its first reward payout. Your funds are not at risk and your own exit still works: the browser
 path handles a non-zero balance, and `escape.sh` refuses until you claim it and tells you so. But
-the service stops working for you. **Leave the pool blank until this is fixed**, or watch your
-book's age closely.
+the service stops working for you.
 
 ## Operational limits
 
@@ -269,19 +322,37 @@ The keeper prices your pair from two independent public feeds, with a divergence
 them, and refuses an operator-set constant mid on mainnet. See
 [What your token needs](README.md#what-your-token-needs) for the rule and the reason. The short
 version: **fewer than two healthy feeds means the pair is not quoted that round**, because
-divergence is unverifiable and quoting into an unchecked number is worse than not quoting.
+divergence is unverifiable and quoting into an unchecked number is worse than not quoting. If it
+lasts 15 minutes, the keeper closes your book. Every book reads the same two feeds, so an outage at
+either provider does that to every book at once; see
+[The keeper can close your book](#the-keeper-can-close-your-book).
 
 A token with no listing on either feed cannot currently be quoted at all.
 
-### Quoting can pause for reasons that are not about your token
+### Pauses that stop every book at once
 
-The keeper runs a drawdown rail that stops it quoting when equity falls past its limit for
-several cycles in a row. **A pause is not necessarily about your market**. The rail is not fully
-isolated per book today, and per-book isolation is open work rather than a shipped property.
+One keeper quotes every book, through one Cardano node, paying gas from one operator wallet.
+Either of these stops every book at the same time, whatever your market is doing:
 
-A halt cannot cost you custody: on any keeper action, your value can only reach your order
-address, your payout address, or the bounded ADA fee leg, and the chain enforces that. What it
-does cost you is quoting, and a book that is not being worked is exposed, not parked.
+- **The node stalls.** The keeper reads the chain and builds every transaction through that single
+  node, with no failover. When the node's tip falls more than 4 minutes behind the clock, the
+  keeper refuses the whole round rather than quote from a stale chain.
+- **Our gas runs out.** Every reprice and every keeper close is paid from that one operator
+  wallet. When it cannot cover a transaction, the keeper skips it, and no book is repriced until
+  we top the wallet up.
+
+While either lasts, your book rests at its last quote, which is the stale-book exposure above, and
+the closes in [The keeper can close your book](#the-keeper-can-close-your-book) wait too. There is
+no alert to clients: the **"last worked"** figure is how you tell. A pause cannot cost you custody,
+and your own exit needs neither: your wallet signs and pays for it, and `escape.sh` runs against
+any node you choose.
+
+A price-feed outage also reaches every book at once, because every book reads the same two feeds,
+but it does not pause them: after 15 minutes it closes every book, and each instance stays closed.
+See [The keeper can close your book](#the-keeper-can-close-your-book).
+
+Your daily loss limit is your book's alone. One book tripping its limit closes that book and no
+other.
 
 ### What you can actually see
 
@@ -309,6 +380,11 @@ short but real.
 - **The bot key touches your inventory on every reprice.** Repricing is the service: each reprice
   spends your order and rebuilds it. The validator fixes where the value can land, not whether the
   bot key can move it.
+- **The fee line in your statement bounds one fee.** Its `our fee` line is the inventory
+  validator's bound on the ADA fee leg of a keeper transaction: at most that share of the ADA the
+  transaction pays out to your wallet, and nothing when it closes your order. The service fee is
+  drawn from your separate prepaid balance, which that bound does not protect; see
+  [How service billing works](README.md#how-service-billing-works).
 - **The five published values are ours to publish and yours to check.** The verifier takes
   `dapp_hash` and `beacon_id` as given. Check them against
   [The five values SaturnSwap publishes](setting-up-a-book.md#the-five-values-saturnswap-publishes)
@@ -327,11 +403,11 @@ short but real.
 - **No guaranteed profit.** See the inventory risk above. A market maker can quote perfectly and
   still finish behind on a trending move.
 - **No guarantee the keeper is running at any instant.** It is one service. It can be down,
-  paused by its own risk rail, or refusing your book for a reason that is correct. There is no
-  uptime commitment here.
-- **No third-party audit.** We run an internal red team weekly with Claude, Codex and Kimi,
-  investigate findings and check for regressions. This is a deliberate choice, not external
-  certification or a guarantee that no vulnerabilities remain. See [Security evidence](security-evidence.md).
+  [paused for every book at once](#pauses-that-stop-every-book-at-once), or refusing your book
+  for a reason that is correct. There is no uptime commitment here.
+- **No guarantee the code is free of vulnerabilities.** Our security evidence is our own:
+  validator unit and property tests, and red-team runs by Claude, Codex and Kimi models whose
+  findings we investigate and re-test. See [Security evidence](security-evidence.md).
 - **Bounded control over trading inventory.** The current validator requires keeper actions to
   preserve assets within the permitted order, client payout and bounded ADA fee outputs.
   The prepaid fee channel is separate and its operator signing branch can spend that balance;
