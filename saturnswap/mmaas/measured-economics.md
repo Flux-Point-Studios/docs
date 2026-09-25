@@ -165,13 +165,13 @@ each client's order around the live mid as the market moves.
 
 **Appetite is four numbers, and the client signs them.** Each client chooses four terms inside
 published bounds and signs them in their consent statement. The keeper runs each book on the terms
-its owner signed, and on nothing else:
+its owner signed, and on no terms it did not sign:
 
 | Term | Default | Bounds | What it does |
 |---|---|---|---|
 | Spread | 8% | 4% to 60% | The ask sits half the spread above the live mid and the bid half below it, each clamped into the client's band. |
 | Reprice threshold | 1.5% | 1.5% to 10% | A quote is rebuilt only once the mid has moved at least this far from the one it was set at. |
-| Book value cap | 120 ADA | 60 to 120 ADA | A book worth more than this, its token valued at the live mid, is closed back to the payout address. |
+| Book value cap | 120 ADA | 60 to 120 ADA | A book worth more than this, its token valued at the keeper's mid, is closed back to the payout address. |
 | Daily loss limit | 5% | 1% to 50% | A book whose value falls by more than this share of its value at the start of the UTC day is closed back to the payout address. |
 
 The spread must be more than twice the reprice threshold. A client changes their terms by signing

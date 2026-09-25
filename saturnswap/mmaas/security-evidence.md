@@ -1,9 +1,12 @@
 # Security evidence and its scope
 
-Our security evidence for MMaaS is our own. Red-team runs by Claude, Codex and Kimi models attack
-the protocol, and we investigate their findings and re-test for regressions. Validator tests are
-recorded against a named source revision, below. None of this is a guarantee that no
-vulnerabilities remain.
+Security evidence for MMaaS: validator unit and property tests recorded against a named source
+revision (below), and red-team runs by Claude, Codex and Kimi models, whose findings we investigate
+and re-test. The validator's most recent red-team record is from September 12, 2026: it ran on the
+current validator's predecessor, and the current validator adds one more condition to it. The most
+recent red-team run over the combined path (validator, keeper, backend and page) to reach a
+verdict was on September 10, 2026, and it returned BLOCK: findings to fix before launch. None of
+this is a guarantee that no vulnerabilities remain.
 
 ## Recorded validator tests
 

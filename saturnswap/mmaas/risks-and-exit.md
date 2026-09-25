@@ -26,7 +26,7 @@ Three of the four cases are your own terms, the ones you signed in your consent 
 | The keeper closes your book when | How it is measured |
 |---|---|
 | **It is worth more than your book value cap** | Each round the keeper can price your token: the ADA in your order plus your token valued at the keeper's mid, which moves at most 10% per round. A rise in your token's price counts, so a rise alone can close a book that no one has traded with. |
-| **It loses more than your daily loss limit in a UTC day** | Against the book's opening value for the UTC day, which is the keeper's first complete valuation of your book that day, measured the same way as the cap. Your limit is your share of that value: at the default 5%, a book that opens the day at 100 ADA is closed once it is worth less than 95 ADA. A fall in your token's price counts as a loss even with no trade. A round in which the keeper cannot value your book completely, for example while a fill is not yet confirmed, neither sets the opening value nor closes the book. |
+| **It loses more than your daily loss limit in a UTC day** | Against the book's opening value for the UTC day: its lowest complete valuation in the first 10 minutes after the keeper first values it completely that day, measured the same way as the cap. A fall inside those 10 minutes lowers the opening value instead of closing the book. The round that first values your book each UTC day records that value and does not quote, and neither does a newly funded book's first round. Your limit is your share of the opening value: at the default 5%, once the first 10 minutes have passed, a book that opened the day at 100 ADA is closed once it is worth less than 95 ADA. A fall in your token's price counts as a loss even with no trade. Your token is valued at the keeper's mid, which moves at most 10% per round, so after a sharper move the verdict trails the market by a round or more. A round in which the keeper cannot value your book completely, for example while a fill is not yet confirmed, neither sets the opening value nor closes the book. |
 | **Your terms are outside the published bounds, or two of your statements conflict** | Checked each round against [the bounds on your terms](setting-up-a-book.md#the-bounds-on-your-terms). The keeper never quotes on terms nearer the bounds than the ones you signed. It returns your order once. Two different statements with the same *signed at* time conflict, and the keeper returns the order rather than choose between them. |
 | **No usable price for 15 minutes** | 15 minutes in a row in which either feed (bending.ai or GeckoTerminal) gives no price, or the two disagree by more than 5%, for any reason, including an outage at either provider. Every book reads the same two feeds, so a 15-minute outage at one provider closes every book at once. |
 
@@ -43,16 +43,17 @@ measurements. When it happens, the book comes back to your payout address at its
 
 **Two cases are about capacity, not your book's value.** The keeper quotes one order per book. Any
 other order at your order address is sent back to your payout address, up to two a day for each
-client, and any beyond that rests unquoted. One keeper also quotes at most five books: a book that arrives while
-five are enrolled has its order returned to your payout address, and it can enrol again once a
-seat is free.
+client, and any beyond that rests unquoted. One keeper also quotes at most five books, and
+SaturnSwap's own NIGHT book holds one of the five: a book that arrives while five are enrolled has
+its order returned to your payout address, and it can enrol again once a seat is free.
 
 **Funding the same instance again the same UTC day.** After a daily-loss close, that instance stays
 closed until 00:00 UTC: anything you fund there before then is sent straight back to your payout
 address. After any other close, including your own exit, the daily loss limit still measures
 against the value your book opened that UTC day with, so a smaller book funded at the same
-instance that day can be closed again as soon as the keeper values it. Wait until 00:00 UTC, or set
-up a new instance.
+instance that day can be closed again as soon as the keeper values it. In both cases, until the
+return lands, the new order rests at the edge of your range. Wait until 00:00 UTC, or set up a new
+instance.
 
 A feed-outage close is also remembered: that instance is not quoted again, even after the feeds
 recover, and anything you fund there later is sent straight back to your payout address. To be
@@ -405,9 +406,11 @@ short but real.
 - **No guarantee the keeper is running at any instant.** It is one service. It can be down,
   [paused for every book at once](#pauses-that-stop-every-book-at-once), or refusing your book
   for a reason that is correct. There is no uptime commitment here.
-- **No guarantee the code is free of vulnerabilities.** Our security evidence is our own:
-  validator unit and property tests, and red-team runs by Claude, Codex and Kimi models whose
-  findings we investigate and re-test. See [Security evidence](security-evidence.md).
+- **No guarantee the code is free of vulnerabilities.** The security evidence is validator unit
+  and property tests recorded on September 9, 2026, and red-team runs by Claude, Codex and Kimi
+  models: the validator's most recent red-team record is from September 12, 2026, and the most
+  recent combined run to reach a verdict, on September 10, 2026, returned BLOCK. See
+  [Security evidence](security-evidence.md).
 - **Bounded control over trading inventory.** The current validator requires keeper actions to
   preserve assets within the permitted order, client payout and bounded ADA fee outputs.
   The prepaid fee channel is separate and its operator signing branch can spend that balance;

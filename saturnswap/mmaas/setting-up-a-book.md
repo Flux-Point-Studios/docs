@@ -173,7 +173,8 @@ Line by line:
   price and never sells below the second.
 - **your token** and **token decimals** name the one token your book quotes. The token line shows
   a readable name only when the asset name is 1 to 32 plain letters, digits, dots, hyphens
-  or underscores; otherwise it gives the policy id and the asset name hex alone.
+  or underscores; otherwise it gives the policy id and the asset name hex alone; for a token with
+  an empty asset name it says `empty asset name`.
 - **spread** is the full gap between your book's buying and selling prices. Each side sits half
   of it from our mid, and each is clamped into your price limits.
 - **book value cap** counts both sides: your ADA plus your tokens at our price. Above it the keeper
@@ -355,7 +356,9 @@ floor, for that reason and the one in
 
 **One order per book.** The keeper quotes one order at your order address. Any other order it
 finds there is sent back to your payout address, up to two a day for each client, and any beyond
-that rests unquoted. Fund once; to change the size, close your order and fund again.
+that rests unquoted. Fund once; to change the size, close your order and fund again. To make it
+smaller, wait until 00:00 UTC before funding again; see
+[Funding the same instance again the same UTC day](risks-and-exit.md#the-keeper-can-close-your-book).
 
 Press **Build the funding transaction**. Nothing is signed yet. What you get back is:
 
@@ -399,7 +402,8 @@ address. A plain send arrives with no datum, and the validator decodes the datum
 reaches any branch, so the transfer is permanently unspendable, by SaturnSwap, by you, and by
 the wallet that owns it. The only safe funding is the transaction step 5 builds, which attaches
 the beacons and the price datum. A book holds one order; to change its size, close the order and
-run step 5 again.
+run step 5 again. To make it smaller, wait until 00:00 UTC before funding again; see
+[Funding the same instance again the same UTC day](risks-and-exit.md#the-keeper-can-close-your-book).
 {% endhint %}
 
 **Close your orders before you retire the credential.** See
@@ -533,7 +537,7 @@ says. The verifier takes `dapp_hash` and `beacon_id` as given, so this check is 
 |---|---|---|---|
 | `fee_address` | `addr1v9wr69p2tx8dx2lat8rzznahxh4xhfl075yzm8uxmth4tvcf3lx47` | The only address the inventory validator's fee leg may pay. | An enterprise mainnet address (header `0x61`) with payment key hash `5c3d142a598ed32bfd59c6214fb735ea6ba7eff5082d9f86daef55b3`. It receives this fee and nothing else: no change, no payouts, no treasury. |
 | `fee_bps` | `20` | The most the inventory validator's fee leg may take, 0.20% of what the transaction pays out to you, and nothing on a transaction that closes an order. This is not the service fee drawn from your prepaid channel; see [What it costs](README.md#what-it-costs). | The validator declares its own ceiling, `const max_fee_bps = 500`. An instance built with a higher rate rejects every bot action. |
-| `adam_bot_pkh` | `1aba8f0a279e88d7aacd20a1f8e6d6ae4293a4f18fcb17cd43f20fd8` | The one key SaturnSwap holds against your instance. It can reprice and cancel. Your value can only land at your order address, your payout address or the bounded ADA fee leg. It is also the `our bot key` line of the statement you sign. | The key funds its own enterprise address, `addr1vydt4rc2y70g34a2e5s2r78x66hy9yay7x8uk97dg0eqlkqefwst2` (header `0x61`), whose payment credential is this hash. The keeper pays for every reprice from that address, so its mainnet history is this key signing for itself, and it grows every day the keeper runs. Check the credential. |
+| `adam_bot_pkh` | `1aba8f0a279e88d7aacd20a1f8e6d6ae4293a4f18fcb17cd43f20fd8` | The one key SaturnSwap holds against your instance. It can reprice and cancel. Your value can only land at your order address, your payout address or the bounded ADA fee leg. It is also the `our bot key` line of the statement you sign. | The key funds its own enterprise address, `addr1vydt4rc2y70g34a2e5s2r78x66hy9yay7x8uk97dg0eqlkqefwst2` (header `0x61`), whose payment credential is this hash. The keeper pays for every reprice from that address, so the transactions spending from it are this key's signatures, and they grow every day the keeper runs. Check the credential. |
 | `dapp_hash` | `11928a3ac3b65edbf103ea6bb3362e39b879a36f02897df31c40917b` | The two-way cardano-swaps validator your orders rest against. Only the two-way order datum carries both a bid ceiling and an ask floor. | The beacon policy below commits to it: fetch that policy's script from any mainnet indexer and this hash appears inside it as an applied parameter. You can also rebuild it from source; see [What it actually does](risks-and-exit.md#what-it-actually-does). |
 | `beacon_id` | `8a199a17ef4517215945aaf3c8c5204c60fd94d34c46d341e99c8fcf` | The policy that marks your orders on the book. | Fetch its script from any mainnet indexer and read its error strings: *"Two-way swaps must have exactly three kinds of beacons"*, *"Wrong asset1_beacon"* and *"Wrong asset2_beacon"*. A one-way policy says *"One-way"* and *"Wrong offer_beacon"* instead. That is the only way to tell the two deployments apart. |
 
@@ -573,7 +577,8 @@ Stated plainly, because acting on a stale claim here costs real money:
 
 - **Enrolment is automatic, up to five books.** Every version 2 statement names its token, the
   expert form's included, and the keeper finds a book with a governing statement on the chain and
-  starts quoting it without anyone at SaturnSwap adding it. One keeper quotes at most five books.
+  starts quoting it without anyone at SaturnSwap adding it. One keeper quotes at most five books,
+  and SaturnSwap's own NIGHT book holds one of the five.
   A book that arrives while five are enrolled is not quoted: its order is returned to your payout
   address, and it can enrol again once a seat is free. Until the keeper's first reprice, your order
   rests and is fillable by takers at whatever price it last carried.
