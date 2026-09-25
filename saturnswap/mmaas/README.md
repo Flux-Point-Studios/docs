@@ -57,7 +57,9 @@ does not multiply it. Anything else fails the transaction.
 
 So, stated plainly: **we can reprice your order and cancel it back to your payout address.**
 Bot transactions must preserve your assets within the permitted outputs, including the bounded
-ADA fee leg described above. These checks are enforced by consensus.
+ADA fee leg described above. These checks are enforced by consensus. The cases in which the
+keeper returns your book to your payout address on its own are in
+[The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 
 The same check is why the gas is ours. Your order's own value can only reach those three
 destinations, so a transaction that paid its network fee out of your inventory would come up
@@ -112,8 +114,9 @@ authorised operator branch spends. Billing eligibility and collection limits are
 co-signer policy controls. The inventory validator's `max_fee_bps = 500` does **not** cap a
 fee-channel draw. Keep the channel balance consistent with the exposure you accept.
 
-Signing the nine-parameter possession challenge authorises keeper consent for that ceremony;
-it does not itself enrol a billing grant or place the grant's commercial terms on chain.
+Signing the consent statement authorises the keeper to make a market in your token for that one
+ceremony, on the four terms the statement names. It does not enrol a billing grant or place the
+grant's commercial terms on chain.
 
 ### The separate inventory-validator fee capability
 
@@ -139,7 +142,10 @@ GeckoTerminal), read by policy id and asset name, with a divergence breaker betw
   on an unchecked number.
 - Once you are running, the keeper applies the same rule each round. A pair sourced from feeds is
   priced by its feeds **or not at all**. A feed outage or a divergence trip means your book is
-  not quoted that round rather than quoted badly.
+  not quoted that round rather than quoted badly. If it lasts 15 minutes, the keeper closes your
+  book back to your payout address. Every book reads the same two feeds, so a 15-minute outage at
+  either provider closes every book at once; see
+  [The keeper can close your book](risks-and-exit.md#the-keeper-can-close-your-book).
 - An operator-set constant mid is **refused outright on mainnet** by the keeper's own code. It
   would stub both feeds with one number and defeat the breaker.
 
@@ -155,23 +161,31 @@ your token publishes decimals nowhere, register it before you come back.
 
 Three wallet prompts, in this order (and one more if you are moving an existing book):
 
-1. **Prove** the wallet is yours: a CIP-30 signature, no transaction and no fee.
+1. **Consent**: sign the consent statement with the wallet that owns the vault. It is a CIP-30
+   signature, no transaction and no fee.
 2. **Register** your credential on chain (the 2 ADA deposit).
 3. **Fund** the order (your inventory into your own order address).
 
-**The order matters.** That first signature is your consent to be market-made. Sign it before you
-register and it travels *inside* the registration transaction as metadata under label 8747, where
-the keeper finds it by your credential for as long as the book exists. A registration cannot be
-amended afterwards. If you registered first, the page offers **Publish my consent**, a separate
+**The order matters.** That first signature is your consent to be market-made. The statement you
+sign says so in its second line, *"I consent to SaturnSwap making a market in my token with its bot
+key, on the terms below"*, and names your token and your four terms: spread, book value cap, daily
+loss limit and reprice threshold. Sign it before you register and it travels *inside* the
+registration transaction as metadata under label 8747. A registration cannot be amended
+afterwards. If you registered first, the page offers **Publish my consent**, a separate
 transaction that carries the same record; see
 [If your credential is already registered without consent](setting-up-a-book.md#if-your-credential-is-already-registered-without-consent).
+You change your terms later the same way, by signing and publishing a newer statement; see
+[Changing your terms](setting-up-a-book.md#changing-your-terms).
 
-You publish it yourself, in your own transaction. There is nothing to send us. The keeper reads it
-back off the chain and checks it against your ceremony: the signature must come from the payout
-address your parameters baked in, and the challenge it carries must be the one those nine
-parameters hash to. Without a proof that passes both, the keeper declines to quote your book. Your
-order still rests on the public book, fillable by anyone at the prices you set, and nobody
-reprices it.
+You publish it yourself, in your own transaction. There is nothing to send us. The keeper reads
+every statement for your ceremony back off the chain and checks each against your ceremony: the
+signature must come from the payout address your parameters baked in, the challenge it carries
+must be the one those nine parameters hash to, and the statement must match its canonical text
+exactly. One statement governs at a time, chosen by the rules in
+[Which statement governs](setting-up-a-book.md#which-statement-governs), and the keeper quotes your
+book on its terms and no others. Without a statement that passes, the keeper declines to quote
+your book. Your order still rests on the public book, fillable by anyone at the prices you set,
+and nobody reprices it.
 
 ## Talk to us
 

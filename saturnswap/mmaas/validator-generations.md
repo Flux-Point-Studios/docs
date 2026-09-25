@@ -56,9 +56,10 @@ staking rewards from the fee basis; later ones close those, and the current one 
 requires the bot's continuation to carry the ceremony's own beacons and to declare no
 expiration.
 
-These are generation-specific guarantees, not claims of a complete audit. The band is
-an immutable bid ceiling and ask floor, not an oracle-relative price guarantee. Public
-taker fills run the DEX's trading rules and are distinct from bot owner actions.
+These are generation-specific guarantees. They do not claim that a generation has no other
+defect. The band is an immutable bid ceiling and ask floor; it does not guarantee a price
+relative to any oracle. Public taker fills run the DEX's trading rules and are distinct from bot
+owner actions.
 
 Moving an old book to the current generation requires a new ceremony and address, and
 client-authorized recovery and funding transactions. The client-signature branch
