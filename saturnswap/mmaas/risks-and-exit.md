@@ -196,8 +196,12 @@ market, with 27 ADA behind it. Nothing took it, so it cost nothing. That was luc
 property of the design.
 
 Do not read "idle" as "safe". Ask which side is on the wrong side of the market, and how much
-inventory is behind it. The **"last worked"** figure on the re-entry panel is how you tell, and
-you can compute it yourself from any indexer.
+inventory is behind it. The test is drift, not the age of the last reprice: the book is stale
+when the market has moved at least the keeper's reprice threshold, 150 basis points (about 1.5
+percent) by default, away from the price your order is resting at. A large **"last worked"**
+figure on the re-entry panel is not itself the alarm, because a healthy keeper reprices only on
+a move that large and leaves a book in a quiet market untouched for hours or days. Compare your
+resting price against the current market price on any indexer to tell.
 
 ### One band per instance
 

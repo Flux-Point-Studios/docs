@@ -297,10 +297,16 @@ type) and lists each one roughly like this:
 44.00 ADA · 0.0891 – 0.1094 ADA · last worked 3h ago · 3c265036cwm9…
 ```
 
-**"last worked"** is the answer you want. It is the age of the resting UTxO, read from chain
-alone, and it asks the keeper nothing: a refused ceremony, a missing config entry and a stopped
-process are indistinguishable from outside, which is exactly why the check does not try to tell
-them apart. A number that keeps climbing means nobody is repricing you.
+**"last worked"** is the age of the resting UTxO, read from chain alone. It asks the keeper
+nothing, so a refused ceremony, a missing config entry and a stopped process all look the same
+from outside. On its own it is not a verdict. The keeper reprices only when the market mid moves
+at least its reprice threshold, 150 basis points (about 1.5 percent) by default, away from the
+price your order rests at, so a healthy book in a quiet market can rest untouched for hours or
+days and its "last worked" figure keeps climbing. What tells you a book is stale is drift, not
+age: whether the current market price has moved at least that reprice threshold away from the
+price your order is resting at. When it has, the quote should have been repriced. Below that, a
+book left untouched is still a fair quote, and a climbing "last worked" figure on its own does
+not mean nobody is repricing you.
 
 You can compute the same number yourself from any indexer, or just watch your order address on a
 block explorer. Your settled volume, fills and fees are also on your own dashboard at
