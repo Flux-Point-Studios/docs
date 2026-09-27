@@ -182,7 +182,6 @@ Spec-220's settle path is the bottom-of-stack primitive that enables everything 
 | **Settle claim** (spec-220) | LIVE 2026-05-15 | (this page) |
 | **Expire policy** (spec-221) | LIVE 2026-05-15 | spec-220 committee path |
 | **MM rebate program v0** | Design locked, impl queued | spec-220 attestation |
-| **Perp engine v0** | Design locked, impl queued | spec-220 attestation + Aegis price oracle |
 | **Materios Oracle Network Phase 1** | Design locked, impl queued | spec-220 committee + Aegis publishers |
 | **Compute portal Wave 3 (heterogeneous TEE)** | LIVE on attestation pallet | spec-220 committee path |
 
@@ -245,7 +244,6 @@ No bond, no whitelist, no committee admission tx today. The single gate is the p
 | **Spec-220** (settle path) | Live | Committee-attested settle, 8-fact verification, M-of-N envelope, Cardano L1 anchor |
 | **Spec-221** (expire path) | Live | Symmetric attested-expire for stale intents |
 | **MON Phase 1** (oracle rail) | Q2 2026 | Aegis publishers post prices to Materios pallet-oracle as a second output rail |
-| **Perp engine v0** | Q3 2026 | i128 positions, premium-index funding, pull-based oracle |
 | **MM rebate program v0** | Q3 2026 | 5M MATRA over 24 months, bonded-permissionless |
 | **Slashable attestor bond** | Q3 2026 | Cryptoeconomic gate per committee member |
 | **Cross-chain intent dApp** | Q4 2026 | First-party SDK for posting intents + watching settlements |
