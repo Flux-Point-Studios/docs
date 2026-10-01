@@ -37,15 +37,15 @@ token the book held at that moment, and nothing is quoted until you fund again.
 book funded at the most allowed and held entirely in your token is closed by a rise of more than
 20% in its price; a book holding some ADA needs a larger rise. That rise is not rare. For a token
 as volatile as NIGHT has been, a measured daily standard deviation of 5.68%, we estimate the
-chance that its price touches +20% at some point as about 6% within 3 days, 22% within 7 days,
-39% within 14 days and 56% within 30 days. These are estimates from a random-walk model with no drift, not
-measurements. When it happens, the book comes back to your payout address at its higher value.
+chance that its price touches +20% at some point as about 0.13% within 1 day, 6% within 3 days,
+22% within 7 days, 39% within 14 days and 56% within 30 days. These are estimates from a random-walk
+model with no drift, not measurements. When it happens, the book comes back to your payout address at its higher value.
 
 **Two cases are about capacity, not your book's value.** The keeper quotes one order per book. Any
 other order at your order address is sent back to your payout address, up to two a day for each
-client, and any beyond that rests unquoted. One keeper also quotes at most five books, and
-SaturnSwap's own NIGHT book holds one of the five: a book that arrives while five are enrolled has
-its order returned to your payout address, and it can enrol again once a seat is free.
+client, and any beyond that rests unquoted. One keeper also quotes at most five books: a book that
+arrives while five are enrolled has its order returned to your payout address, and it can enrol
+again once a seat is free.
 
 **Funding the same instance again the same UTC day.** After a daily-loss close, that instance stays
 closed until 00:00 UTC: anything you fund there before then is sent straight back to your payout
@@ -248,8 +248,12 @@ market, with 27 ADA behind it. Nothing took it, so it cost nothing. That was luc
 property of the design.
 
 Do not read "idle" as "safe". Ask which side is on the wrong side of the market, and how much
-inventory is behind it. The **"last worked"** figure on the re-entry panel is how you tell, and
-you can compute it yourself from any indexer.
+inventory is behind it. The test is drift, not the age of the last reprice: the book is stale
+when the market has moved at least the keeper's reprice threshold, 150 basis points (about 1.5
+percent) by default, away from the price your order is resting at. A large **"last worked"**
+figure on the re-entry panel is not itself the alarm, because a healthy keeper reprices only on
+a move that large and leaves a book in a quiet market untouched for hours or days. Compare your
+resting price against the current market price on any indexer to tell.
 
 ### One band per instance
 
@@ -344,7 +348,10 @@ Either of these stops every book at the same time, whatever your market is doing
 
 While either lasts, your book rests at its last quote, which is the stale-book exposure above, and
 the closes in [The keeper can close your book](#the-keeper-can-close-your-book) wait too. There is
-no alert to clients: the **"last worked"** figure is how you tell. A pause cannot cost you custody,
+no alert to clients. A climbing **"last worked"** figure alone does not tell you, because a healthy
+book in a quiet market also rests untouched. The test is drift: if the market has moved at least
+your reprice threshold away from the price your order is resting at and the order has not moved,
+nobody is repricing you. A pause cannot cost you custody,
 and your own exit needs neither: your wallet signs and pays for it, and `escape.sh` runs against
 any node you choose.
 
@@ -362,7 +369,8 @@ Honestly: not much, and you should not rely on us to tell you.
 - The page shows each of your instances with what it holds and **"last worked *N*h ago"**,
   computed from the age of the UTxO at your order address.
 - That number comes from the chain, so you can compute it yourself from any indexer without
-  asking us. The age of the UTxO at your order address is the whole signal.
+  asking us. Read it with your resting price: a large age in a quiet market is normal, and a
+  market that has moved at least your reprice threshold away from that price is the signal.
 - There is **no public health endpoint and no alerting to clients today.** Our own book-health
   check is internal and deliberately not public. It is a list of which books are not being
   repriced and exactly what they hold, which is an adverse-selection target list aimed at the
@@ -409,8 +417,9 @@ short but real.
 - **No guarantee the code is free of vulnerabilities.** The security evidence is validator unit
   and property tests recorded on September 9, 2026, and red-team runs by Claude, Codex and Kimi
   models: the validator's most recent red-team record is from September 12, 2026, and the most
-  recent combined run to reach a verdict, on September 10, 2026, returned BLOCK. See
-  [Security evidence](security-evidence.md).
+  recent combined run to reach a verdict, on September 10, 2026, returned BLOCK. A combined run
+  against the release deployed on October 1, 2026 follows the launch, and funding new books stays
+  closed until it returns GREEN. See [Security evidence](security-evidence.md).
 - **Bounded control over trading inventory.** The current validator requires keeper actions to
   preserve assets within the permitted order, client payout and bounded ADA fee outputs.
   The prepaid fee channel is separate and its operator signing branch can spend that balance;

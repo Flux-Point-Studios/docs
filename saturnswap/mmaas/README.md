@@ -152,10 +152,16 @@ GeckoTerminal), read by policy id and asset name, with a divergence breaker betw
 A token listed on neither feed cannot currently be quoted. You can still build a band by hand,
 but nothing will work it.
 
+**Which tokens.** The page sets up books only for the tokens our keeper quotes: NIGHT, SNEK,
+MIN, DJED, Talos, USDM, iBTC and iUSD. The keeper prices a book only when its own decimals record
+covers the token and refuses every other token, so the page does not offer a book the keeper
+would refuse. The list grows when we add a token to the keeper's record and redeploy the page.
+Ask us if you want yours added.
+
 **Published decimals.** Your token's decimals are a scale exponent baked permanently into your
 order address, so the page resolves them from the token's own CIP-68 on-chain metadata or the
-CIP-26 token registry, and refuses to continue if neither states them or the two disagree. If
-your token publishes decimals nowhere, register it before you come back.
+CIP-26 token registry. It refuses to continue if neither states them, if the two disagree, or if
+they differ from the value the keeper holds on record for that token.
 
 ## What you sign
 

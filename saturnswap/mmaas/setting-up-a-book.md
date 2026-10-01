@@ -445,10 +445,16 @@ type) and lists each one roughly like this:
 An instance whose only consent is a statement from before version 2 carries the label *old
 statement, not quotable*.
 
-**"last worked"** is the answer you want. It is the age of the resting UTxO, read from chain
-alone, and it asks the keeper nothing: a refused ceremony, a missing config entry and a stopped
-process are indistinguishable from outside, which is exactly why the check does not try to tell
-them apart. A number that keeps climbing means nobody is repricing you.
+**"last worked"** is the age of the resting UTxO, read from chain alone. It asks the keeper
+nothing, so a refused ceremony, a missing config entry and a stopped process all look the same
+from outside. On its own it is not a verdict. The keeper reprices only when the market mid moves
+at least its reprice threshold, 150 basis points (about 1.5 percent) by default, away from the
+price your order rests at, so a healthy book in a quiet market can rest untouched for hours or
+days and its "last worked" figure keeps climbing. What tells you a book is stale is drift, not
+age: whether the current market price has moved at least that reprice threshold away from the
+price your order is resting at. When it has, the quote should have been repriced. Below that, a
+book left untouched is still a fair quote, and a climbing "last worked" figure on its own does
+not mean nobody is repricing you.
 
 You can compute the same number yourself from any indexer, or just watch your order address on a
 block explorer. Your settled volume, fills and fees are also on your own dashboard at
@@ -537,7 +543,7 @@ says. The verifier takes `dapp_hash` and `beacon_id` as given, so this check is 
 |---|---|---|---|
 | `fee_address` | `addr1v9wr69p2tx8dx2lat8rzznahxh4xhfl075yzm8uxmth4tvcf3lx47` | The only address the inventory validator's fee leg may pay. | An enterprise mainnet address (header `0x61`) with payment key hash `5c3d142a598ed32bfd59c6214fb735ea6ba7eff5082d9f86daef55b3`. It receives this fee and nothing else: no change, no payouts, no treasury. |
 | `fee_bps` | `20` | The most the inventory validator's fee leg may take, 0.20% of what the transaction pays out to you, and nothing on a transaction that closes an order. This is not the service fee drawn from your prepaid channel; see [What it costs](README.md#what-it-costs). | The validator declares its own ceiling, `const max_fee_bps = 500`. An instance built with a higher rate rejects every bot action. |
-| `adam_bot_pkh` | `1aba8f0a279e88d7aacd20a1f8e6d6ae4293a4f18fcb17cd43f20fd8` | The one key SaturnSwap holds against your instance. It can reprice and cancel. Your value can only land at your order address, your payout address or the bounded ADA fee leg. It is also the `our bot key` line of the statement you sign. | The key funds its own enterprise address, `addr1vydt4rc2y70g34a2e5s2r78x66hy9yay7x8uk97dg0eqlkqefwst2` (header `0x61`), whose payment credential is this hash. The keeper pays for every reprice from that address, so the transactions spending from it are this key's signatures, and they grow every day the keeper runs. Check the credential. |
+| `adam_bot_pkh` | `1aba8f0a279e88d7aacd20a1f8e6d6ae4293a4f18fcb17cd43f20fd8` | The one key SaturnSwap holds against your instance. It can reprice and cancel. Your value can only land at your order address, your payout address or the bounded ADA fee leg. It is also the `our bot key` line of the statement you sign. | The key funds its own enterprise address, `addr1vydt4rc2y70g34a2e5s2r78x66hy9yay7x8uk97dg0eqlkqefwst2` (header `0x61`), whose payment credential is this hash. The keeper pays for every reprice from that address, so the transactions spending from it are this key's signatures. They appear once the keeper reprices a book. Check the credential. |
 | `dapp_hash` | `11928a3ac3b65edbf103ea6bb3362e39b879a36f02897df31c40917b` | The two-way cardano-swaps validator your orders rest against. Only the two-way order datum carries both a bid ceiling and an ask floor. | The beacon policy below commits to it: fetch that policy's script from any mainnet indexer and this hash appears inside it as an applied parameter. You can also rebuild it from source; see [What it actually does](risks-and-exit.md#what-it-actually-does). |
 | `beacon_id` | `8a199a17ef4517215945aaf3c8c5204c60fd94d34c46d341e99c8fcf` | The policy that marks your orders on the book. | Fetch its script from any mainnet indexer and read its error strings: *"Two-way swaps must have exactly three kinds of beacons"*, *"Wrong asset1_beacon"* and *"Wrong asset2_beacon"*. A one-way policy says *"One-way"* and *"Wrong offer_beacon"* instead. That is the only way to tell the two deployments apart. |
 
@@ -577,8 +583,7 @@ Stated plainly, because acting on a stale claim here costs real money:
 
 - **Enrolment is automatic, up to five books.** Every version 2 statement names its token, the
   expert form's included, and the keeper finds a book with a governing statement on the chain and
-  starts quoting it without anyone at SaturnSwap adding it. One keeper quotes at most five books,
-  and SaturnSwap's own NIGHT book holds one of the five.
+  starts quoting it without anyone at SaturnSwap adding it. One keeper quotes at most five books.
   A book that arrives while five are enrolled is not quoted: its order is returned to your payout
   address, and it can enrol again once a seat is free. Until the keeper's first reprice, your order
   rests and is fillable by takers at whatever price it last carried.
