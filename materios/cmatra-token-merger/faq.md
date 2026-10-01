@@ -356,7 +356,15 @@ The six-month window is meant to give holders enough time to recover assets from
 
 ### 35. What happens after six months?
 
-The public redemption window closes. Unredeemed legacy assets no longer have an open public trade-in path unless an explicit extension or exceptional remedy is formally announced.
+The public redemption window closes on **November 28, 2026**, and **there will be no extension**. The on-chain validator permanently disables the surrender path at the deadline, so late surrenders are not technically possible.
+
+Unredeemed legacy assets (AGENT, SHARDS, and the eligible NFT collections) stay in your wallet, but they have no redemption path and no supported utility in any Flux Point product after the deadline. Redeem before November 28.
+
+### 35a. Does the team have to process or approve my surrender?
+
+No. There is no manual review or queue. When you sign the surrender in your wallet, the portal's signing services automatically add the two required administrator co-signatures and submit it. Your legacy assets go to the quarantine address and your cMATRA arrives in that same transaction.
+
+The administrator keys exist so the pool can only be spent by a valid surrender. They are not a human approval step. If a surrender fails, it is almost always a wallet issue: not enough ADA for fees and collateral, or assets still in a farm or LP position. See Q24.
 
 ### 36. What happens to any unreleased cMATRA from the 722.5M public redemption pool after the deadline?
 
