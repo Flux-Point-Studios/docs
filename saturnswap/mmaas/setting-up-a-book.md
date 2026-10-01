@@ -6,6 +6,12 @@ description: >-
 
 # Setting up a book
 
+{% hint style="warning" %}
+Funding new books through the page is closed until the combined red-team run against the
+October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+statement, and register your instance. See [Security evidence](security-evidence.md).
+{% endhint %}
+
 Everything below happens at [saturnswap.io/v3/mmaas](https://saturnswap.io/v3/mmaas) in your
 browser. You sign with your own wallet. There is no form and no approval step, but one part of the
 flow is still manual, and it is named in [What is not automatic yet](#what-is-not-automatic-yet).
@@ -318,8 +324,8 @@ instance's own Plutus script. The ledger accepts it only with your signature.
 
 **How to tell it worked:** the panel flips to *"Your credential is registered on chain"*, followed
 by the certificate hash, a **View the certificate ↗** link and the line *"Funding can proceed
-below."* If the indexers have not caught up you get the hash and the explorer link anyway, and
-the panel keeps re-checking.
+below."* While funding is closed, no funding step appears below it. If the indexers have not
+caught up you get the hash and the explorer link anyway, and the panel keeps re-checking.
 
 ### If you are moving an existing book
 
@@ -337,6 +343,12 @@ deposit** for it, so moving costs roughly the network fees (see
 [One band per instance](risks-and-exit.md#one-band-per-instance)).
 
 ## 5 · Put your inventory to work
+
+{% hint style="warning" %}
+Funding new books through the page is closed until the combined red-team run against the
+October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+statement, and register your instance. See [Security evidence](security-evidence.md).
+{% endhint %}
 
 The panel states the token you picked and how much of it you hold. Fill in:
 

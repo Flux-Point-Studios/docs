@@ -38,7 +38,7 @@ book funded at the most allowed and held entirely in your token is closed by a r
 20% in its price; a book holding some ADA needs a larger rise. That rise is not rare. For a token
 as volatile as NIGHT has been, a measured daily standard deviation of 5.68%, we estimate the
 chance that its price touches +20% at some point as about 0.13% within 1 day, 6% within 3 days,
-22% within 7 days, 39% within 14 days and 56% within 30 days. These are estimates from a random-walk
+23% within 7 days, 39% within 14 days and 56% within 30 days. These are estimates from a random-walk
 model with no drift, not measurements. When it happens, the book comes back to your payout address
 at its higher value.
 
@@ -352,9 +352,8 @@ the closes in [The keeper can close your book](#the-keeper-can-close-your-book) 
 no alert to clients. A climbing **"last worked"** figure alone does not tell you, because a healthy
 book in a quiet market also rests untouched. The test is drift: if the market has moved at least
 your reprice threshold away from the price your order is resting at and the order has not moved,
-nobody is repricing you. A pause cannot cost you custody,
-and your own exit needs neither: your wallet signs and pays for it, and `escape.sh` runs against
-any node you choose.
+nobody is repricing you. A pause cannot cost you custody, and your own exit needs neither: your
+wallet signs and pays for it, and `escape.sh` runs against any node you choose.
 
 A price-feed outage also reaches every book at once, because every book reads the same two feeds,
 but it does not pause them: after 15 minutes it closes every book, and each instance stays closed.
@@ -416,11 +415,13 @@ short but real.
   [paused for every book at once](#pauses-that-stop-every-book-at-once), or refusing your book
   for a reason that is correct. There is no uptime commitment here.
 - **No guarantee the code is free of vulnerabilities.** The security evidence is validator unit
-  and property tests recorded on September 9, 2026, and red-team runs by Claude, Codex and Kimi
-  models: the validator's most recent red-team record is from September 12, 2026, and the most
-  recent combined run to reach a verdict, on September 10, 2026, returned BLOCK. A combined run
-  against the release deployed on October 1, 2026 follows the launch, and funding new books stays
-  closed until it returns GREEN. See [Security evidence](security-evidence.md).
+  and property tests recorded on September 9, 2026 at a revision before the current validator,
+  and red-team runs by Claude, Codex and Kimi models. The validator's most recent red-team record
+  is from September 12, 2026: it ran on the source revision just before the current validator's,
+  which adds one more condition. The most recent combined run to reach a verdict, on
+  September 10, 2026, returned BLOCK. A combined run against the release deployed on
+  October 1, 2026 follows the launch, and funding new books stays closed until it returns GREEN.
+  See [Security evidence](security-evidence.md).
 - **Bounded control over trading inventory.** The current validator requires keeper actions to
   preserve assets within the permitted order, client payout and bounded ADA fee outputs.
   The prepaid fee channel is separate and its operator signing branch can spend that balance;

@@ -172,6 +172,12 @@ Three wallet prompts, in this order (and one more if you are moving an existing 
 2. **Register** your credential on chain (the 2 ADA deposit).
 3. **Fund** the order (your inventory into your own order address).
 
+{% hint style="warning" %}
+Funding new books through the page is closed until the combined red-team run against the
+October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+statement, and register your instance. See [Security evidence](security-evidence.md).
+{% endhint %}
+
 **The order matters.** That first signature is your consent to be market-made. The statement you
 sign says so in its second line, *"I consent to SaturnSwap making a market in my token with its bot
 key, on the terms below"*, and names your token and your four terms: spread, book value cap, daily
