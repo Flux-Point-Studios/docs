@@ -45,7 +45,7 @@ The rate table is locked for the full 6-month redemption window once published, 
 
 * **6 months** from the launch date.
 * Public surrenders are permanently disabled at the on-chain validator level once the deadline passes. Any unreleased cMATRA returns to the project treasury under [README → Deadline and After-Window Handling](README.md#deadline-and-after-window-handling).
-* No extension or exceptional late-surrender mechanism is planned. Holders are encouraged to redeem well before the deadline.
+* **There will be no extension** and no late-surrender mechanism. Holders should redeem well before the deadline.
 
 ***
 

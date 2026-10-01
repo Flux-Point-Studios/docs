@@ -6,6 +6,8 @@ description: Unreal Engine SDK (CORE)
 
 ## Flux Point Cardano SDK — Core (FAB)
 
+> **SHARDS is no longer part of this SDK.** The free UE 5.5 build shipped with a demo integration that used the legacy SHARDS token. SHARDS was retired in the [cMATRA Token Merger](materios/cmatra-token-merger/README.md), and that dependency is being removed. The licensed Core SDK runs on ADA only and needs no Flux Point token. SHARDS holders should redeem before **November 28, 2026**.
+
 ### Setup
 
 * Install plugin into your project Plugins folder.
