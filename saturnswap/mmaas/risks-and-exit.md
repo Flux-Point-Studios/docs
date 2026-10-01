@@ -39,7 +39,8 @@ book funded at the most allowed and held entirely in your token is closed by a r
 as volatile as NIGHT has been, a measured daily standard deviation of 5.68%, we estimate the
 chance that its price touches +20% at some point as about 0.13% within 1 day, 6% within 3 days,
 22% within 7 days, 39% within 14 days and 56% within 30 days. These are estimates from a random-walk
-model with no drift, not measurements. When it happens, the book comes back to your payout address at its higher value.
+model with no drift, not measurements. When it happens, the book comes back to your payout address
+at its higher value.
 
 **Two cases are about capacity, not your book's value.** The keeper quotes one order per book. Any
 other order at your order address is sent back to your payout address, up to two a day for each
