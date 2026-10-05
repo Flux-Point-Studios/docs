@@ -509,5 +509,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 7.1 | **Date:** July 31, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)\
+**Version:** 7.2 | **Date:** October 5, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
