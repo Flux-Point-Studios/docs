@@ -358,4 +358,6 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 4.1 | **Date:** July 31, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)
+**Version:** 4.2 | **Date:** October 5, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)
+
+**What changed in 4.2 (October 2026):** no extension to the November 28 deadline (stated plainly; it was previously described as "not planned"); surrenders are co-signed automatically with no manual approval step ([FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)); security model described in [Launch Readiness → Audit Status](launch-readiness.md#audit-status). Eligibility, rates and the window are unchanged.

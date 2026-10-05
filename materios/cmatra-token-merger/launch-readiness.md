@@ -14,17 +14,19 @@ description: >-
 
 * The redemption window is **6 months** long. It closes on **November 28, 2026**. See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
 * The live redemption portal is at [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
-* The launch is shipping under the **pre-audit posture** disclosed below — the third-party security audit is still in progress. Review [Audit Status](#audit-status) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
+* The merger is live. Security is handled through **continuous adversarial testing** rather than a one-off audit. See [Audit Status](#audit-status) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
 
 ***
 
 ## Audit Status
 
-**Security audit in progress. Pre-audit launch posture.**
+**Continuous adversarial testing, not a point-in-time audit.**
 
-* The Materios chain runtime, the merger contracts, and the cMATRA mint/burn scripts are under active third-party security review.
-* The full audit report will be linked here once published.
-* Pre-audit safeguards in effect during the redemption window:
+* The merger contracts and off-chain signing services are open source at [github.com/Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger), so anyone can inspect them.
+* FPS does not rely on point-in-time vendor audits. Instead, AI red-team agents actively attack our products and services, including the merger contracts and signing services, and what they find gets fixed. Internal audit reports and red-team results are published in the repository's `audit_pack/` folder.
+* No formal third-party security audit has been performed (see [FAQ Q41f](faq.md#41f-is-the-code-audited)).
+* Safeguards in effect during the redemption window:
+  * Every surrender is co-signed automatically by two independent signing services in the same transaction you sign. There is no manual approval step (see [FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)).
   * Multisig-controlled administrator key with explicit pause and throttle authority (see [Legal § Force Majeure](legal-and-disclaimers.md#force-majeure-and-emergency-pause)).
   * Public testnet running the same code path that handles the merger on mainnet.
 * Findings that materially affect users will be announced via [Discord](https://discord.gg/MfYUMnfrJM) and this page.
@@ -93,5 +95,5 @@ Before the redemption window opens:
 
 ***
 
-**Version:** 1.0 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026\
+**Version:** 1.1 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026 | **Last updated:** October 5, 2026\
 **Owner:** Flux Point Studios.
