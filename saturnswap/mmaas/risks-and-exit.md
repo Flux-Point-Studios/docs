@@ -414,14 +414,11 @@ short but real.
 - **No guarantee the keeper is running at any instant.** It is one service. It can be down,
   [paused for every book at once](#pauses-that-stop-every-book-at-once), or refusing your book
   for a reason that is correct. There is no uptime commitment here.
-- **No guarantee the code is free of vulnerabilities.** The security evidence is validator unit
-  and property tests recorded on September 9, 2026 at a revision before the current validator,
-  and red-team runs by Claude, Codex and Kimi models. The validator's most recent red-team record
-  is from September 12, 2026: it ran on the source revision just before the current validator's,
-  which adds one more condition. The most recent combined run to reach a verdict, on
-  September 10, 2026, returned BLOCK. A combined run against the release deployed on
-  October 1, 2026 follows the launch, and funding new books stays closed until it returns GREEN.
-  See [Security evidence](security-evidence.md).
+- **No guarantee the code is free of vulnerabilities.** An AI red team attacks the validator and
+  the keeper every week and publishes every run with its date (the latest is [Red team 2026-10-19](https://github.com/Flux-Point-Studios/docs/issues/50)), and validator
+  unit and property tests are recorded at named revisions. The most recent combined run to reach a
+  verdict, on September 10, 2026, returned BLOCK, and funding new books stays closed until a combined
+  run against the release that will take funds returns GREEN. See [Security evidence](security-evidence.md).
 - **Bounded control over trading inventory.** The current validator requires keeper actions to
   preserve assets within the permitted order, client payout and bounded ADA fee outputs.
   The prepaid fee channel is separate and its operator signing branch can spend that balance;

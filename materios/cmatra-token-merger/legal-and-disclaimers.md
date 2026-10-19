@@ -39,9 +39,9 @@ Participating in the cMATRA merger carries real risk. The following list is not 
 ### Smart-contract risk
 
 * The Cardano-side merger contracts and the Materios chain are software. Software has bugs.
-* Audits, peer review, and a public testnet (`materios_preprod_v6`) reduce — but do not eliminate — the chance of a critical bug surfacing during or after launch.
+* AI red-team attacks, peer review, and a public testnet (`materios_preprod_v6`) reduce, but do not eliminate, the chance of a critical bug surfacing during or after launch.
 * A bug in the surrender script, the cMATRA minting script, the bridge contracts, or the Materios runtime could result in **loss of funds, frozen funds, or incorrect minting**.
-* See [Audit Status](launch-readiness.md#audit-status) for the current security review posture.
+* See [Attacked, with dates](launch-readiness.md#attacked-with-dates) for how the code is tested.
 
 ### Market risk
 

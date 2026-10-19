@@ -1,13 +1,18 @@
 # Security evidence and its scope
 
-Security evidence for MMaaS: validator unit and property tests recorded against a named source
-revision (below), and red-team runs by Claude, Codex and Kimi models, whose findings we investigate
-and re-test. The validator's most recent red-team record is from September 12, 2026: it ran on the
-source revision just before the current validator's, which adds one more condition. The most
-recent red-team run over the combined path (validator, keeper, backend and page) to reach a
-verdict was on September 10, 2026, and it returned BLOCK: findings to fix before launch. A combined
-run against the release deployed on October 1, 2026 follows the launch, and funding new books stays
-closed until that run returns GREEN. None of this is a guarantee that no vulnerabilities remain.
+Point-in-time audits are not enough for code that changes every week, so MMaaS is attacked
+continuously and every result is dated. An AI red team attacks the validator and the keeper. What it
+finds gets fixed and re-attacked before it ships. A full combined run (validator, keeper, backend and
+page) is repeated before public sign-up opens, then every week.
+
+- **Weekly record.** The validator and the keeper are attacked every week, and every run is published
+  with its date, including the runs that find nothing. The latest is [Red team 2026-10-19](https://github.com/Flux-Point-Studios/docs/issues/50).
+- **Combined runs.** The most recent combined run to reach a verdict, on September 10, 2026, returned
+  BLOCK: findings to fix before launch. Funding new books through the page stays closed until a
+  combined run against the release that will take funds returns GREEN.
+- **Validator tests.** Unit and property tests are recorded against a named source revision (below).
+
+None of this is a guarantee that no vulnerabilities remain.
 
 ## Recorded validator tests
 

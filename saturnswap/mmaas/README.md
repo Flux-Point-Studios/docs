@@ -173,8 +173,8 @@ Three wallet prompts, in this order (and one more if you are moving an existing 
 3. **Fund** the order (your inventory into your own order address).
 
 {% hint style="warning" %}
-Funding new books through the page is closed until the combined red-team run against the
-October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+Funding new books through the page is closed until a combined red-team run against the release
+that will take funds returns GREEN. You can still prove your wallet by signing the consent
 statement, and register your instance. See [Security evidence](security-evidence.md).
 {% endhint %}
 

@@ -467,7 +467,7 @@ No. A successful surrender is **final and irreversible**. Legacy assets you subm
 
 ### 41f. Is the code audited?
 
-The Aiken validators and off-chain services are open source and published at [Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger) for independent inspection. The code has been extensively unit-tested and red-team rehearsed on preprod, but **has not been subjected to a formal third-party security audit**. You bear all risk of bugs, exploits, network outages, wallet errors, or loss of access to your wallet keys, as set forth in the Terms of Service. The Portal is provided "AS IS" and "AS AVAILABLE."
+Not by a point-in-time audit, which checks one moment in code that keeps changing. The Aiken validators and off-chain services are open source and published at [Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger) for independent inspection. The code is unit-tested, and an AI red team attacks it: what it finds gets fixed and re-attacked before it ships, and each run's results are published with its date in the repository's `audit_pack/` folder (see [Attacked, with dates](launch-readiness.md#attacked-with-dates)). Testing reduces risk but cannot rule out every bug. You bear all risk of bugs, exploits, network outages, wallet errors, or loss of access to your wallet keys, as set forth in the Terms of Service. The Portal is provided "AS IS" and "AS AVAILABLE."
 
 ### 41g. Where are disputes resolved?
 
