@@ -1,6 +1,6 @@
 ---
 description: >-
-  Launch date, audit posture, rate-table reference, and wallet compatibility
+  Launch date, security testing, rate-table reference, and wallet compatibility
   for the cMATRA Token Merger.
 ---
 
@@ -14,17 +14,16 @@ description: >-
 
 * The redemption window is **6 months** long. It closes on **November 28, 2026**. See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
 * The live redemption portal is at [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
-* The merger is live. Security is handled through **continuous adversarial testing** rather than a one-off audit. See [Audit Status](#audit-status) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
+* The merger is live. Security is handled through **continuous adversarial testing** rather than a one-off audit. See [Attacked, with dates](#attacked-with-dates) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
 
 ***
 
-## Audit Status
+## Attacked, with dates
 
-**Continuous adversarial testing, not a point-in-time audit.**
+**Point-in-time audits are not enough for code that keeps changing, so we attack it continuously and date every result.**
 
 * The merger contracts and off-chain signing services are open source at [github.com/Flux-Point-Studios/matra-token-merger](https://github.com/Flux-Point-Studios/matra-token-merger), so anyone can inspect them.
-* FPS does not rely on point-in-time vendor audits. Instead, AI red-team agents actively attack our products and services, including the merger contracts and signing services, and what they find gets fixed. Internal audit reports and red-team results are published in the repository's `audit_pack/` folder.
-* No formal third-party security audit has been performed (see [FAQ Q41f](faq.md#41f-is-the-code-audited)).
+* An AI red team attacks the merger contracts and signing services. What it finds gets fixed and re-attacked before it ships. Each run's results are published, with its date, in the repository's `audit_pack/` folder.
 * Safeguards in effect during the redemption window:
   * Every surrender is co-signed automatically by two independent signing services in the same transaction you sign. There is no manual approval step (see [FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)).
   * Multisig-controlled administrator key with explicit pause and throttle authority (see [Legal § Force Majeure](legal-and-disclaimers.md#force-majeure-and-emergency-pause)).

@@ -7,8 +7,8 @@ description: >-
 # Setting up a book
 
 {% hint style="warning" %}
-Funding new books through the page is closed until the combined red-team run against the
-October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+Funding new books through the page is closed until a combined red-team run against the release
+that will take funds returns GREEN. You can still prove your wallet by signing the consent
 statement, and register your instance. See [Security evidence](security-evidence.md).
 {% endhint %}
 
@@ -345,8 +345,8 @@ deposit** for it, so moving costs roughly the network fees (see
 ## 5 · Put your inventory to work
 
 {% hint style="warning" %}
-Funding new books through the page is closed until the combined red-team run against the
-October 1, 2026 release returns GREEN. You can still prove your wallet by signing the consent
+Funding new books through the page is closed until a combined red-team run against the release
+that will take funds returns GREEN. You can still prove your wallet by signing the consent
 statement, and register your instance. See [Security evidence](security-evidence.md).
 {% endhint %}
 

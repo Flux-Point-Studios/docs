@@ -20,8 +20,9 @@ Live at [saturnswap.io](https://saturnswap.io).
   limit-order book so traders can post resting orders at a chosen price, not just swap at spot.
 - **One signature, broad reach.** A single connected wallet can trade Cardano-native pairs and,
   through the aggregator, reach liquidity on other chains.
-- **Transparent settlement.** Orders settle on-chain against audited validators; balances, fills,
-  and liquidity are all verifiable from the ledger.
+- **Transparent settlement.** Orders settle on-chain against validators an AI red team attacks
+  every week, with a dated public record of each run; balances, fills, and liquidity are all
+  verifiable from the ledger.
 
 ## How it works
 
