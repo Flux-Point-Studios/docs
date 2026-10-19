@@ -150,19 +150,23 @@ your ceremony:
 | Script | Rebuilt from | Must hash to |
 |---|---|---|
 | your applied `maker_stake_bound` | the validator source in that repo, re-applied with your nine parameters | your ceremony's `applied_script_hash` |
-| the cardano-swaps two-way spend validator | the public [cardano-swaps](https://github.com/fallen-icarus/cardano-swaps) blueprint at tag **`v2.0.0`** | `dapp_hash` |
+| the cardano-swaps two-way spend validator | the public [cardano-swaps](https://github.com/fallen-icarus/cardano-swaps) blueprint at commit **`ecbf5daf`** | `dapp_hash` |
 | the two-way beacon policy | that same blueprint, applied with `dapp_hash` | `beacon_id` |
 
 Any mismatch is fatal and nothing is submitted. Because every input is public and every script is
 checked locally, you can point it at **any node you trust**. A hostile node can refuse you
 service, but it can never redirect your funds.
 
-You can check one link of that chain right now, without running anything of ours. **The tag
-matters**: cardano-swaps has moved on since the deployment SaturnSwap books against, and the
-current default branch produces a different hash.
+You can check one link of that chain right now, without running anything of ours. **The commit
+matters**: cardano-swaps has moved on since the deployment SaturnSwap books against. Its `v2.0.0`
+tag and its default branch now point to a later release, which produces different hashes, so pin
+the exact commit.
 
 ```bash
-git clone --depth 1 --branch v2.0.0 https://github.com/fallen-icarus/cardano-swaps
+git init -q cardano-swaps
+git -C cardano-swaps fetch -q --depth 1 https://github.com/fallen-icarus/cardano-swaps \
+  ecbf5daf8f28ac6e56adc8cc28d2a0931e01194a
+git -C cardano-swaps checkout -q FETCH_HEAD
 python3 -c "
 import json, hashlib
 v = next(x for x in json.load(open('cardano-swaps/aiken/plutus.json'))['validators']
