@@ -415,7 +415,7 @@ short but real.
   [paused for every book at once](#pauses-that-stop-every-book-at-once), or refusing your book
   for a reason that is correct. There is no uptime commitment here.
 - **No guarantee the code is free of vulnerabilities.** An AI red team attacks the validator and
-  the keeper every week and publishes every run with its date (the latest is [Red team 2026-10-19](https://github.com/Flux-Point-Studios/docs/issues/50)), and validator
+  the keeper every week and publishes every run with its date ([the dated record](https://github.com/Flux-Point-Studios/docs/issues?q=is%3Aissue%20author%3Arealdecimalist%20%22Red%20team%22%20in%3Atitle)), and validator
   unit and property tests are recorded at named revisions. The most recent combined run to reach a
   verdict, on September 10, 2026, returned BLOCK, and funding new books stays closed until a combined
   run against the release that will take funds returns GREEN. See [Security evidence](security-evidence.md).

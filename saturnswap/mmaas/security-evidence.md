@@ -6,7 +6,7 @@ finds gets fixed and re-attacked before it ships. A full combined run (validator
 page) is repeated before public sign-up opens, then every week.
 
 - **Weekly record.** The validator and the keeper are attacked every week, and every run is published
-  with its date, including the runs that find nothing. The latest is [Red team 2026-10-19](https://github.com/Flux-Point-Studios/docs/issues/50).
+  with its date, including the runs that find nothing: see [the dated record](https://github.com/Flux-Point-Studios/docs/issues?q=is%3Aissue%20author%3Arealdecimalist%20%22Red%20team%22%20in%3Atitle).
 - **Combined runs.** The most recent combined run to reach a verdict, on September 10, 2026, returned
   BLOCK: findings to fix before launch. Funding new books through the page stays closed until a
   combined run against the release that will take funds returns GREEN.
