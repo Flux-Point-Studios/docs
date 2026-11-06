@@ -1,115 +1,108 @@
 ---
-description: Aegis — parametric, on-chain insurance and risk infrastructure for Cardano
+description: Aegis is parametric cover on Cardano, sold from the Sovereign Book. Status, what it does and where it runs today.
 ---
 
 # Aegis
 
-Aegis is **parametric insurance built natively on Cardano**. Buyers escrow a small premium and
-receive an automatic, oracle-settled payout if a price condition is met — an ADA crash below a
-chosen strike, a stablecoin depeg, or a CDP nearing liquidation. Underwriters provide pooled ADA
-liquidity that backs every policy and earn the premiums on policies that expire without a claim.
-There is no claims desk and no custodian: settlement is enforced by Aiken validators, and the
-oracle reading is verified on-chain at claim time.
+Aegis is **parametric cover on Cardano**. A buyer pays a premium and receives a fixed payout if a
+signed price reading reaches the strike during the term. Underwriters post standing offers from
+their own stake credentials, and each sale moves the full coverage amount into the position's own
+UTxOs. Settlement is decided by Aiken validators and a reading they check themselves. Anyone can
+submit a claim, and it pays only the buyer.
 
-Live on Cardano mainnet at [aegis.fluxpointstudios.com](https://aegis.fluxpointstudios.com).
-
-## What you can do with Aegis
-
-- **Buy crash coverage** — a price-contingent payout if ADA (or iBTC / iETH) falls below your
-  strike before expiry. Functionally a synthetic put: bounded premium, leveraged downside payout.
-- **Buy depeg coverage** — protection on stablecoins (USDC, USDT, iUSD) that pays if the feed
-  leaves its insurable band around the peg.
-- **Protect a CDP** — attach a policy calibrated to your liquidation price on Indigo, Liqwid,
-  Danogo, Surf, or FluidTokens, so a payout can settle before the liquidation bots strike.
-- **Underwrite** — deposit ADA into the shared pool, receive transferable `aLP` tokens, and earn
-  premium yield pro-rata to your share.
-
-## Design goals
-
-- **Non-custodial by construction.** Every action is a Cardano transaction the user signs in their
-  own wallet. Aegis never holds keys or funds.
-- **Parametric, not discretionary.** Payouts are decided by an on-chain price condition and an
-  oracle reading the validator checks itself — not by a human adjudicator.
-- **Solvency enforced on-chain.** The pool validator never lets reserved coverage exceed deposited
-  liquidity, and never lets an underwriter withdraw funds reserved against open policies.
-- **Oracle-agnostic.** The same protocol settles policies against Charli3, Orcfax, the AegisSelf
-  publisher feed, or Indigo's per-iAsset oracle — chosen per policy, with no validator redeploy to
-  add a provider.
-- **A public risk primitive.** Aggregate demand across strikes and durations forms an on-chain
-  "fear gauge" any protocol can read via reference inputs.
-
-## How it works
-
-Aegis is a single Aiken project that compiles to **four Plutus V3 scripts** (plus a one-shot NFT
-that bootstraps the pool), connected by a build-sign-submit transaction flow:
-
-```
-   Wallet (CIP-30)                Frontend
-        |  sign                       |  REST
-        v                             v
-   Cardano L1   <----- submit -----  API (tx build, indexing)
-   policy / pool / lp_token /        Charli3 · Orcfax · AegisSelf · Indigo
-   policy_marker validators          oracle reference inputs (CIP-31)
-```
-
-- The **policy validator** governs one UTxO per policy (its datum encodes the strike, coverage,
-  premium, window, oracle, and risk class).
-- The **pool validator** is a single shared UTxO holding all underwriter capital and the solvency
-  accounting. It **funds the coverage** for every policy it underwrites — buyers pay only the premium.
-- The **aLP minting policy** is parameterized by the pool's script hash, so `aLP` can only be
-  minted or burned when the pool itself is consumed in the same transaction.
-- The **marker minting policy** stamps every policy UTxO with one `AEGIS_POLICY` integrity token at
-  underwrite time and burns it at settlement — so a policy that was never underwritten can never be
-  claimed or cancelled to drain the pool.
-
-The oracle UTxO is read as a **reference input** (CIP-31) — never consumed — so a single feed can
-back many concurrent claims, and the feed's freshness is checked inside the validator.
-
-### V8 Stable-Vault (current)
-
-The latest deployed version (V8) replaces the single V7 pool UTxO with a **vault architecture**:
-
-- **VaultState** — a leaner 4-field datum (`lp_supply`, `active_coverage`, `reserve`, `registry_nft`)
-  that drops the redundant `total_liquidity` and `lp_token_policy` fields in favor of derived values.
-- **Registry + M-of-N governance** — the vault is tied to a `RegistryDatum` with configurable
-  M-of-N admin (was single-operator 1-of-1). Admin can only propose logic swaps behind a 72h
-  timelock — never has LP custody.
-- **Non-custodial builders** — users fund and receive directly. No operator key ever touches user
-  funds. All six lifecycle paths (add/remove liquidity, underwrite, claim, cancel, expire) route
-  through the vault with the user signing their own transaction.
-- **V7 → V8 migration** — existing V7 LPs can withdraw from the old pool and move into the vault.
-  The API dispatches to V8 when `AEGIS_V8_VAULT_ADDRESS` is set, else keeps serving V7.
-
-For the full datums, redeemers, transaction graphs, and edge cases, see
-[How Aegis Works On-Chain](architecture.md). For who participates and why, see
-[The Seven-Sided Marketplace](marketplace.md).
-
-## Coverage and oracles
-
-A policy names an `oracle_provider` (Charli3, Orcfax, AegisSelf, or Indigo) and an `oracle_nft`. At
-claim time the validator locates the matching feed by NFT, parses the Charli3-compatible
-`OracleDatum`, rejects a stale reading (checked against the transaction validity range), and pays
-out only if the price meets the strike for the policy's risk class. Aegis performs no off-chain
-price-oracle work of its own — it only verifies.
-
-## Treasury give-back
-
-Every fee-bearing Aegis transaction routes a fixed share of the protocol fee into the **Cardano
-protocol treasury** via the Conway-era `treasury_donation` body field (CDDL key 22). The pool
-validator rejects any such transaction that under-pays, so the contribution is enforced
-cryptographically rather than by trust, and shows up as a "Treasury Donation" row on cardanoscan.
-
-## Building on Aegis
-
-Integrators (DEXs, lending protocols, wallets) add one-click coverage with the TypeScript SDK,
-[`@fluxpointstudios/aegis-sdk`](https://www.npmjs.com/package/@fluxpointstudios/aegis-sdk). It
-exposes quote/compose helpers that return the policy parts to splice into your own transaction, a
-network-aware oracle-feed registry, and byte-for-byte datum encoders that mirror the on-chain
-types. No backend integration is required to read pool state or quote a premium.
+The current product is the **Sovereign Book**. It runs on Cardano preprod with test ADA.
 
 ## Status
 
-Aegis is **live on Cardano mainnet** — crash coverage, depeg coverage, CDP protection, the
-underwriter pool, and the AEGIS / FEAR index are all in active use, with partner integrations
-(SaturnSwap, Surf, Indigo CDP protection) onboarding through the SDK. The current mainnet deploy
-runs the **V8 stable-vault** with non-custodial builders and registry governance.
+| Network | State |
+|---------|-------|
+| Preprod | The Sovereign Book is deployed and has sold cover. Sales, a buyer cancel, signed price bundles and relay marks are on chain. See [Preprod Proof](preprod-proof.md). |
+| Preprod, still open | No Claim and no Expire have landed. The earliest Expire is after 2026-11-15 20:45 UTC. A Claim waits on a real market fall through a sold strike. |
+| Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
+| Audit | This generation has not been independently audited. An audit is planned before any mainnet launch of the Book. |
+
+Preprod custody is deliberately relaxed for this stage, and signer hardening follows. Nothing on
+preprod carries real value.
+
+## What the Book does
+
+- **Barrier cover** on ADA, BTC and ETH pays if the price reaches a strike at least 15% under the
+  lower of the current reading and its trailing low.
+- **Depeg cover** on USDC pays if the feed falls to a strike between 50% and 95% of the $1 peg. It
+  can be sold only while the peg reads at 99% or better.
+- **Underwriting** is posting an offer: your capital, your price sheet, your limits. The capital
+  stays under your stake credential while it waits and while it backs a position, so it keeps
+  earning staking rewards and keeps its delegation.
+
+Terms run at least 7 days. The reference price sheets on preprod sell 7 to 45 days. Each position
+can draw on up to 20 offers.
+
+## How a sale works
+
+```
+ Underwriters                     Buyer (CIP-30 wallet)
+   offers at the book script        |  signs
+   each under its own stake         v
+        |                     +--------------+     reference inputs:
+        +-------------------> |  sale tx     | <-- price sheets, the feed
+                              +--------------+     through the observer
+                                |    |     |
+                 P-leg: policy  |    |     |  fee output
+                 C-legs: one per offer, each holding exactly its coverage
+```
+
+1. The relay allocates the sale across admitted offers, cheapest first, and marks the body it
+   presents.
+2. The buyer signs. The position script checks every offer the sale spends against that offer's
+   own terms and price sheet.
+3. Each contributing offer moves into a C-leg that holds exactly its share of the coverage and
+   keeps its owner's stake credential. Any remainder of the offer goes back to the book.
+4. The position ends one of three ways: a Claim pays the buyer the coverage, an Expire returns each
+   leg to its owner, or a buyer cancel in the first 30 minutes refunds 90% of the premium.
+
+The full rules are in [How Aegis Works On-Chain](architecture.md). The roles are in
+[Who Participates](marketplace.md).
+
+## Design properties
+
+- **Fully funded at sale.** A position holds its whole coverage from the moment it is sold. There
+  is no shared pool to run short, and one underwriter's position cannot draw on another's capital.
+- **Parametric.** A payout depends on the strike and term pinned at sale and on a fresh signed
+  reading. No person adjudicates a claim.
+- **Underwriters set their own terms.** An offer names its feeds, depths, terms, fill sizes, price
+  sheet and expiry. An agent the owner names can only send the offer home or narrow its terms.
+- **Permissionless settlement.** Anyone can submit a Claim or an Expire. The hosted keeper does so
+  as a service, and it cannot change who gets paid.
+
+## Fees
+
+This generation sends at least 1% of the premium to one fixed address set at deployment, enforced
+by the position script at sale. A buyer cancel does not return it. On preprod, the output also has
+to meet the ledger's minimum UTxO, which is why the sales on the proof page show about 1.14 tADA.
+
+This generation makes no Cardano Treasury donation, and its feed table is a compiled script
+parameter, so adding an asset means a new generation. A Cardano Treasury share and a governed asset
+allowlist are next-generation work.
+
+## Integrations
+
+| Integration | State |
+|-------------|-------|
+| SaturnSwap swap-plus-insure | In progress against the Book on preprod |
+| FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
+| Indigo | Sold on the prior generation, not yet relaunched on the Book |
+| Surf | Paused |
+
+The published TypeScript SDK,
+[`@fluxpointstudios/aegis-sdk`](https://www.npmjs.com/package/@fluxpointstudios/aegis-sdk), targets
+the prior generation. Its re-cut against the Book is part of the SaturnSwap work.
+
+## Earlier generations
+
+Aegis began as a single shared pool with `aLP` tokens (V4 to V7), then moved to a stable vault with
+M-of-N registry governance and a 72-hour timelock (V8). Both funded cover from pooled capital. The
+Book replaces pooled underwriting: capital stays with the underwriter that posted it, and each
+position is funded separately. The prior vault is summarised in
+[How Aegis Works On-Chain](architecture.md#earlier-generations).
+
+Aegis has no token.
