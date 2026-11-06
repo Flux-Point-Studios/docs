@@ -1,130 +1,77 @@
 ---
-description: Aegis as a risk-infrastructure layer — the participants on every side of the market and how each strengthens the network for the others.
+description: Who takes part in the Sovereign Book, what each role pays and earns, and what each role can and cannot do.
 ---
 
-# The Seven-Sided Marketplace
+# Who Participates
 
-Aegis isn't just insurance — it's a risk-infrastructure layer. Several distinct participants each
-strengthen the network for every other. This page walks each side: what they pay, what they earn,
-how value flows, and where they're exposed.
+The Sovereign Book has two sides that exchange risk, and a set of services that keep it running. No
+service can move an underwriter's capital anywhere except home, and none can redirect a payout.
 
-## 1. Underwriters — liquidity providers
+## Buyers
 
-Capital providers who deposit ADA into the shared pool and back every policy the protocol writes,
-pro-rata to their `aLP` share. Yield is real economic activity — premiums on policies that expire
-without a claim — not token emissions.
+A buyer pays a premium for a fixed payout if a price reaches a strike during the term.
 
-- **Pays in:** ADA into the pool; capital is locked while utilized.
-- **Earns:** premium yield pro-rata to `aLP` share; scales with utilization.
-- **Flows:** deposit ADA → pool (single-UTxO continuation) · mint transferable `aLP` · earn
-  premiums on every unclaimed policy · pool drawn pro-rata to pay valid claims.
-- **Risks:** drawdown if many policies hit strike at once; `aLP` redemption is gated when
-  utilization spikes (to protect open policies); premium yield correlates with market fear — high
-  APY often precedes high losses.
+- **Pays:** the premium, the fee, the transaction fee and a deposit of about 2.1 tADA in the P-leg.
+  Whoever submits the settlement can take that deposit as change.
+- **Receives:** the full coverage on a Claim, sent to the buyer's own address.
+- **Can:** cancel within 30 minutes of the start for 90% of the premium, while the reading is out of
+  the money.
+- **Risks:** the term ends with no trigger and the premium is spent. A Claim also needs a fresh
+  reading that shows the trigger, and the claim wait of 1 hour must have passed.
 
-### V8 improvements for underwriters
+The contract does not check whether the buyer holds a loan or the asset. A borrower can use a Barrier
+position as liquidation protection by choosing a strike above the liquidation price, and anyone else
+can hold the same position as a synthetic put.
 
-- **Non-custodial deposits/withdrawals** — you sign every transaction. No operator key ever
-  touches your funds.
-- **Registry governance** — M-of-N admin (not single operator) with 72h timelock on logic changes.
-  Admin can propose parameter updates but never has LP custody.
-- **Migration path** — V7 LPs can withdraw from the old pool and deposit into the vault without
-  losing position.
+## Underwriters
 
-## 2. Borrowers — liquidation-protected
+An underwriter posts offers at the book script under their own stake credential.
 
-CDP holders on Indigo, Liqwid, Danogo, Surf, and FluidTokens who attach a policy calibrated to
-their liquidation price. If the market crashes, the payout can settle before the liquidation bots
-strike — giving the borrower time to top up collateral.
+- **Puts up:** ADA, up to the offer's capital. A position locks only what it fills.
+- **Earns:** the premium on each position that expires, 10% of the premium on a cancelled position,
+  and staking rewards. The capital stays under the underwriter's stake credential both as an offer
+  and as a leg, so it keeps its delegation.
+- **Controls:** feeds, classes, depth and term ranges, fill sizes, price sheet, load and expiry. The
+  owner can cancel an unfilled offer at any time.
+- **Risks:** a leg pays out in full if its position triggers. A leg is locked until its position
+  settles, which for an unclaimed position is 48 hours after expiry.
 
-- **Pays in:** a premium tuned to LTV and strike distance.
-- **Gets:** a pre-liquidation payout and time to recover the position.
-- **Flows:** attach premium → policy (datum links to the CDP) · off-chain keeper tracks LTV vs.
-  oracle · payout settles before the keeper liquidation tx wins.
-- **Risks:** the strike must sit above the liquidation threshold to be useful; a race against
-  keeper bots during cascades; cover ends at expiry — chronic under-collateralization isn't
-  insurable.
+Capital is not pooled. Each leg backs one position, and a loss on one underwriter's leg cannot reach
+another underwriter.
 
-## 3. Speculators — synthetic-put buyers
+## Agents and the hosted maker
 
-The contract doesn't check whether you hold a loan — anyone can buy protection at any strike. That
-makes Aegis a pure price-contingent instrument: pay a small premium, receive a large payout if the
-price falls below your strike. Sophisticated traders use it as a synthetic put on ADA.
+An offer can name an agent. The agent can withdraw the offer to its owner or narrow its terms, and in
+approval mode it must witness every fill. It cannot take the capital or widen the terms.
 
-- **Pays in:** premium; no collateral, no margin call.
-- **Gets:** an asymmetric payoff — bounded loss, leveraged crash exposure.
-- **Flows:** open (premium → policy NFT minted to wallet) · hold (the policy NFT is transferable) ·
-  settle (on strike: full coverage paid; else the premium expires).
-- **Risks:** premium is non-refundable if the strike never hits in the window; strike-distance
-  pricing is actuarial, not arbitrage-free; deep-OTM liquidity is thin until the pool grows.
+The hosted maker is one such agent. It reads the offers that name its agent key, and under a halt it
+sends them home, its clients' offers first. It pays its own transaction fees from a separate float.
 
-## 4. Lending protocols — B2B integrators
+## The relay
 
-Indigo, Liqwid, Danogo, Surf, FluidTokens — protocols that embed Aegis into their CDP creation flow
-("open a CDP with built-in liquidation insurance"). They reduce systemic liquidation cascades,
-protect users, and differentiate the product. Premiums can be subsidized from protocol treasuries.
+The relay allocates each sale across admitted offers and presents the body for the buyer to sign. It
+ranks by price, then by when an offer was posted. Its mark on each sale records which allocation
+produced it. Validators do not depend on the relay.
 
-- **Pays in:** integration time; CIP-31 reference inputs in the CDP datum.
-- **Gets:** a lower bad-debt rate; a referral fee on premiums it originates.
-- **Flows:** the Aegis policy NFT is cited in the CDP datum at open time · insolvency on covered
-  positions falls during cascades · a share of premium on protocol-referred policies.
-- **Risks:** tight coupling (an Aegis pause cascades to integrator UX); a mis-calibrated subsidy
-  could create moral hazard; reference-input contention during high-throughput epochs.
+## The publisher and the observer
 
-## 5. Treasuries & DAOs — risk managers
+The publisher writes the price feeds. A signing core refuses a bundle unless at least two exchange
+sources agree with it and its trailing low can be found in the observer's Pyth-signed, on-chain
+anchored history.
 
-Funded projects, DAOs, and protocol treasuries holding significant ADA can buy crash protection as
-basic risk management. A 500K-ADA treasury buying 30-day cover at a 20%-below strike costs roughly
-1–2% — trivial insurance against catastrophic loss.
+## The keeper
 
-- **Pays in:** a premium budget, roughly 1–2% of treasury per cycle.
-- **Gets:** a floor on treasury value, fiduciary cover, runway certainty.
-- **Flows:** allocate (multi-sig premium tx via governance vote) · hold (policy NFT custodied at
-  the treasury address) · disclose (on-chain hedge ratio visible to the community).
-- **Risks:** premium is an explicit P&L line to defend at the next vote; per-policy coverage caps
-  mean large treasuries split across policies; strike calibration is a governance question.
+The hosted keeper submits Claims and Expires. Settlement is permissionless, so a buyer or an
+underwriter can submit the same transaction. The validators hold every settlement to the full amount,
+so the keeper keeps none of the coverage.
 
-## 6. Arbitrageurs — pricing efficiency
+## The quorum
 
-When Aegis premiums diverge from CEX-implied volatility, arbitrageurs buy the cheaper instrument
-and sell the dearer. This compresses the spread and keeps Aegis pricing reflecting real market
-risk — they are unpaid market makers.
+A 2-of-3 quorum can return offers to their owners in an emergency, short by at most 0.6 tADA to pay
+the batch's fee. A transaction it signs may contain nothing except those returns.
 
-- **Pays in:** capital, monitoring infrastructure, execution latency.
-- **Gets:** the spread between the Aegis premium and the CEX-IV-implied option price.
-- **Flows:** watch (Aegis premium vs. CEX option mid) · trade (buy the under-priced side, hedge on
-  the other venue) · pricing converges to fair IV, protecting pool capital.
-- **Risks:** cross-venue settlement / slippage / withdrawal latency; counterparty risk on the CEX
-  leg; an on-chain Aegis policy can't be cancelled while the CEX leg can — basis blow-out possible.
+## Integrators
 
-## 7. The broader market — an on-chain fear index
-
-Aggregate Aegis demand at every strike and duration becomes Cardano's first on-chain fear gauge —
-analogous to the VIX. When demand spikes at a low strike, the market is pricing in a crash. The
-signal is on-chain, real-time, and consumable by any protocol via reference inputs.
-
-- **Pays in:** nothing — it's derived from existing protocol activity.
-- **Gets:** a public good: a transparent volatility / fear primitive.
-- **Flows:** aggregate (strike concentration · premium velocity · utilization) · publish (an
-  AEGIS / FEAR datum each block) · other protocols consume it via CIP-31 reference inputs.
-- **Risks:** thin volume makes the index noisy (robust only above a baseline TVL); manipulable in
-  early epochs by a single large policy at an extreme strike; the index definition is open and
-  could fork as new feeds arrive.
-
-## 8. The Cardano treasury — a validator-enforced give-back
-
-Every fee-bearing Aegis transaction routes a fixed share of the protocol fee directly into the
-on-chain Cardano protocol treasury via the Conway-era `treasury_donation` body field (CDDL key 22).
-The pool validator **rejects** any fee-bearing transaction that under-pays — it's enforced
-cryptographically, not by trust. With the default parameters (a 2% protocol fee × a 25% treasury
-share), **0.50% of every premium** flows to Cardano governance reserves at the next epoch
-transition.
-
-- **Pays in:** 0.50% of every Aegis premium (25% of the protocol fee).
-- **Gets:** sustainable funding for Cardano governance, Catalyst, and dev tooling.
-- **Flows:** the validator derives the required cut on-chain (no off-chain trust) · body field 22
-  carries the lovelace into the treasury at the epoch boundary · every donating tx is visible on
-  cardanoscan with a "Treasury Donation" row.
-- **Risks:** hardware-wallet support for Conway donations isn't yet universal (feature-flagged
-  behind a CIP-30 capability check); the validator hash rotates if the share constant changes, so
-  the rate is code-pinned rather than operator-mutable — by design.
+DEXs and lending protocols sell cover at the point of use. SaturnSwap swap-plus-insure and FluidTokens
+V4 liquidation cover are in progress against the Book. See [Integrations](README.md#integrations) for
+the state of each.

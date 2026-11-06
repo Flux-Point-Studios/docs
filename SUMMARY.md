@@ -6,7 +6,8 @@
 
 * [Overview](aegis/README.md)
 * [How Aegis Works On-Chain](aegis/architecture.md)
-* [The Seven-Sided Marketplace](aegis/marketplace.md)
+* [Who Participates](aegis/marketplace.md)
+* [Preprod Proof](aegis/preprod-proof.md)
 
 ## Materios Partner Chain
 
