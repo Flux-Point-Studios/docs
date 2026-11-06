@@ -67,7 +67,7 @@ rules.
 |-----------|----------------|----------|
 | `publisher.price_bundle` | Proven | The bundles below, spending and returning at the publisher's address |
 | `relay.mark` | Proven | The mark on sales 1, 2 and 3 |
-| `maker.agent`, `maker.float` | Not yet on chain | No transaction yet |
+| `maker.agent`, `maker.float` | Proven | [Offer Withdraw](https://preprod.cexplorer.io/tx/2fa57a14ff331685134047ed67b484eb3a34339af1f6f5b87cf65280bff359e4), height 5381765, from this [managed offer](https://preprod.cexplorer.io/tx/0e025cfc07947d0ebabb7d6264dd87d73344bf95d656f03df2e87deb687996e9). `maker.float`'s post path has not run |
 | `keeper.g2.settle` | Not yet on chain | The first Expire or Claim |
 
 Sample price bundles, all from 2026-11-06:
