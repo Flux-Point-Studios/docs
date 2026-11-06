@@ -91,7 +91,8 @@ allowlist are next-generation work.
 | SaturnSwap swap-plus-insure | In progress against the Book on preprod |
 | FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
-| Surf | Paused |
+| Liqwid | Planned as the first money market for the rehypothecation waterfall, in a later Book generation. Design stage: nothing is built or live |
+| Surf | Surf's services relaunched in November 2026. Re-integration against the Book to follow, with no date set |
 
 The published TypeScript SDK,
 [`@fluxpointstudios/aegis-sdk`](https://www.npmjs.com/package/@fluxpointstudios/aegis-sdk), targets
