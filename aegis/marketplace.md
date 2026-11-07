@@ -72,6 +72,6 @@ the batch's fee. A transaction it signs may contain nothing except those returns
 
 ## Integrators
 
-DEXs and lending protocols sell cover at the point of use. SaturnSwap swap-plus-insure and FluidTokens
-V4 liquidation cover are in progress against the Book. See [Integrations](README.md#integrations) for
-the state of each.
+DEXs and lending protocols sell cover at the point of use. SaturnSwap swap-plus-insure runs against
+the Book on preprod, with the swap and its cover in one transaction. FluidTokens V4 liquidation
+cover is in progress. See [Integrations](README.md#integrations) for the state of each.
