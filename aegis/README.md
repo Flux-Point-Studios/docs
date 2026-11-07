@@ -16,7 +16,7 @@ The current product is the **Sovereign Book**. It runs on Cardano preprod with t
 
 | Network | State |
 |---------|-------|
-| Preprod | The Sovereign Book is deployed and has sold Barrier cover on ADA and Depeg cover on USDC. Sales, a buyer cancel, signed price bundles, relay marks and a SaturnSwap swap sold with its cover in one transaction are on chain. See [Preprod Proof](preprod-proof.md). |
+| Preprod | The Sovereign Book is deployed and has sold Barrier cover on ADA and Depeg cover on USDC. Sales, buyer cancels, signed price bundles, relay marks and a SaturnSwap swap sold with its cover in one transaction are on chain. See [Preprod Proof](preprod-proof.md). |
 | Preprod, still open | No Claim and no Expire have landed. The earliest Expire is after 2026-11-15 20:45 UTC. A Claim waits on a real market fall through a sold strike. |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
 | Audit | This generation has not been independently audited. An audit is planned before any mainnet launch of the Book. |

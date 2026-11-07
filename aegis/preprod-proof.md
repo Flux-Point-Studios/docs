@@ -15,7 +15,7 @@ hash opens that transaction on Cexplorer.
 | Offers posted under three separate owners and stake credentials | Proven |
 | Sale drawing on three owners and stakes, with a relay mark | Proven, twice |
 | Fee output on every sale | Proven |
-| Buyer cancel with the fee kept | Proven |
+| Buyer cancel with the fee kept | Proven, twice |
 | USDC Depeg sale | Proven, five times |
 | SaturnSwap V3 order fill and cover sale in one transaction | Proven, four times |
 | That transaction signed by a buyer in a mobile wallet | Proven, twice: in the Aegis web app and through SaturnSwap's interface |
@@ -45,6 +45,7 @@ hash opens that transaction on Cexplorer.
 | Offer (USDC Depeg) | [d0b271d445f903e32415850bf0576a39d97724fa8b5847ab7bf9b7327e4ce353](https://preprod.cexplorer.io/tx/d0b271d445f903e32415850bf0576a39d97724fa8b5847ab7bf9b7327e4ce353) | 5381905 | One 60 tADA offer. Sale 5 draws on it |
 | Sale 4 | [a1c3629050f1184777e1ceea393c49b8b423c93a666d6ed1bd4103e62ef2abae](https://preprod.cexplorer.io/tx/a1c3629050f1184777e1ceea393c49b8b423c93a666d6ed1bd4103e62ef2abae) | 5381965 | V3 order fill and 60 tADA Depeg cover on 2 legs. No relay mark |
 | Sale 5 | [12bc25d18e512b1a104c75326dbea5110c6d80614d5fe0bd53153ac3df03266c](https://preprod.cexplorer.io/tx/12bc25d18e512b1a104c75326dbea5110c6d80614d5fe0bd53153ac3df03266c) | 5382835 | 30 tADA Depeg cover on 1 leg |
+| Buyer cancel of sale 5 | [1ac73e5bad33977f3dc383a99b0dd021c4a22900ccce9e826d7dca26dfdd52e3](https://preprod.cexplorer.io/tx/1ac73e5bad33977f3dc383a99b0dd021c4a22900ccce9e826d7dca26dfdd52e3) | 5382874 | Fee kept |
 | Sale 6 | [1ba43aadbb8a55e3c20f09a94263485544714c8b7215635185794739afac95c2](https://preprod.cexplorer.io/tx/1ba43aadbb8a55e3c20f09a94263485544714c8b7215635185794739afac95c2) | 5383000 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed by a test script |
 | Sale 7 | [250d49c206d3c4644dc45d25ddc0fe15fb900a508dfccad15c249bc635f93786](https://preprod.cexplorer.io/tx/250d49c206d3c4644dc45d25ddc0fe15fb900a508dfccad15c249bc635f93786) | 5384482 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed in a mobile wallet in the Aegis web app |
 | Sale 8 | [49c2e18d74efeb9c6f475cffc04a23c11841714896be174205e0c20bcc294c20](https://preprod.cexplorer.io/tx/49c2e18d74efeb9c6f475cffc04a23c11841714896be174205e0c20bcc294c20) | 5385594 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed in a mobile wallet through SaturnSwap's interface |
@@ -77,7 +78,7 @@ Sales 4 to 8 are USDC/USD Depeg positions with a 0.94 strike and a 7-day term. P
 | Sale | Coverage | Legs | Premium | Start (UTC) | Expiry (UTC) | Expire possible after (UTC) |
 |------|----------|------|---------|-------------|--------------|-----------------------------|
 | 4 | 60 tADA | 30 + 30 | 2 tADA | 2026-11-06 22:46:05 | 2026-11-13 22:46:05 | 2026-11-15 22:46:05 |
-| 5 | 30 tADA | 30 | 2 tADA | 2026-11-07 04:12:05 | 2026-11-14 04:12:05 | 2026-11-16 04:12:05 |
+| 5 | 30 tADA | 30 | 2 tADA | 2026-11-07 04:12:05 | Cancelled | Cancelled |
 | 6 | 30 tADA | 15 + 15 | 2 tADA | 2026-11-07 05:20:10 | 2026-11-14 05:20:10 | 2026-11-16 05:20:10 |
 | 7 | 30 tADA | 18.214286 + 11.785714 | 2.214286 tADA | 2026-11-07 14:44:03 | 2026-11-14 14:44:03 | 2026-11-16 14:44:03 |
 | 8 | 30 tADA | 10.714285 + 19.285715 | 2.285715 tADA | 2026-11-07 21:38:08 | 2026-11-14 21:38:08 | 2026-11-16 21:38:08 |
@@ -85,7 +86,7 @@ Sales 4 to 8 are USDC/USD Depeg positions with a 0.94 strike and a 7-day term. P
 Each premium is the minimum. A sale pays at least 2 tADA, and each leg pays at least 1 tADA and its
 pro-rata share of that 2 tADA, so sales 7 and 8 come to a little over 2 tADA. The sheet's 1.18% rate
 comes to less at these sizes. The 0.94 strike sat about 6% under the reading, inside the
-sheet's 5% to 50% depth band.
+sheet's 5% to 50% depth band. Sale 5's buyer cancelled it 12 minutes after the start.
 
 Sales 4, 6, 7 and 8 each fill a resting SaturnSwap V3 order and sell the cover in the same
 transaction. The buyer receives the order's tUSDC and the order's owner receives its ADA, while the
