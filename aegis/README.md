@@ -16,7 +16,7 @@ The current product is the **Sovereign Book**. It runs on Cardano preprod with t
 
 | Network | State |
 |---------|-------|
-| Preprod | The Sovereign Book is deployed and has sold cover. Sales, a buyer cancel, signed price bundles and relay marks are on chain. See [Preprod Proof](preprod-proof.md). |
+| Preprod | The Sovereign Book is deployed and has sold Barrier cover on ADA and Depeg cover on USDC. Sales, a buyer cancel, signed price bundles, relay marks and a SaturnSwap swap sold with its cover in one transaction are on chain. See [Preprod Proof](preprod-proof.md). |
 | Preprod, still open | No Claim and no Expire have landed. The earliest Expire is after 2026-11-15 20:45 UTC. A Claim waits on a real market fall through a sold strike. |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
 | Audit | This generation has not been independently audited. An audit is planned before any mainnet launch of the Book. |
@@ -88,7 +88,7 @@ allowlist are next-generation work.
 
 | Integration | State |
 |-------------|-------|
-| SaturnSwap swap-plus-insure | In progress against the Book on preprod |
+| SaturnSwap swap-plus-insure | Live on preprod. One transaction fills a SaturnSwap V3 order and sells USDC Depeg cover from the Book, signed in a mobile wallet. See [The Depeg sales](preprod-proof.md#the-depeg-sales). The SaturnSwap interface for it is not yet on SaturnSwap's public site |
 | FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
 | Liqwid | Planned as the first money market for the rehypothecation waterfall, in a later Book generation. Design stage: nothing is built or live |
