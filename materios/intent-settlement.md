@@ -17,17 +17,16 @@ It is the first production Cardano L2 path where the settlement decision is made
 DeFi settlement on Cardano today depends on one of:
 
 1. **A single batcher** (Minswap, SundaeSwap pre-Gummiworm) — the operator decides which orders settle, in what order, at what price. Reorgs, BEV, and frontrun risk all concentrate on one party.
-2. **A Hydra head** — multiparty channel that requires all participants to be online for every state transition. Strong cryptography, weak liveness when one party drops.
-3. **A bridged sidechain** — Materios's category. Trust depends on who watches L1, who signs the settlement, and how falsifiable the chain of custody is.
+2. **A bridged sidechain** — Materios's category. Trust depends on who watches L1, who signs the settlement, and how falsifiable the chain of custody is.
 
-Materios's intent-settlement pallet inverts the failure modes of category (3):
+Materios's intent-settlement pallet inverts the failure modes of category (2):
 
-| Centralized batcher | Hydra head | **Materios intent-settlement** |
-|---|---|---|
-| One operator decides settlement | All-or-nothing liveness | M-of-N committee, any N-M can be offline |
-| No cryptographic provenance | Cryptographic, but private | Public on-chain, **every sig verifies sr25519 against canonical bytes the pallet rebuilds from chain state** |
-| Operator can frontrun | No BEV (only participants) | Committee cannot frontrun — they sign chain-state-derived digests, not orderings |
-| No skin in the game | No external slashing | Slashable MATRA bond per attestor (#286 follow-on shipping) |
+| Centralized batcher | **Materios intent-settlement** |
+|---|---|
+| One operator decides settlement | M-of-N committee, any N-M can be offline |
+| No cryptographic provenance | Public on-chain, **every sig verifies sr25519 against canonical bytes the pallet rebuilds from chain state** |
+| Operator can frontrun | Committee cannot frontrun — they sign chain-state-derived digests, not orderings |
+| No skin in the game | Slashable MATRA bond per attestor (#286 follow-on shipping) |
 
 The committee's job isn't to **decide** — it's to **observe and confirm**. The pallet defines exactly which Cardano L1 fact must be true for the settlement to be valid; the committee's signature is just a multi-party witness that the fact is true. Anyone running a follower node can refute a forged settlement.
 
@@ -192,17 +191,17 @@ Every product line above re-uses the same committee, the same canonical-digest p
 
 ## Comparison Frame
 
-| | Materios intent-settlement | Hydra (Cardano L2) | Gummiworm (Sundae L2) | Generic bridge |
-|---|---|---|---|---|
-| Settlement decision | M-of-N committee observation | All participants online | Off-chain archive | Custodian / federation |
-| Plutus parity | No (Substrate runtime) | Yes | Yes (planned) | N/A |
-| Cardano L1 anchor | Periodic checkpoint (CIP-31 metadata) | Every state update | Periodic archive | Variable |
-| TEE attestation | Optional (Wave 3 pallet, LIVE) | None | None | None |
-| MEV / BEV exposure | Committee cannot front-run | None | TBD | Custodian-dependent |
-| Throughput baseline (live) | ~250 TPS measured, 10k target | <100 TPS | TBD | Variable |
-| Autonomous settle witness | YES (this page) | N/A (participants ARE the witnesses) | TBD | NO |
+| | Materios intent-settlement | Gummiworm (Sundae L2) | Generic bridge |
+|---|---|---|---|
+| Settlement decision | M-of-N committee observation | Off-chain archive | Custodian / federation |
+| Plutus parity | No (Substrate runtime) | Yes (planned) | N/A |
+| Cardano L1 anchor | Periodic checkpoint (CIP-31 metadata) | Periodic archive | Variable |
+| TEE attestation | Optional (Wave 3 pallet, LIVE) | None | None |
+| MEV / BEV exposure | Committee cannot front-run | TBD | Custodian-dependent |
+| Throughput baseline (live) | ~250 TPS measured, 10k target | TBD | Variable |
+| Autonomous settle witness | YES (this page) | TBD | NO |
 
-Materios is **not** a Hydra replacement — Hydra wins the pure-Plutus story and the low-latency story for whitelisted participant sets. Materios wins the **production-grade, attested, permissionless-throughput-without-Plutus-parity** story for intent flows where a Substrate-based runtime is acceptable.
+Materios targets intent flows that need **production-grade, attested, permissionless throughput** and can run on a Substrate-based runtime without Plutus parity.
 
 ***
 
