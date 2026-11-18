@@ -6,7 +6,7 @@ description: >-
 
 # Proof-of-Inference Litepaper (Legacy)
 
-> **Superseded — kept for the record.** Proof-of-Inference (PoI) evolved into **[Orynq](README.md)**, Flux Point Studios' verifiable-AI stack on the [Materios blockchain](../materios/README.md). The $AGENT-based economics described in the original litepaper — job fees paid in $AGENT, the 70/28/1/1 fee split, epoch-rolled staker payouts, inference-pool bonds, and $AGENT-weighted governance — are **retired and will not ship**. There are no $AGENT rewards, staker fee-shares, or PoI governance going forward. $AGENT is being consolidated into **cMATRA** under the [cMATRA Token Merger](../materios/cmatra-token-merger/README.md); holders can surrender it at the [official portal](https://fluxpointstudios.com/matra-merger) until **November 28, 2026**.
+> **Superseded — kept for the record.** Proof-of-Inference (PoI) evolved into **[Orynq](README.md)**, Flux Point Studios' verifiable-AI stack on the [Materios blockchain](../materios/README.md). The $AGENT-based economics described in the original litepaper — job fees paid in $AGENT, the 70/28/1/1 fee split, epoch-rolled staker payouts, inference-pool bonds, and $AGENT-weighted governance — are **retired and will not ship**. There are no $AGENT rewards, staker fee-shares, or PoI governance going forward. $AGENT is being consolidated into **cMATRA** under the [cMATRA Token Merger](../materios/cmatra-token-merger/README.md); holders can surrender it at the [official portal](https://fluxpointstudios.com/matra-merger) until **December 4, 2026**.
 
 ***
 
