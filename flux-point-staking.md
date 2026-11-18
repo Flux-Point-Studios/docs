@@ -3,7 +3,7 @@ description: >-
   The legacy AGENT & SHARDS staking program has concluded. Unstake, claim, and
   trade eligible legacy assets for cMATRA — the Cardano-side form of MATRA, the
   network token of the Materios blockchain — before the redemption window
-  closes on November 28, 2026.
+  closes on December 4, 2026.
 ---
 
 # Flux Point Staking (Program Concluded)
@@ -18,7 +18,7 @@ If you still have AGENT, SHARDS, or NFTs in a legacy staking position:
 
 1. **Unstake and claim.** Withdraw your staked assets (and any final claimed rewards) through the staking dApp at [fluxpoint.ada-anvil.io](https://fluxpoint.ada-anvil.io/en/) so they return to a wallet you control.
 2. **Surrender and redeem.** Trade eligible legacy assets — AGENT, SHARDS, Flux Point Team Pass, SE Brawlers, Brawl Pass: Enter the Dragon, and T1/T2 ADAM Launch Passes — for **cMATRA** at the official portal: [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
-3. **Don't wait for the deadline.** The redemption window closes **November 28, 2026**, and the on-chain surrender path is permanently disabled after that date. See [Launch Readiness](materios/cmatra-token-merger/launch-readiness.md) and the [pre-launch checklist](materios/cmatra-token-merger/launch-readiness.md#pre-launch-checklist-for-holders).
+3. **Don't wait for the deadline.** The redemption window closes **December 4, 2026**, and the on-chain surrender path is permanently disabled after that date. See [Launch Readiness](materios/cmatra-token-merger/launch-readiness.md) and the [pre-launch checklist](materios/cmatra-token-merger/launch-readiness.md#pre-launch-checklist-for-holders).
 
 Read the [Legal & Disclaimers](materios/cmatra-token-merger/legal-and-disclaimers.md) before redeeming.
 

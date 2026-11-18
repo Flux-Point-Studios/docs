@@ -12,7 +12,7 @@ description: >-
 
 **May 28, 2026.** The redemption window opens on this date.
 
-* The redemption window is **6 months** long. It closes on **November 28, 2026**. See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
+* The redemption window is **6 months** long. It closes on **December 4, 2026** (originally November 28; extended by the 6 days the portal was paused). See [README → Window mechanics](README.md#window-mechanics) for the full window rules and [FAQ Q35](faq.md#35-what-happens-after-six-months) for what happens at expiry.
 * The live redemption portal is at [fluxpointstudios.com/matra-merger](https://fluxpointstudios.com/matra-merger).
 * The merger is live. Security is handled through **continuous adversarial testing** rather than a one-off audit. See [Attacked, with dates](#attacked-with-dates) and the [risk disclosures](legal-and-disclaimers.md#risk-disclosure) before redeeming.
 
@@ -46,7 +46,7 @@ The rate table is locked for the full 6-month redemption window once published, 
 
 * **6 months** from the launch date.
 * Public surrenders are permanently disabled at the on-chain validator level once the deadline passes. Any unreleased cMATRA returns to the project treasury under [README → Deadline and After-Window Handling](README.md#deadline-and-after-window-handling).
-* **There will be no extension** and no late-surrender mechanism. Holders should redeem well before the deadline.
+* **The deadline was extended once, by 6 days (from November 28 to December 4, 2026), to give back the time the redemption portal was paused for maintenance (November 6–12).** There will be no further extension and no late-surrender mechanism. Holders should redeem well before the deadline.
 
 ***
 
@@ -94,5 +94,5 @@ Before the redemption window opens:
 
 ***
 
-**Version:** 1.1 | **Launch:** May 28, 2026 | **Window closes:** November 28, 2026 | **Last updated:** October 5, 2026\
+**Version:** 1.1 | **Launch:** May 28, 2026 | **Window closes:** December 4, 2026 | **Last updated:** November 12, 2026\
 **Owner:** Flux Point Studios.

@@ -41,7 +41,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 
 - **[Aegis](aegis/)** - Parametric cover from the Sovereign Book, on preprod. See the [on-chain proof](aegis/preprod-proof.md)
 - **[Materios Partner Chain](materios/README.md)** - The blockchain behind MATRA: consensus, nodes, SPO onboarding, roadmap
-- **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Surrender legacy assets for the Materios network token — window closes November 28, 2026
+- **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Surrender legacy assets for the Materios network token — window closes December 4, 2026
 - **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX
 - **[Orynq](proof-of-inference/README.md)** - Verifiable AI: attested receipts anchored via Materios to Cardano
 - **[Orynq SDK](proof-of-inference/orynq-sdk.md)** - Anchor AI process traces
