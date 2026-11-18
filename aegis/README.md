@@ -16,10 +16,10 @@ The current product is the **Sovereign Book**. It runs on Cardano preprod with t
 
 | Network | State |
 |---------|-------|
-| Preprod | The Sovereign Book is deployed and has sold Barrier cover on ADA and Depeg cover on USDC. Sales, buyer cancels, signed price bundles, relay marks and a SaturnSwap swap sold with its cover in one transaction are on chain. See [Preprod Proof](preprod-proof.md). |
-| Preprod, still open | No Claim and no Expire have landed. The earliest Expire is after 2026-11-15 20:45 UTC. A Claim waits on a real market fall through a sold strike. |
+| Preprod | The Sovereign Book is deployed and has run the full lifecycle: Barrier cover on ADA and Depeg cover on USDC sold, buyer cancels, five Expires, and one Claim paid on a real ADA fall through a sold strike. A SaturnSwap swap sold with its cover in one transaction is on chain too. See [Preprod Proof](preprod-proof.md). |
+| Preview | The next generation is built and launches on Cardano preview first. See [The next generation](#the-next-generation). |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
-| Audit | This generation has not been independently audited. An audit is planned before any mainnet launch of the Book. |
+| Audit | No generation of the Book has been independently audited yet. The next generation is audited at its code freeze, before any mainnet launch. |
 
 Preprod custody is deliberately relaxed for this stage, and signer hardening follows. Nothing on
 preprod carries real value.
@@ -81,8 +81,24 @@ by the position script at sale. A buyer cancel does not return it. On preprod, t
 to meet the ledger's minimum UTxO, which is why the sales on the proof page show about 1.14 tADA.
 
 This generation makes no Cardano Treasury donation, and its feed table is a compiled script
-parameter, so adding an asset means a new generation. A Cardano Treasury share and a governed asset
-allowlist are next-generation work.
+parameter, so adding an asset means a new generation. Both change in the next generation.
+
+## The next generation
+
+The next generation of the Book is built and launches on Cardano preview first, then as an
+ADA-only instance on preprod. It keeps the model above: fully funded positions, underwriters'
+own offers and permissionless settlement. What changes:
+
+- **A governed asset table.** Feeds and event slots are rows in an on-chain table, changed through
+  a timelocked governance path, so a new asset no longer needs a new generation.
+- **Two instances.** One sells cover paid in ADA, the other cover paid in USDCx.
+- **Fees.** 2% of the premium to the protocol, plus a 0.5% share for the Cardano Treasury, both
+  enforced by the position script.
+- **Script-owned offers.** An offer can be owned by a script as well as a key, so a vault or
+  a DAO treasury can underwrite.
+- **Minimum premium.** 20 ADA, or 10 USDCx on the USDCx instance.
+
+It is audited at its code freeze. Mainnet comes after that audit.
 
 ## Integrations
 
@@ -93,6 +109,7 @@ allowlist are next-generation work.
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
 | Liqwid | Planned as the first money market for the rehypothecation waterfall, in a later Book generation. Design stage: nothing is built or live |
 | Surf | Surf's services relaunched in November 2026. Re-integration against the Book to follow, with no date set |
+| Lending and credit lines | Cover that pays before a borrower's position reaches liquidation or recovery. Design stage, see [Cover for Lending Positions](lending-cover.md) |
 
 The published TypeScript SDK,
 [`@fluxpointstudios/aegis-sdk`](https://www.npmjs.com/package/@fluxpointstudios/aegis-sdk), targets
