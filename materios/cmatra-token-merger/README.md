@@ -36,7 +36,7 @@ Flux Point's early ecosystem spread utility across seven separate assets — two
 | Decimals                     | 6                                              |
 | Network Incentives Reserve   | 277,500,000 (27.75%)                           |
 | Public Redemption Pool       | 722,500,000 (72.25%)                           |
-| Public window                | 6 months from launch                           |
+| Public window                | 6 months from launch — closes **December 4, 2026** |
 | Public model                 | Surrender legacy assets, receive cMATRA        |
 | Snapshot role                | Audit baseline, not normal fungible entitlement |
 
@@ -139,7 +139,7 @@ A public holder redeems by **actually controlling and surrendering an eligible l
 
 ### Window mechanics
 
-* The standard public window is **6 months** from the published launch date.
+* The standard public window is **6 months** from the published launch date, extended by the 6 days the redemption portal was down for maintenance in November 2026. It closes **December 4, 2026**.
 * A **fixed rate table** is published before the window opens.
 * The rate table remains fixed for the full window unless a documented governance-approved correction is required for a launch bug or reconciliation error.
 * Holders can redeem in **multiple transactions** during the window.
@@ -319,7 +319,7 @@ Surrendered legacy assets are **not** intended to remain in free circulation. Wh
 
 ## Deadline and After-Window Handling
 
-* The ordinary public window closes **6 months** after launch.
+* The ordinary public window closes on **December 4, 2026**.
 * After the deadline, the normal public surrender path is permanently closed. The on-chain validator enforces this — the `ProcessSurrender` spending path is disabled after the deadline.
 * Any unreleased cMATRA remaining in the pool is withdrawn by the administrator and returned to the project treasury for future allocation decisions (validator incentives, ecosystem development, or other uses to be determined by governance).
 * **There will be no extension** and no late-surrender mechanism. Holders should redeem well before the deadline.
@@ -358,6 +358,8 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 ***
 
-**Version:** 4.2 | **Date:** October 5, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)
+**Version:** 4.3 | **Date:** November 18, 2026 | **Status:** Public — redemption window open (closes December 4, 2026)
+
+**What changed in 4.3 (November 2026):** the deadline was extended from November 28 to **December 4, 2026** — exactly the 6 days the redemption portal was down for maintenance in November. There will be no further extension. Eligibility, rates and all other terms are unchanged.
 
 **What changed in 4.2 (October 2026):** no extension to the November 28 deadline (stated plainly; it was previously described as "not planned"); surrenders are co-signed automatically with no manual approval step ([FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)); security model described in [Launch Readiness → Attacked, with dates](launch-readiness.md#attacked-with-dates). Eligibility, rates and the window are unchanged.

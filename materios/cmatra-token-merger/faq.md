@@ -356,9 +356,9 @@ The six-month window is meant to give holders enough time to recover assets from
 
 ### 35. What happens after six months?
 
-The public redemption window closes on **November 28, 2026**, and **there will be no extension**. The on-chain validator permanently disables the surrender path at the deadline, so late surrenders are not technically possible.
+The public redemption window closes on **December 4, 2026**, and **there will be no further extension**. The original November 28 date was extended by exactly the 6 days the redemption portal was down for maintenance in November 2026. The on-chain validator permanently disables the surrender path at the deadline, so late surrenders are not technically possible.
 
-Unredeemed legacy assets (AGENT, SHARDS, and the eligible NFT collections) stay in your wallet, but they have no redemption path and no supported utility in any Flux Point product after the deadline. Redeem before November 28.
+Unredeemed legacy assets (AGENT, SHARDS, and the eligible NFT collections) stay in your wallet, but they have no redemption path and no supported utility in any Flux Point product after the deadline. Redeem before December 4.
 
 ### 35a. Does the team have to process or approve my surrender?
 
@@ -509,5 +509,5 @@ It is a public / governance draft aligned to the current policy direction. The c
 
 ***
 
-**Version:** 7.2 | **Date:** October 5, 2026 | **Status:** Public — redemption window open (closes November 28, 2026)\
+**Version:** 7.3 | **Date:** November 18, 2026 | **Status:** Public — redemption window open (closes December 4, 2026)\
 **Companion documents:** Litepaper, eligibility rules, fixed rate table, legacy reward reconciliation package, validator incentives spec
