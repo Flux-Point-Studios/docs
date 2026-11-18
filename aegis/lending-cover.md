@@ -77,7 +77,7 @@ multisig or a vault can be the owner.
 | Network | State |
 |---------|-------|
 | Preprod | ADA Barrier cover on the current generation, with test ADA |
-| Preview | The next generation launches here first |
+| Preview | The next generation, gen-3, with test ADA: ADA Barrier cover on the ADA instance, and Barrier and USDT Depeg cover on the USDCx instance. See [Gen-3 on preview](preview-proof.md) |
 | Mainnet | After the next generation's audit. No generation of the Book runs on mainnet today |
 
 ## What we need from an integrating protocol

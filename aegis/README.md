@@ -10,19 +10,20 @@ their own stake credentials, and each sale moves the full coverage amount into t
 UTxOs. Settlement is decided by Aiken validators and a reading they check themselves. Anyone can
 submit a claim, and it pays only the buyer.
 
-The current product is the **Sovereign Book**. It runs on Cardano preprod with test ADA.
+The current product is the **Sovereign Book**. It runs on Cardano preprod with test ADA. Its next
+generation, gen-3, is live on Cardano preview with test ADA.
 
 ## Status
 
 | Network | State |
 |---------|-------|
 | Preprod | The Sovereign Book is deployed and has run the full lifecycle: Barrier cover on ADA and Depeg cover on USDC sold, buyer cancels, five Expires, and one Claim paid on a real ADA fall through a sold strike. A SaturnSwap swap sold with its cover in one transaction is on chain too. See [Preprod Proof](preprod-proof.md). |
-| Preview | The next generation is built and launches on Cardano preview first. See [The next generation](#the-next-generation). |
+| Preview | Gen-3, the next generation, is deployed as two instances, one paying claims in ADA and one in USDCx, with six standing offers. Its first sale, an ADA/USD Barrier on the ADA instance, has landed. See [Gen-3 on preview](preview-proof.md). |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
 | Audit | No generation of the Book has been independently audited yet. The next generation is audited at its code freeze, before any mainnet launch. |
 
 Preprod custody is deliberately relaxed for this stage, and signer hardening follows. Nothing on
-preprod carries real value.
+preprod or preview carries real value.
 
 ## What the Book does
 
@@ -85,9 +86,10 @@ parameter, so adding an asset means a new generation. Both change in the next ge
 
 ## The next generation
 
-The next generation of the Book is built and launches on Cardano preview first, then as an
-ADA-only instance on preprod. It keeps the model above: fully funded positions, underwriters'
-own offers and permissionless settlement. What changes:
+The next generation of the Book, gen-3, is live on Cardano preview. See
+[Gen-3 on preview](preview-proof.md). It comes to preprod next as an ADA-only instance. It keeps the
+model above: fully funded positions, underwriters' own offers and permissionless settlement. What
+changes:
 
 - **A governed asset table.** Feeds and event slots are rows in an on-chain table, changed through
   a timelocked governance path, so a new asset no longer needs a new generation.
@@ -97,6 +99,8 @@ own offers and permissionless settlement. What changes:
 - **Script-owned offers.** An offer can be owned by a script as well as a key, so a vault or
   a DAO treasury can underwrite.
 - **Minimum premium.** 20 ADA, or 10 USDCx on the USDCx instance.
+- **Minimum term.** 1 day.
+- **A cap on total cost.** A sale is refused when its total cost to the buyer reaches the coverage.
 
 It is audited at its code freeze. Mainnet comes after that audit.
 
@@ -107,7 +111,7 @@ It is audited at its code freeze. Mainnet comes after that audit.
 | SaturnSwap swap-plus-insure | Live on preprod. One transaction fills a SaturnSwap V3 order and sells USDC Depeg cover from the Book, signed in a mobile wallet. See [The Depeg sales](preprod-proof.md#the-depeg-sales). The SaturnSwap interface for it is not yet on SaturnSwap's public site |
 | FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
-| Liqwid | Planned as the first money market for the rehypothecation waterfall, in a later Book generation. Design stage: nothing is built or live |
+| Liqwid | Live on preview. The gen-3 USDCx instance pays a claim in USDCx first, then in receipts from Liqwid's isolated sUSDr-USDCx market. See [Gen-3 on preview](preview-proof.md). No claim has paid in receipts yet |
 | Surf | Surf's services relaunched in November 2026. Re-integration against the Book to follow, with no date set |
 | Lending and credit lines | Cover that pays before a borrower's position reaches liquidation or recovery. Design stage, see [Cover for Lending Positions](lending-cover.md) |
 
