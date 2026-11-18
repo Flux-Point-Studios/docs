@@ -4,8 +4,9 @@ description: The Sovereign Book's transactions on Cardano preprod, each linked t
 
 # Preprod Proof
 
-Every transaction below landed on Cardano preprod, with test ADA, on 2026-11-06 or 2026-11-07. Each
-hash opens that transaction on Cexplorer.
+Every transaction below landed on Cardano preprod, with test ADA. The sales landed on 2026-11-06 and
+2026-11-07, and the settlements on 2026-11-15 and 2026-11-16. Each hash opens that transaction on
+Cexplorer.
 
 ## What is proven and what is open
 
@@ -19,8 +20,8 @@ hash opens that transaction on Cexplorer.
 | USDC Depeg sale | Proven, five times |
 | SaturnSwap V3 order fill and cover sale in one transaction | Proven, four times |
 | That transaction signed by a buyer in a mobile wallet | Proven, twice: in the Aegis web app and through SaturnSwap's interface |
-| Expire by the hosted keeper | Open. The earliest is after 2026-11-15 20:45 UTC |
-| Claim by the hosted keeper | Open. It waits on a real market fall through a sold strike |
+| Expire by the hosted keeper | Proven, five times |
+| Claim by the hosted keeper, on a real market fall | Proven, once: sale 3 paid 24 tADA |
 
 ## Transactions
 
@@ -49,6 +50,12 @@ hash opens that transaction on Cexplorer.
 | Sale 6 | [1ba43aadbb8a55e3c20f09a94263485544714c8b7215635185794739afac95c2](https://preprod.cexplorer.io/tx/1ba43aadbb8a55e3c20f09a94263485544714c8b7215635185794739afac95c2) | 5383000 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed by a test script |
 | Sale 7 | [250d49c206d3c4644dc45d25ddc0fe15fb900a508dfccad15c249bc635f93786](https://preprod.cexplorer.io/tx/250d49c206d3c4644dc45d25ddc0fe15fb900a508dfccad15c249bc635f93786) | 5384482 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed in a mobile wallet in the Aegis web app |
 | Sale 8 | [49c2e18d74efeb9c6f475cffc04a23c11841714896be174205e0c20bcc294c20](https://preprod.cexplorer.io/tx/49c2e18d74efeb9c6f475cffc04a23c11841714896be174205e0c20bcc294c20) | 5385594 | V3 order fill and 30 tADA Depeg cover on 2 legs, signed in a mobile wallet through SaturnSwap's interface |
+| Expire of sale 1 | [bfac5818ea1fee0a80ba2581e7aedf86ca3b2d33da0ff864cc8aae7a6ff6f0b1](https://preprod.cexplorer.io/tx/bfac5818ea1fee0a80ba2581e7aedf86ca3b2d33da0ff864cc8aae7a6ff6f0b1) | 5416703 | 3 legs of 25 tADA back to their owners |
+| Claim of sale 3 | [7475e3e0f8a3b3af28f20536d0c30a629be176285b14c9edd61c9937184471b6](https://preprod.cexplorer.io/tx/7475e3e0f8a3b3af28f20536d0c30a629be176285b14c9edd61c9937184471b6) | 5416890 | 24 tADA paid to the buyer |
+| Expire of sale 4 | [2b5484e3a0bc90c5c86e64bfc1f885b0526926bd2a6113661b45fa936ac1309a](https://preprod.cexplorer.io/tx/2b5484e3a0bc90c5c86e64bfc1f885b0526926bd2a6113661b45fa936ac1309a) | 5416991 | 2 legs of 30 tADA back |
+| Expire of sale 6 | [bf9468abd47e138930475646b4b48e907e2225f9620daac7ff9e8b739fb10883](https://preprod.cexplorer.io/tx/bf9468abd47e138930475646b4b48e907e2225f9620daac7ff9e8b739fb10883) | 5418052 | 2 legs of 15 tADA back |
+| Expire of sale 7 | [722817b015f0ed5d6591f609af57a5973c773cdab9ad8f7e4991136c01a2cf8f](https://preprod.cexplorer.io/tx/722817b015f0ed5d6591f609af57a5973c773cdab9ad8f7e4991136c01a2cf8f) | 5419565 | 18.214286 and 11.785714 tADA back |
+| Expire of sale 8 | [f1f312bc87b4cee8d0f192e8d1d06bf6806677f5989ff9b7f0b2b900e689824c](https://preprod.cexplorer.io/tx/f1f312bc87b4cee8d0f192e8d1d06bf6806677f5989ff9b7f0b2b900e689824c) | 5420707 | 10.714285 and 19.285715 tADA back |
 
 ## The Barrier sales
 
@@ -98,6 +105,22 @@ Sales 5 to 8 carry the relay's mark at metadata label 1986. Sale 4 carries none,
 not present its body. The validators do not read the mark, and the sale is valid without it. Each
 fee output is 1.13784 tADA, as on sales 1 to 3.
 
+## Settlements
+
+The hosted keeper settled every position that ran its course. Each Expire came after the 48-hour
+claim grace and returned each leg to the owner and stake credential that funded it. No settlement
+needed the buyer or an underwriter to sign.
+
+**The Claim.** Sale 3 is an ADA/USD Barrier with a strike of 0.156431 USD. ADA fell through it on
+2026-11-15. The reading the Claim settled on was observed at 22:03:20 UTC, with a spot of 0.153970
+and a trailing low of 0.148681 observed at 06:11:39 UTC, both under the strike and both inside the
+term. The keeper submitted the Claim at 22:06:29 UTC. It paid the buyer the full 24 tADA coverage
+and burned the position's P and C markers. Nothing about it was staged: the strike was sold close to
+the 15% minimum, and the payout came from a real market move and the live publisher's reading.
+
+**The Expires.** Sales 1, 4, 6, 7 and 8 expired with no trigger. Each Expire burned the position's
+markers and paid every leg back in full.
+
 ## Signer operations
 
 | Operation | State on chain | Evidence |
@@ -105,7 +128,7 @@ fee output is 1.13784 tADA, as on sales 1 to 3.
 | `publisher.price_bundle` | Proven | The bundles below, spending and returning at the publisher's address |
 | `relay.mark` | Proven | The mark on sales 1 to 3 and 5 to 8 |
 | `maker.agent`, `maker.float` | Proven | [Offer Withdraw](https://preprod.cexplorer.io/tx/2fa57a14ff331685134047ed67b484eb3a34339af1f6f5b87cf65280bff359e4), height 5381765, from this [managed offer](https://preprod.cexplorer.io/tx/0e025cfc07947d0ebabb7d6264dd87d73344bf95d656f03df2e87deb687996e9). `maker.float`'s post path has not run |
-| `keeper.g2.settle` | Not yet on chain | The first Expire or Claim |
+| `keeper.g2.settle` | Proven | The Claim and the five Expires below, all from the keeper's wallet |
 
 Sample price bundles, all from 2026-11-06:
 
@@ -125,5 +148,5 @@ The hashes and policies for this generation are in
 ## What this does not prove
 
 This is preprod, with test ADA, relaxed key custody and an unaudited generation. The rules on
-[How Aegis Works On-Chain](architecture.md) are the deployed code's, and a Claim path has not yet run
-on this generation.
+[How Aegis Works On-Chain](architecture.md) are the deployed code's. One Claim has run, on a Barrier
+position; no Depeg position has been claimed, because USDC has held its peg.
