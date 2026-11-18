@@ -322,7 +322,7 @@ Surrendered legacy assets are **not** intended to remain in free circulation. Wh
 * The ordinary public window closes on **December 4, 2026**.
 * After the deadline, the normal public surrender path is permanently closed. The on-chain validator enforces this — the `ProcessSurrender` spending path is disabled after the deadline.
 * Any unreleased cMATRA remaining in the pool is withdrawn by the administrator and returned to the project treasury for future allocation decisions (validator incentives, ecosystem development, or other uses to be determined by governance).
-* **There will be no extension** and no late-surrender mechanism. Holders should redeem well before the deadline.
+* **The deadline was extended once, by 6 days (November 28 → December 4, 2026), to give back the time the redemption portal was paused for maintenance (November 6–12).** There will be no further extension and no late-surrender mechanism. Holders should redeem well before the deadline.
 
 ***
 
@@ -360,6 +360,6 @@ If earlier reports, Discord posts, or snapshot-era drafts conflict with this doc
 
 **Version:** 4.3 | **Date:** November 18, 2026 | **Status:** Public — redemption window open (closes December 4, 2026)
 
-**What changed in 4.3 (November 2026):** the deadline was extended from November 28 to **December 4, 2026** — exactly the 6 days the redemption portal was down for maintenance in November. There will be no further extension. Eligibility, rates and all other terms are unchanged.
+**What changed in 4.3 (November 2026):** the deadline was extended from November 28 to **December 4, 2026** — exactly the 6 days the redemption portal was down for maintenance in November. There will be no further extension. Eligibility, rates and all other terms are unchanged. New portal safeguards: wallets linked to the drain and other known-compromised keys are refused; pass-type assets that moved recently wait 72 hours before they can be surrendered; at most 4M cMATRA per transaction and 15M per day.
 
-**What changed in 4.2 (October 2026):** no extension to the November 28 deadline (stated plainly; it was previously described as "not planned"); surrenders are co-signed automatically with no manual approval step ([FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)); security model described in [Launch Readiness → Attacked, with dates](launch-readiness.md#attacked-with-dates). Eligibility, rates and the window are unchanged.
+**What changed in 4.2 (October 2026):** no extension to the original November 28 deadline (superseded by 4.3; stated plainly; it was previously described as "not planned"); surrenders are co-signed automatically with no manual approval step ([FAQ Q35a](faq.md#35a-does-the-team-have-to-process-or-approve-my-surrender)); security model described in [Launch Readiness → Attacked, with dates](launch-readiness.md#attacked-with-dates). Eligibility, rates and the window are unchanged.
