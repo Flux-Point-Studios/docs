@@ -126,7 +126,7 @@ The response returns a directional bias (Bullish / Bearish), confidence level, a
 
 ### Launch & Access
 
-> **ADAM v2 update (2026).** ADAM v2 removes launch passes and subscriptions entirely — access is open and priced **per transaction only**. T1/T2 ADAM Launch Passes are being bought out with cMATRA through the [cMATRA Token Merger](materios/cmatra-token-merger/faq.md#33a-i-hold-a-t1-or-t2-adam-launch-pass-will-i-lose-access-to-adam-if-i-surrender-it) (redemption window closes November 28, 2026) — surrendering a pass does **not** cost you ADAM access. The phased-access history below is preserved for the record.
+> **ADAM v2 update (2026).** ADAM v2 removes launch passes and subscriptions entirely — access is open and priced **per transaction only**. T1/T2 ADAM Launch Passes are being bought out with cMATRA through the [cMATRA Token Merger](materios/cmatra-token-merger/faq.md#33a-i-hold-a-t1-or-t2-adam-launch-pass-will-i-lose-access-to-adam-if-i-surrender-it) (redemption window closes December 4, 2026) — surrendering a pass does **not** cost you ADAM access. The phased-access history below is preserved for the record.
 
 **ADAM** launched in three controlled phases:
 
