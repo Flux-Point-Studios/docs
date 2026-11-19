@@ -4,7 +4,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 
 <table data-view="cards"><thead><tr><th></th><th data-hidden data-card-cover data-type="image">Cover image</th></tr></thead><tbody>
 <tr>
-<td><a href="aegis/">Aegis</a><br>Parametric cover for Cardano, sold from a multi-underwriter book. Running on preprod</td>
+<td><a href="aegis/">Aegis</a><br>Parametric cover for Cardano, sold from a multi-underwriter book. Running on preprod, with gen-3 live on preview</td>
 <td><a href=".gitbook/assets/logo.png">logo.png</a></td>
 </tr>
 <tr>
@@ -39,7 +39,7 @@ Welcome to the official documentation for Flux Point Studios products and protoc
 
 ## Quick Links
 
-- **[Aegis](aegis/)** - Parametric cover from the Sovereign Book, on preprod. See the [on-chain proof](aegis/preprod-proof.md)
+- **[Aegis](aegis/)** - Parametric cover from the Sovereign Book, on preprod, with gen-3 live on preview. See the [preprod proof](aegis/preprod-proof.md) and [gen-3 on preview](aegis/preview-proof.md)
 - **[Materios Partner Chain](materios/README.md)** - The blockchain behind MATRA: consensus, nodes, SPO onboarding, roadmap
 - **[cMATRA Token Merger](materios/cmatra-token-merger/README.md)** - Surrender legacy assets for the Materios network token — window closes December 4, 2026
 - **[SaturnSwap](saturnswap/)** - Cardano-native order-book DEX

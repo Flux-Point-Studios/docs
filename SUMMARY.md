@@ -8,6 +8,7 @@
 * [How Aegis Works On-Chain](aegis/architecture.md)
 * [Who Participates](aegis/marketplace.md)
 * [Preprod Proof](aegis/preprod-proof.md)
+* [Gen-3 on preview](aegis/preview-proof.md)
 * [Cover for Lending Positions](aegis/lending-cover.md)
 
 ## Materios Partner Chain
