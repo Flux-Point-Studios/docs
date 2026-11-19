@@ -18,7 +18,7 @@ generation, gen-3, is live on Cardano preview with test ADA.
 | Network | State |
 |---------|-------|
 | Preprod | The Sovereign Book is deployed and has run the full lifecycle: Barrier cover on ADA and Depeg cover on USDC sold, buyer cancels, five Expires, and one Claim paid on a real ADA fall through a sold strike. A SaturnSwap swap sold with its cover in one transaction is on chain too. See [Preprod Proof](preprod-proof.md). |
-| Preview | Gen-3, the next generation, is deployed as two instances, one paying claims in ADA and one in USDCx, with six standing offers. Its first sale, an ADA/USD Barrier on the ADA instance, has landed. See [Gen-3 on preview](preview-proof.md). |
+| Preview | Gen-3, the next generation, is deployed as two instances, one paying claims in ADA and one in USDCx, with eight offers posted. Four sales have landed: ADA/USD Barrier cover on both instances, a FluidTokens loan taken with its cover in one transaction, and cover on the FluidTokens loan event. A buyer cancel on the USDCx instance returned Liqwid receipts at their sale value. See [Gen-3 on preview](preview-proof.md). |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
 | Audit | No generation of the Book has been independently audited yet. The next generation is audited at its code freeze, before any mainnet launch. |
 
@@ -109,9 +109,9 @@ It is audited at its code freeze. Mainnet comes after that audit.
 | Integration | State |
 |-------------|-------|
 | SaturnSwap swap-plus-insure | Live on preprod. One transaction fills a SaturnSwap V3 order and sells USDC Depeg cover from the Book, signed in a mobile wallet. See [The Depeg sales](preprod-proof.md#the-depeg-sales). The SaturnSwap interface for it is not yet on SaturnSwap's public site |
-| FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
+| FluidTokens V4 liquidation cover | In progress. On preview, one transaction takes a FluidTokens V4 loan and buys its cover, and cover on the FluidTokens loan event has sold. A Claim on that event is in progress. See [Gen-3 on preview](preview-proof.md). On preprod, the RH1 event slot is on the table and no event cover is sold |
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
-| Liqwid | Live on preview. The gen-3 USDCx instance pays a claim in USDCx first, then in receipts from Liqwid's isolated sUSDr-USDCx market. See [Gen-3 on preview](preview-proof.md). No claim has paid in receipts yet |
+| Liqwid | Live on preview. The gen-3 USDCx instance pays a claim in USDCx first, then in receipts from Liqwid's isolated sUSDr-USDCx market. A sale has locked receipts in a leg at Liqwid's exchange rate, and the buyer's cancel returned them at that value. See [Gen-3 on preview](preview-proof.md). No claim has paid in receipts yet |
 | Surf | Surf's services relaunched in November 2026. Re-integration against the Book to follow, with no date set |
 | Lending and credit lines | Cover that pays before a borrower's position reaches liquidation or recovery. Design stage, see [Cover for Lending Positions](lending-cover.md) |
 

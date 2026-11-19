@@ -1,5 +1,5 @@
 ---
-description: Gen-3 of the Sovereign Book on Cardano preview, its launch transactions, contract hashes, standing offers and first sale, each linked to its explorer page.
+description: Gen-3 of the Sovereign Book on Cardano preview, its launch transactions, contract hashes, standing offers and sales, each linked to its explorer page.
 ---
 
 # Gen-3 on preview
@@ -7,8 +7,8 @@ description: Gen-3 of the Sovereign Book on Cardano preview, its launch transact
 Gen-3 is the next generation of the Sovereign Book, described in
 [the Overview](README.md#the-next-generation). It runs on Cardano preview with test ADA, as two
 instances: one sells cover paid in ADA, the other cover paid in USDCx. The launch landed on
-2026-11-18 between 18:25 and 18:35 UTC, the offers between 20:07 and 20:10 UTC, and the first sale
-at 22:05:48 UTC. Each transaction and script hash opens on Cexplorer.
+2026-11-18 between 18:25 and 18:35 UTC. The sales landed between 2026-11-18 22:05 UTC and
+2026-11-19 18:46 UTC. Each transaction and script hash opens on Cexplorer.
 
 ## What is proven and what is open
 
@@ -16,13 +16,18 @@ at 22:05:48 UTC. Each transaction and script hash opens on Cexplorer.
 |-------------|-------|
 | Both instances deployed, with their asset tables, lanes and reference scripts | Proven: 16 launch transactions |
 | Reference price sheets published | Proven |
-| Standing offers on both instances | Proven: three on the ADA instance, three on the USDCx instance |
-| ADA Barrier sale on the ADA instance | Proven, once |
-| Fee output and Cardano Treasury share on a sale | Proven, once |
-| Sale priced at the 20 ADA minimum premium | Proven, once |
-| Sale on the USDCx instance | Open. No USDCx offer has been drawn on yet |
-| FluidTokens loan cover sale | Open |
-| Claim or Expire on gen-3 | Open. The first position's term ends on 2026-11-25 at 22:09:03 UTC |
+| Standing offers on both instances | Proven: eight posted, five on the ADA instance and three on the USDCx instance |
+| ADA/USD Barrier sale on the ADA instance | Proven, twice |
+| A FluidTokens V4 loan and its cover in one transaction, under one signature | Proven, once |
+| Cover on the FluidTokens loan event | Proven, once |
+| Sale at the 1-day minimum term | Proven, once |
+| Sale on the USDCx instance, with Liqwid receipts in its leg | Proven, once |
+| Buyer cancel with the fee kept, receipts returned at their sale value | Proven, once |
+| Fee output on every sale | Proven, four times |
+| Cardano Treasury share paid in the sale transaction | Proven, three times |
+| Sale priced at the minimum premium | Proven, four times |
+| Claim on the FluidTokens loan event | In progress |
+| Claim or Expire on any other gen-3 position | Open. The first position's term ends on 2026-11-25 at 22:09:03 UTC |
 | Claim paid in Liqwid receipts | Open |
 
 ## The two instances
@@ -80,31 +85,52 @@ scripts.
 
 ## Standing offers
 
-Six offers stand on preview, three on each instance's book. All six were posted by one underwriter,
-under one stake credential. Sizes are as they stand on chain.
+Eight offers have been posted on preview: five on the ADA instance's book and three on the USDCx
+instance's book. All eight were posted by one underwriter, under one stake credential. Sizes are as
+they stand on chain after the sales below.
 
 | Offer | Out-ref | Holds | Depth | Term |
 |-------|---------|-------|-------|------|
 | ADA Barrier, wide | [cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67#3](https://preview.cexplorer.io/tx/cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67) | 470 tADA | 15% to 50% | 7 to 45 days |
 | ADA Barrier, deep | [e1259312b6e43dca71611074a54ec9f1bdd326ef40c6f9eaf6d544d4e4c88b9d#0](https://preview.cexplorer.io/tx/e1259312b6e43dca71611074a54ec9f1bdd326ef40c6f9eaf6d544d4e4c88b9d) | 400 tADA | 30% to 50% | 7 to 45 days |
-| ADA Barrier, short | [88c59c1b3bb3d297d35b425b7b76f0a9a1deae07b4cc3c8fad5b0ed601b857f5#0](https://preview.cexplorer.io/tx/88c59c1b3bb3d297d35b425b7b76f0a9a1deae07b4cc3c8fad5b0ed601b857f5) | 300 tADA | 15% to 50% | 7 to 14 days |
-| USDCx Barrier, backed by receipts | [0d4c19b0314cdb4724ffaddaf457f4469b2f17bd3edb2cee392679ba800997fc#0](https://preview.cexplorer.io/tx/0d4c19b0314cdb4724ffaddaf457f4469b2f17bd3edb2cee392679ba800997fc) | 4,000 USDCx and 20,000,000,000 receipt units | 15% to 50% | 7 to 45 days |
+| ADA Barrier, short | [0c522553a6b4259de39f2b54ccbee6e119cb4740447ab4df473b93617f284faf#7](https://preview.cexplorer.io/tx/0c522553a6b4259de39f2b54ccbee6e119cb4740447ab4df473b93617f284faf) | 295 tADA | 15% to 50% | 7 to 14 days |
+| FluidTokens loan event | [e253add7db43375e6139f2766a47f3c95716a9310b7e83afc096a8cf8c526e60#0](https://preview.cexplorer.io/tx/e253add7db43375e6139f2766a47f3c95716a9310b7e83afc096a8cf8c526e60) | 60 tADA | Event | 1 to 7 days |
+| FluidTokens loan event | [140a27f9f3d4af8354629d8116971f60fb537c7c11219e6f9051632a1cb1747f#3](https://preview.cexplorer.io/tx/140a27f9f3d4af8354629d8116971f60fb537c7c11219e6f9051632a1cb1747f) | 15 tADA | Event | 1 to 7 days |
+| USDCx Barrier, backed by receipts | [3f365d6b8aa9ce90b547bf1ad503fdb35226b6adec305e369f2aaed6354fb273#3](https://preview.cexplorer.io/tx/3f365d6b8aa9ce90b547bf1ad503fdb35226b6adec305e369f2aaed6354fb273) | 3,972.5 USDCx and 19,281,491,441 receipt units | 15% to 50% | 7 to 45 days |
 | USDCx Barrier, short | [c5261417827d16cb4f1746a214fc53aeaa08d49332c411a26e2df7e1c0df830c#0](https://preview.cexplorer.io/tx/c5261417827d16cb4f1746a214fc53aeaa08d49332c411a26e2df7e1c0df830c) | 1,000 USDCx and 5,000,000,000 receipt units | 15% to 50% | 7 to 14 days |
 | USDCx USDT Depeg | [4dd5ce7bd9111def4853ba12dd745df8187e478beab26d28032ad23d014decf9#0](https://preview.cexplorer.io/tx/4dd5ce7bd9111def4853ba12dd745df8187e478beab26d28032ad23d014decf9) | 3,000 USDCx | 5% to 50% | 7 to 45 days |
 
-The wide offer was posted as
-[a3e5dadfd53efa164e44ff8584e8f0c9fc769b651db5461f8a2f3ab29d763fb8#0](https://preview.cexplorer.io/tx/a3e5dadfd53efa164e44ff8584e8f0c9fc769b651db5461f8a2f3ab29d763fb8)
-with 500 tADA. The first sale drew on it, and its remainder of 470 tADA went back to the book at
-the out-ref above. The three ADA Barrier offers and the two USDCx Barrier offers read the ADA/USD
-feed and price from the ADA Barrier sheet. The Depeg offer reads USDT and prices from the Depeg
-sheet. Each USDCx offer also holds 40 tADA alongside its tokens. Receipt units are counted in the
-receipt token's base unit.
+Four offers were drawn on, and their remainders went back to the book at the out-refs above:
 
-## The first sale
+| Offer | Posted as | Posted with |
+|-------|-----------|-------------|
+| ADA Barrier, wide | [a3e5dadfd53efa164e44ff8584e8f0c9fc769b651db5461f8a2f3ab29d763fb8#0](https://preview.cexplorer.io/tx/a3e5dadfd53efa164e44ff8584e8f0c9fc769b651db5461f8a2f3ab29d763fb8) | 500 tADA |
+| ADA Barrier, short | [88c59c1b3bb3d297d35b425b7b76f0a9a1deae07b4cc3c8fad5b0ed601b857f5#0](https://preview.cexplorer.io/tx/88c59c1b3bb3d297d35b425b7b76f0a9a1deae07b4cc3c8fad5b0ed601b857f5) | 300 tADA |
+| FluidTokens loan event, now 15 tADA | [12612ba8bf9cbd97c9beb3b938d02216ec1fc5cffb370c8b1bb04d916ddd40a4#0](https://preview.cexplorer.io/tx/12612ba8bf9cbd97c9beb3b938d02216ec1fc5cffb370c8b1bb04d916ddd40a4) | 20 tADA |
+| USDCx Barrier, backed by receipts | [0d4c19b0314cdb4724ffaddaf457f4469b2f17bd3edb2cee392679ba800997fc#0](https://preview.cexplorer.io/tx/0d4c19b0314cdb4724ffaddaf457f4469b2f17bd3edb2cee392679ba800997fc) | 4,000 USDCx and 20,000,000,000 receipt units |
+
+The ADA and USDCx Barrier offers read the ADA/USD feed and price from the ADA Barrier sheet. The
+two event offers read the FluidTokens loan event slot and price from its event sheet. The Depeg
+offer reads USDT and prices from the Depeg sheet. Each USDCx offer also holds tADA alongside its
+tokens. Receipt units are counted in the receipt token's base unit.
+
+## Sales
+
+| Sale | Tx | Height | Detail |
+|------|----|--------|--------|
+| 1 | [cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67](https://preview.cexplorer.io/tx/cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67) | 4870491 | 50 tADA ADA/USD Barrier, 7 days |
+| 2 | [0c522553a6b4259de39f2b54ccbee6e119cb4740447ab4df473b93617f284faf](https://preview.cexplorer.io/tx/0c522553a6b4259de39f2b54ccbee6e119cb4740447ab4df473b93617f284faf) | 4871054 | A 25 tADA FluidTokens V4 loan and 25 tADA of ADA/USD Barrier cover, 7 days |
+| 3 | [3f365d6b8aa9ce90b547bf1ad503fdb35226b6adec305e369f2aaed6354fb273](https://preview.cexplorer.io/tx/3f365d6b8aa9ce90b547bf1ad503fdb35226b6adec305e369f2aaed6354fb273) | 4872938 | 50 USDCx ADA/USD Barrier, 15 days, with Liqwid receipts in its leg |
+| Buyer cancel of sale 3 | [ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608](https://preview.cexplorer.io/tx/ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608) | 4872956 | Fee kept, receipts back to the underwriter |
+| 4 | [140a27f9f3d4af8354629d8116971f60fb537c7c11219e6f9051632a1cb1747f](https://preview.cexplorer.io/tx/140a27f9f3d4af8354629d8116971f60fb537c7c11219e6f9051632a1cb1747f) | 4873275 | 25 tADA cover on the FluidTokens loan event, 1 day |
+
+Every premium equals its instance's minimum. Sales 1, 3 and 4 carry the relay's mark at metadata
+label 1986. Sale 2 carries none, and it is valid without it.
+
+### Sale 1: ADA/USD Barrier
 
 | Field | Value |
 |-------|-------|
-| Tx | [cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67](https://preview.cexplorer.io/tx/cf447ae7bebb43c66ceb07644a7e8db142e9baf901529d13e2dd5ff436522e67) |
 | Landed | 2026-11-18 22:05:48 UTC, height 4870491 |
 | Position | Out-ref #1 |
 | Instance | ADA |
@@ -140,12 +166,98 @@ under the 50 tADA coverage, so the sale passes the total-cost rule.
 
 **What the underwriter's offer did.** The wide offer went from 500 to 470 tADA. The sale locked
 50 tADA as cover in a C-leg and added the 20 tADA premium back to the offer's remainder. The C-leg
-and the remainder keep the offer's stake credential. The sale carries the relay's mark at metadata
-label 1986.
+and the remainder keep the offer's stake credential.
+
+### Sale 2: a FluidTokens loan and its cover in one transaction
+
+One transaction, signed once by the borrower, takes out a 25 tADA FluidTokens V4 loan against
+50 tADA of collateral and buys 25 tADA of ADA/USD Barrier cover from the Book. It runs ten script
+validations across nine scripts from the two protocols.
+
+| Field | Value |
+|-------|-------|
+| Landed | 2026-11-19 02:15:49 UTC, height 4871054 |
+| Loan | 25 tADA from a FluidTokens V4 lending pool, whose UTxO went from 200 to 175 tADA. The 50 tADA collateral sits at the loan script, and the borrower and the lender each receive their loan token |
+| Cover | ADA/USD Barrier, strike 0.103979 USD, on the ADA instance |
+| Coverage | 25 tADA |
+| Premium | 20 tADA, the minimum |
+| Term | 7 days, from 2026-11-19 02:17:35 to 2026-11-26 02:17:35 UTC |
+| Offer | The short offer, which went from 300 to 295 tADA |
+
+### Sale 3: USDCx cover backed by Liqwid receipts, and its cancel
+
+| Field | Value |
+|-------|-------|
+| Landed | 2026-11-19 16:19:11 UTC, height 4872938 |
+| Position | Out-ref #1 |
+| Instance | USDCx |
+| Cover | ADA/USD Barrier, strike 0.104 USD |
+| Coverage | 50 USDCx |
+| Premium | 10 USDCx, the minimum |
+| Term | 15 days, from 2026-11-19 16:22:13 to 2026-12-04 16:22:13 UTC |
+| Offer | The offer backed by receipts |
+
+The reading the sale checked had a spot of 0.152364 USD and a trailing low of 0.148542 USD, so the
+0.104 strike sits about 30% under the trailing low.
+
+**The leg holds Liqwid receipts.** The C-leg holds 37.5 USDCx and 718,508,559 units of the receipt
+from Liqwid's isolated sUSDr-USDCx market. The sale reads Liqwid's market state as a reference
+input, [50103312d92b88c195af3a001c4d2ce286c4580ce4b0b3e82af9eb6a6b5187e5#1](https://preview.cexplorer.io/tx/50103312d92b88c195af3a001c4d2ce286c4580ce4b0b3e82af9eb6a6b5187e5), whose exchange
+rate is 336,561,239,567 USDCx units per 16,822,409,116,150 receipt units, about 0.0200067. At that
+rate the leg's receipts redeem for exactly 14.375 USDCx: 12.5 USDCx of coverage plus a 15% haircut.
+The leg covers 37.5 USDCx in cash and 12.5 USDCx in receipts, the full 50. The offer went from
+4,000 to 3,972.5 USDCx, with 37.5 into the leg and the 10 USDCx premium back, and from
+20,000,000,000 to 19,281,491,441 receipt units.
+
+**What the buyer paid.** The buyer's wallet paid 10.2 USDCx and 4.999171 tADA:
+
+| Item | USDCx | tADA |
+|------|-------|------|
+| Premium | 10 | |
+| Protocol fee | 0.2 | 1.32748 |
+| Cardano Treasury share | | 0.328162 |
+| Settler deposit, returned at settlement | | 2.26275 |
+| Network fee | | 1.080779 |
+| **Total** | **10.2** | **4.999171** |
+
+The protocol fee is 2% of the premium in USDCx, and its output carries the ledger's minimum in
+tADA. The Treasury share is 0.5% of the premium, 0.05 USDCx, paid in tADA at the reading's spot of
+0.152364 USD through the transaction's donation field.
+
+**The cancel.** The buyer cancelled at 16:23:30 UTC, 77 seconds after the term started, in
+[ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608](https://preview.cexplorer.io/tx/ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608). The cancel burned the
+position's markers and split the leg:
+
+| To | USDCx | Receipt units | tADA |
+|----|-------|---------------|------|
+| The buyer's key | 9 | | 1.608393 |
+| The underwriter's key, under the offer's stake credential | 28.5 | 718,508,559 | 2.5 |
+
+The buyer got back 90% of the premium. The underwriter kept 1 USDCx, the other 10%, and the
+0.2 USDCx protocol fee stayed with the protocol. The buyer's tADA is the settler deposit less the
+cancel's network fee of 0.654357 tADA. Liqwid's market state had not moved between the sale and the
+cancel: the UTxO the sale read is still unspent. The receipts went back worth the same 14.375 USDCx
+they were locked at.
+
+### Sale 4: cover on the FluidTokens loan event
+
+| Field | Value |
+|-------|-------|
+| Landed | 2026-11-19 18:46:16 UTC, height 4873275 |
+| Position | Out-ref #1 |
+| Instance | ADA |
+| Cover | The FluidTokens loan event slot, priced from the event sheet |
+| Coverage | 25 tADA |
+| Premium | 20 tADA, the minimum |
+| Term | 1 day, from 2026-11-19 18:49:46 to 2026-11-20 18:49:46 UTC |
+| Offer | An event offer posted with 20 tADA, which went to 15 tADA |
+
+The buyer's wallet paid 24.202632 tADA: the 20 tADA premium, the 1.13784 tADA protocol fee, a
+0.1 tADA Treasury share, a 2.1119 tADA settler deposit and a 0.852892 tADA network fee. The term is
+the gen-3 minimum of 1 day. A Claim on this position is in progress.
 
 ## What this does not prove
 
-This is preview, with test ADA and an unaudited generation. One sale has run, on the ADA instance.
-No USDCx sale, FluidTokens loan cover sale, Claim or Expire has run on gen-3, and no claim has paid
-out in Liqwid receipts. The current generation's lifecycle on preprod is on
+This is preview, with test ADA and an unaudited generation. No Claim or Expire has run on gen-3,
+and no claim has paid out in Liqwid receipts. The current generation's lifecycle on preprod is on
 [Preprod Proof](preprod-proof.md).
