@@ -20,7 +20,7 @@ next generation on Cardano preview, both with test ADA.
 | Preprod | The Sovereign Book is deployed and has run the full lifecycle: Barrier cover on ADA and Depeg cover on USDC sold, buyer cancels, five Expires, and one Claim paid on a real ADA fall through a sold strike. A SaturnSwap swap sold with its cover in one transaction is on chain too. See [Preprod Proof](preprod-proof.md). |
 | Preview | The next generation is live, with its ADA and USDCx instances, since 2026-11-18. Ten sales, three buyer cancels, one Claim paid on a FluidTokens liquidation and one Expire are on chain, as is a row added to the asset table through governance. See [Preview Proof](preview-proof.md). |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
-| Audit | No generation of the Book has been independently audited yet. The next generation is audited at its code freeze, before any mainnet launch. |
+| Audit | No generation of the Book has been independently audited yet. The next generation will be audited at its code freeze, before any mainnet launch. |
 
 Preprod custody is deliberately relaxed for this stage, and signer hardening follows. Nothing on
 preprod carries real value.
@@ -104,7 +104,7 @@ permissionless settlement. What changes:
 - **Event cover.** An event slot on the table carries a signed reading of an outside event, such as
   the liquidation of a named FluidTokens loan, and cover on it pays when the event happens.
 
-It is audited at its code freeze. Mainnet comes after that audit. Its transactions are on
+It will be audited at its code freeze. Mainnet comes after that audit. Its transactions are on
 [Preview Proof](preview-proof.md).
 
 ## Integrations

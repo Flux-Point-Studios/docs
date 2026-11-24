@@ -101,9 +101,9 @@ ADA in the treasury donation field: 0.336418 tADA on sale 8, for example. Sale 2
 transaction with FluidTokens' scripts, so its donation field is empty and the share goes to the
 accrual script as a 1.01716 tADA output instead.
 
-**Buyer cancels.** Sales 3, 6 and 9 were cancelled by their buyer within minutes. Each cancel
-refunded 9 USDCx, 90% of the 10 USDCx premium, burned the position's markers and returned the leg to
-its underwriter: [ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608](https://preview.cexplorer.io/tx/ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608)
+**Buyer cancels.** Sales 3, 6 and 9 were cancelled by their buyer within half an hour. Each cancel
+refunded 9 USDCx, 90% of the 10 USDCx premium, burned the position's markers and returned the rest of the
+leg to its underwriter: [ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608](https://preview.cexplorer.io/tx/ad2f5100c8203639e66cc1464c9ba3584af2673738647431c15204d19a79e608)
 (height 4872956),
 [36acd2bb39c9aa23f8814532470099040a6cedb692f11e87d74a7a2611079e1d](https://preview.cexplorer.io/tx/36acd2bb39c9aa23f8814532470099040a6cedb692f11e87d74a7a2611079e1d)
 (height 4873653) and
@@ -195,7 +195,7 @@ A second event slot was added to the USDCx instance's asset table on 2026-11-23.
 
 | Step | Tx | Height | Time (UTC) | Detail |
 |------|----|--------|------------|--------|
-| Slot token | [7bdfe1a192bf287826cb2d11a247a052e95564f666b0e461ee04c662b00e44d2](https://preview.cexplorer.io/tx/7bdfe1a192bf287826cb2d11a247a052e95564f666b0e461ee04c662b00e44d2) | 4886843 | 20:16:22 | Mints the slot's one token under a native policy that can no longer mint after slot 128809557 |
+| Slot token | [7bdfe1a192bf287826cb2d11a247a052e95564f666b0e461ee04c662b00e44d2](https://preview.cexplorer.io/tx/7bdfe1a192bf287826cb2d11a247a052e95564f666b0e461ee04c662b00e44d2) | 4886843 | 20:16:22 | Mints the slot's one token under a native policy that can no longer mint from slot 128809557 |
 | Proposal | [8d24f0f901abc5f0544cc4b5b9ef638573f1b0bbcdf867e69ed4d72a9af47475](https://preview.cexplorer.io/tx/8d24f0f901abc5f0544cc4b5b9ef638573f1b0bbcdf867e69ed4d72a9af47475) | 4886877 | 20:33:35 | Table epoch 0 with two rows. Pending: three rows, effective after 21:06:28 |
 | Enact | [03dc7ed150fe778fc8b4c38e85a16f3eb60730054c4b43fd25cd2707b5e071ba](https://preview.cexplorer.io/tx/03dc7ed150fe778fc8b4c38e85a16f3eb60730054c4b43fd25cd2707b5e071ba) | 4886956 | 21:08:36 | Table epoch 1 with three rows, nothing pending |
 | Offer on the new row | [506f60968c4518e544538c3da12fb16815630b3aa1c3001d44a550afb19d7c6a](https://preview.cexplorer.io/tx/506f60968c4518e544538c3da12fb16815630b3aa1c3001d44a550afb19d7c6a) | 4886960 | 21:10:05 | 15 tADA, 4 USDCx and 1,000,000,000 qUSDCx on the new slot's feed |
@@ -206,7 +206,7 @@ next.
 
 ## What this does not prove
 
-This is preview, with test ADA, test tokens and an unaudited generation, which is audited at its code
+This is preview, with test ADA, test tokens and an unaudited generation, which will be audited at its code
 freeze. One Claim has run, on a FluidTokens liquidation event. No price feed has triggered a Claim on
 this generation, and no Claim has paid in qUSDCx receipts. The sales still open can be
 settled from 2026-11-27. The Babel-fee tank is our deployment of FluidTokens' Aquarium validators with its own
