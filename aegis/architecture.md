@@ -6,7 +6,8 @@ description: The on-chain rules of the Sovereign Book. Offers, sales, positions,
 
 This page describes the generation running on Cardano preprod. Every rule below is taken from the
 validators and off-chain code of that generation, which has had no independent audit yet. Prices are
-scaled by 1,000,000 on chain.
+scaled by 1,000,000 on chain. The next generation's scripts on Cardano preview are listed on
+[Preview Proof](preview-proof.md#scripts).
 
 ## 1. Scripts
 

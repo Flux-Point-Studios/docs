@@ -38,14 +38,15 @@ the money.
 
 | Collateral | State |
 |------------|-------|
-| ADA | Barrier cover on ADA/USD is live on preprod. A Claim has paid on a real ADA fall, see [Preprod Proof](preprod-proof.md#settlements) |
+| ADA | Barrier cover on ADA/USD is live on preprod, and on both preview instances. A Claim has paid on a real ADA fall, see [Preprod Proof](preprod-proof.md#settlements) |
 | BTC, ETH | On the preprod feed table. No underwriter has posted offers for them yet |
-| USDC, USDT | Depeg cover on USDC is live on preprod. USDT is on the next generation's table |
+| USDC, USDT | Depeg cover on USDC is live on preprod. USDT is on the next generation's table, and one sale on it on preview was cancelled by its buyer |
 | sUSDrf | Needs a new feed. Its price is RealFi's staking-vault exchange rate times USDrf's USD price. The rate can be computed from the vault's own UTxO on chain, and the USDrf leg from the SundaeSwap USDCx/USDrf pool. Neither leg is published yet, and the pool leg needs a time condition so one large trade cannot move it |
 | LP tokens and other receipts | Case by case. Each needs a price source both sides accept |
 
 A new feed on the next generation is a governed row in the asset table: an authenticated reading,
-a watcher and a signer path that can attest it.
+a watcher and a signer path that can attest it. A row was added this way on preview, see
+[A governed table change](preview-proof.md#a-governed-table-change).
 
 The strongest trigger is the price the lending protocol itself acts on. If a protocol closes
 positions on its own mark, Aegis can read that mark through its publisher, or the protocol can sign
@@ -59,8 +60,21 @@ its marks and the cover verifies the signature.
 3. The borrower signs one transaction in a CIP-30 wallet. The borrower's key is the insured party.
 
 An app that builds its own transactions can place the cover sale beside its own steps in one
-transaction, as SaturnSwap does with a swap. The quote and build routes are part of the hosted API.
+transaction, as SaturnSwap does with a swap. On preview, one transaction has opened a FluidTokens
+loan and sold its cover to the borrower. The quote and build routes are part of the hosted API.
 A Book client for the TypeScript SDK is not published yet.
+
+## Cover on the liquidation event
+
+The next generation can also cover the liquidation itself. A loan is bound to an event slot on the
+asset table, and the publisher signs the slot's reading: 1.0 while the loan is open and 0.1 once the
+lending protocol's own liquidation of that loan lands. A cover on the slot pays its full coverage
+when the loan is liquidated during the term.
+
+This pays after the position is closed, where a Barrier pays before, and it reads no price feed for
+the collateral. On preview, a FluidTokens V4 loan was liquidated by its lender and the cover on it
+paid 30 tADA to the borrower, see
+[FluidTokens liquidation cover](preview-proof.md#fluidtokens-liquidation-cover).
 
 ## Who underwrites it
 
@@ -77,7 +91,7 @@ multisig or a vault can be the owner.
 | Network | State |
 |---------|-------|
 | Preprod | ADA Barrier cover on the current generation, with test ADA |
-| Preview | The next generation launches here first |
+| Preview | The next generation, live since 2026-11-18. Barrier cover on ADA/USD on both instances, and event cover on FluidTokens loans |
 | Mainnet | After the next generation's audit. No generation of the Book runs on mainnet today |
 
 ## What we need from an integrating protocol

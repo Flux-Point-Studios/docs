@@ -10,14 +10,15 @@ their own stake credentials, and each sale moves the full coverage amount into t
 UTxOs. Settlement is decided by Aiken validators and a reading they check themselves. Anyone can
 submit a claim, and it pays only the buyer.
 
-The current product is the **Sovereign Book**. It runs on Cardano preprod with test ADA.
+The current product is the **Sovereign Book**. Its current generation runs on Cardano preprod and its
+next generation on Cardano preview, both with test ADA.
 
 ## Status
 
 | Network | State |
 |---------|-------|
 | Preprod | The Sovereign Book is deployed and has run the full lifecycle: Barrier cover on ADA and Depeg cover on USDC sold, buyer cancels, five Expires, and one Claim paid on a real ADA fall through a sold strike. A SaturnSwap swap sold with its cover in one transaction is on chain too. See [Preprod Proof](preprod-proof.md). |
-| Preview | The next generation is built and launches on Cardano preview first. See [The next generation](#the-next-generation). |
+| Preview | The next generation is live, with its ADA and USDCx instances, since 2026-11-18. Ten sales, three buyer cancels, one Claim paid on a FluidTokens liquidation and one Expire are on chain, as is a row added to the asset table through governance. See [Preview Proof](preview-proof.md). |
 | Mainnet | New cover sales have been paused since 2026-09-04 for the move to the Book. The prior vault generation remains deployed, and its liquidity providers can withdraw. |
 | Audit | No generation of the Book has been independently audited yet. The next generation is audited at its code freeze, before any mainnet launch. |
 
@@ -85,9 +86,9 @@ parameter, so adding an asset means a new generation. Both change in the next ge
 
 ## The next generation
 
-The next generation of the Book is built and launches on Cardano preview first, then as an
-ADA-only instance on preprod. It keeps the model above: fully funded positions, underwriters'
-own offers and permissionless settlement. What changes:
+The next generation of the Book is live on Cardano preview since 2026-11-18. An ADA-only instance
+on preprod follows. It keeps the model above: fully funded positions, underwriters' own offers and
+permissionless settlement. What changes:
 
 - **A governed asset table.** Feeds and event slots are rows in an on-chain table, changed through
   a timelocked governance path, so a new asset no longer needs a new generation.
@@ -97,17 +98,24 @@ own offers and permissionless settlement. What changes:
 - **Script-owned offers.** An offer can be owned by a script as well as a key, so a vault or
   a DAO treasury can underwrite.
 - **Minimum premium.** 20 ADA, or 10 USDCx on the USDCx instance.
+- **Receipts as backing.** On the USDCx instance an offer can hold Liqwid qUSDCx receipts, valued at
+  the market's exchange rate with a 15% haircut, so capital supplied to Liqwid can back cover
+  without being withdrawn.
+- **Event cover.** An event slot on the table carries a signed reading of an outside event, such as
+  the liquidation of a named FluidTokens loan, and cover on it pays when the event happens.
 
-It is audited at its code freeze. Mainnet comes after that audit.
+It is audited at its code freeze. Mainnet comes after that audit. Its transactions are on
+[Preview Proof](preview-proof.md).
 
 ## Integrations
 
 | Integration | State |
 |-------------|-------|
 | SaturnSwap swap-plus-insure | Live on preprod. One transaction fills a SaturnSwap V3 order and sells USDC Depeg cover from the Book, signed in a mobile wallet. See [The Depeg sales](preprod-proof.md#the-depeg-sales). The SaturnSwap interface for it is not yet on SaturnSwap's public site |
-| FluidTokens V4 liquidation cover | In progress. The RH1 event slot is on the preprod table, and the publisher does not serve it yet, so no event cover is sold |
+| FluidTokens V4 liquidation cover | Live on preview. A loan's liquidation through FluidTokens paid a 30 tADA Claim, and a loan and its cover have opened in one transaction. See [FluidTokens liquidation cover](preview-proof.md#fluidtokens-liquidation-cover) |
 | Indigo | Sold on the prior generation, not yet relaunched on the Book |
-| Liqwid | Planned as the first money market for the rehypothecation waterfall, in a later Book generation. Design stage: nothing is built or live |
+| Liqwid | Live on preview. USDCx offers hold qUSDCx receipts from Liqwid's preview market as backing, and five sales have drawn on them. See [Liqwid receipts as backing](preview-proof.md#liqwid-receipts-as-backing). No Claim has paid in receipts yet |
+| Babel fees | Live on preview. A buyer pays the premium and every ADA part of a sale in USDCx through a tank built on FluidTokens' Aquarium validators. See [Paying in USDCx with no ADA](preview-proof.md#paying-in-usdcx-with-no-ada) |
 | Surf | Surf's services relaunched in November 2026. Re-integration against the Book to follow, with no date set |
 | Lending and credit lines | Cover that pays before a borrower's position reaches liquidation or recovery. Design stage, see [Cover for Lending Positions](lending-cover.md) |
 
